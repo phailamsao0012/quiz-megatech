@@ -12,7 +12,6 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
-        /* CHỐNG BÔI ĐEN VÀ COPY GIAN LẬN */
         body {
             background-color: #f0fdf4;
             background-image: radial-gradient(circle at top right, #dcfce7 0%, transparent 50%), radial-gradient(circle at bottom left, #bbf7d0 0%, transparent 50%);
@@ -67,51 +66,83 @@
         .name-input { width: 100%; padding: 15px 25px; font-size: 18px; font-family: 'Nunito', sans-serif; font-weight: 700; background: #ffffff; color: #14532d; border: 2px solid #86efac; border-radius: 16px; outline: none; transition: all 0.3s; box-shadow: 0 5px 15px rgba(34, 197, 94, 0.03); }
         .name-input:focus { border-color: #22c55e; box-shadow: 0 0 15px rgba(34, 197, 94, 0.15); }
 
-        /* VỊT MAKER CSS */
+        /* HEO MAKER CSS */
         .avatar-maker-box {
             background: #ffffff; border: 2px solid #86efac; border-radius: 20px; padding: 20px; width: 100%; max-width: 500px;
             display: flex; gap: 20px; align-items: center; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(34, 197, 94, 0.1);
         }
         .avatar-preview-wrapper {
-            width: 100px; height: 100px; border-radius: 50%; background: #bae6fd; flex-shrink: 0;
-            border: 4px solid #3b82f6; overflow: hidden; display: flex; justify-content: center; align-items: center; box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+            width: 100px; height: 100px; border-radius: 50%; background: #fdf4ff; flex-shrink: 0;
+            border: 4px solid #f472b6; overflow: hidden; display: flex; justify-content: center; align-items: center; box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
         }
         .avatar-preview-wrapper img { width: 90%; height: 90%; object-fit: contain; }
         .maker-controls { flex-grow: 1; display: flex; flex-direction: column; gap: 8px; }
         .maker-select { width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #cbd5e1; font-family: 'Nunito'; font-weight: bold; color: #1e293b; outline: none; }
         .maker-select:focus { border-color: #3b82f6; }
 
-        /* NÔNG TRẠI VỊT (PLAYGROUND) CSS */
-        .playground-container {
-            width: 100%; max-width: 1000px; height: 60vh; min-height: 400px; margin: 20px auto;
-            background: linear-gradient(to bottom, #7dd3fc 0%, #38bdf8 40%, #86efac 40%, #4ade80 100%);
-            border-radius: 24px; border: 4px solid #ffffff; box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-            position: relative; overflow: hidden;
+        /* NÔNG TRẠI HEO MULTIPLAYER (COMPLEX BACKGROUND) */
+        #waiting-screen { padding: 0; display: flex; flex-direction: column; height: 100%; overflow: hidden;}
+        .waiting-header { padding: 15px 20px; background: white; width: 100%; z-index: 10; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #bbf7d0;}
+        .waiting-header h2 { font-size: 24px; color: #1e3a8a; font-family: 'Montserrat'; font-weight: 900;}
+        .waiting-header p { font-size: 14px; color: #64748b; font-weight: bold;}
+        
+        .playground-wrapper {
+            flex-grow: 1; width: 100%; position: relative; display: flex; flex-direction: column; background: #86efac;
         }
-        /* Mây trang trí */
-        .cloud { position: absolute; background: white; border-radius: 50px; opacity: 0.8; }
-        .cloud::before, .cloud::after { content: ''; position: absolute; background: white; border-radius: 50%; }
-        .c1 { width: 100px; height: 30px; top: 10%; left: 10%; animation: floatCloud 20s linear infinite; }
-        .c1::before { width: 50px; height: 50px; top: -20px; left: 15px; } .c1::after { width: 40px; height: 40px; top: -10px; right: 15px; }
-        .c2 { width: 80px; height: 25px; top: 20%; right: 20%; animation: floatCloud 15s linear infinite reverse; }
-        .c2::before { width: 40px; height: 40px; top: -15px; left: 10px; } .c2::after { width: 30px; height: 30px; top: -8px; right: 10px; }
-        @keyframes floatCloud { 0% { transform: translateX(-50px); } 50% { transform: translateX(50px); } 100% { transform: translateX(-50px); } }
 
-        /* Nhân vật vịt di chuyển */
-        .draggable-duck {
-            position: absolute; width: 80px; height: 80px; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            cursor: grab; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100;
-            transition: transform 0.1s ease-out; /* Smooth scale effect */
+        .playground-container {
+            flex-grow: 1; width: 100%; position: relative; overflow: hidden;
+            background-color: #4ade80;
+            /* Vẽ nền thảm cỏ caro + đường đất đẹp mắt */
+            background-image: 
+                linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.1) 75%, rgba(255,255,255,0.1)), 
+                linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.1) 75%, rgba(255,255,255,0.1));
+            background-size: 60px 60px;
+            background-position: 0 0, 30px 30px;
         }
-        .draggable-duck:active { cursor: grabbing; transform: translate(-50%, -50%) scale(1.15); }
-        .draggable-duck img { width: 100%; height: 100%; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.3)); pointer-events: none;}
-        .duck-nameplate {
+        
+        /* Bối cảnh trang trí map */
+        .scenery { position: absolute; pointer-events: none; }
+        .fence { width: 100%; height: 20px; background: repeating-linear-gradient(90deg, #d97706, #d97706 10px, transparent 10px, transparent 40px); top: 20px; position: absolute;}
+        .barn { width: 120px; height: 100px; background: #b91c1c; position: absolute; top: 30px; left: 50px; border-radius: 10px 10px 0 0; border: 4px solid #7f1d1d;}
+        .barn::before { content: ''; position: absolute; width: 0; height: 0; border-left: 65px solid transparent; border-right: 65px solid transparent; border-bottom: 50px solid #991b1b; top: -50px; left: -9px;}
+        .tree { width: 40px; height: 40px; background: #14532d; border-radius: 50%; position: absolute; box-shadow: 20px 10px 0 #166534, -15px 15px 0 #15803d;}
+        .tree-trunk { width: 10px; height: 20px; background: #78350f; position: absolute; top: 35px; left: 15px;}
+
+        /* Bảng điều khiển Joystick cố định dưới cùng */
+        .joystick-panel {
+            height: 120px; width: 100%; background: #ffffff; border-top: 3px solid #cbd5e1; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; flex-shrink: 0; z-index: 50;
+        }
+
+        /* Vùng Joystick */
+        .joystick-zone {
+            width: 100px; height: 100px; position: relative; border-radius: 50%; background: #e2e8f0; border: 4px solid #cbd5e1; display: flex; align-items: center; justify-content: center; touch-action: none;
+        }
+        .joystick-stick {
+            width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #2563eb); position: absolute; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.4); pointer-events: none; transition: transform 0.1s;
+        }
+
+        /* Hướng dẫn phím Desktop */
+        .keyboard-hint {
+            display: flex; flex-direction: column; align-items: center; color: #64748b; font-weight: bold;
+        }
+        .key-row { display: flex; gap: 5px; margin-bottom: 5px;}
+        .key { width: 35px; height: 35px; background: #f1f5f9; border: 2px solid #cbd5e1; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-family: monospace; font-size: 16px; color: #1e293b; box-shadow: 0 3px 0 #cbd5e1;}
+
+        /* Nhân vật Heo di chuyển */
+        .player-pig {
+            position: absolute; width: 80px; height: 80px; transform: translate(-50%, -50%);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100;
+        }
+        .player-pig img { width: 100%; height: 100%; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.3)); pointer-events: none;}
+        .pig-nameplate {
             position: absolute; top: -25px; background: rgba(255,255,255,0.9); padding: 4px 10px;
             border-radius: 12px; font-weight: 800; font-size: 13px; color: #1e40af; white-space: nowrap;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1); border: 1px solid #bfdbfe; pointer-events: none;
         }
+        .other-pig { transition: left 0.15s linear, top 0.15s linear; z-index: 90;} /* Chuyển động mượt cho người khác */
 
-        /* Sidebar Danh Sách Vịt */
+        /* Sidebar Danh Sách */
         .player-sidebar {
             position: absolute; top: 0; right: -320px; width: 300px; height: 100%;
             background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
@@ -123,15 +154,15 @@
         .close-sidebar-btn { background: none; border: none; color: white; font-size: 20px; cursor: pointer; }
         .sidebar-list { flex-grow: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
         .sidebar-item { display: flex; align-items: center; gap: 15px; background: #f0fdf4; padding: 10px; border-radius: 12px; border: 1px solid #bbf7d0; }
-        .sidebar-item img { width: 40px; height: 40px; border-radius: 50%; background: #bae6fd; border: 2px solid #3b82f6; }
+        .sidebar-item img { width: 40px; height: 40px; border-radius: 50%; background: #fdf4ff; border: 2px solid #f472b6; }
         .sidebar-item .name { font-weight: 700; color: #166534; font-size: 14px; }
         
         .toggle-sidebar-btn {
-            position: absolute; top: 20px; right: 20px; background: #ffffff; border: 2px solid #10b981;
-            color: #10b981; width: 50px; height: 50px; border-radius: 50%; font-size: 20px;
-            cursor: pointer; z-index: 150; box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3); transition: all 0.2s;
+            background: #ffffff; border: 2px solid #10b981;
+            color: #10b981; padding: 10px 20px; border-radius: 30px; font-weight: bold; font-family: 'Montserrat';
+            cursor: pointer; box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3); transition: all 0.2s; display: flex; gap: 10px; align-items: center;
         }
-        .toggle-sidebar-btn:hover { transform: scale(1.1); background: #10b981; color: white; }
+        .toggle-sidebar-btn:hover { transform: scale(1.05); background: #10b981; color: white; }
 
         /* Quiz Layouts */
         .timer-container { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 20px; }
@@ -167,7 +198,7 @@
         .lb-item { display: grid; grid-template-columns: 40px 50px 1fr 80px 80px; align-items: center; background: #f0fdf4; padding: 12px 15px; border-radius: 12px; font-weight: 700; color: #166534; font-size: 16px; border: 1px solid transparent;}
         .lb-item.current-user { background: #dcfce7; border-color: #22c55e; box-shadow: 0 4px 10px rgba(34,197,94,0.2); }
         .lb-rank { font-family: 'Montserrat'; font-weight: 900; font-size: 18px; color: #15803d; }
-        .lb-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #22c55e; background-color: #bae6fd;}
+        .lb-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #22c55e; background-color: #fdf4ff;}
         .lb-score { color: #10b981; font-weight: 900; text-align: right; }
         .lb-time { color: #d97706; font-size: 14px; text-align: right;}
 
@@ -182,7 +213,7 @@
         .admin-grid-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .admin-user-card { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 10px 15px; display: flex; align-items: center; gap: 12px; position: relative;}
         .admin-user-card-rank { font-family: 'Montserrat'; font-weight: 900; font-size: 20px; color: #15803d; width: 35px;}
-        .admin-user-card-avatar { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid #22c55e; background-color: #bae6fd;}
+        .admin-user-card-avatar { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid #22c55e; background-color: #fdf4ff;}
         .admin-user-card-info { flex-grow: 1; min-width: 0; }
         .admin-user-card-score { text-align: right; margin-right: 15px; flex-shrink: 0; }
         .chart-view-container { display: flex; align-items: flex-end; justify-content: flex-start; gap: 12px; padding: 40px 25px 50px 25px; min-height: 550px; overflow-x: auto; background: #f8fafc; border-radius: 16px; border: 1px solid #e2e8f0; position: relative; width: 100%; -webkit-overflow-scrolling: touch; }
@@ -215,24 +246,20 @@
         .presentation-grid { display: grid; grid-template-columns: 1fr; gap: 20px; width: 100%; max-width: 1000px; margin: 0 auto; text-align: left;}
         .p-card { background: white; border: 2px solid #bbf7d0; border-radius: 16px; padding: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);}
         .p-options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        
-        .shape { position: absolute; opacity: 0.15; z-index: 1; pointer-events: none; color: #86efac;}
-        .shape-1 { top: -20px; left: -20px; font-size: 400px; transform: rotate(-15deg); }
-        .shape-2 { bottom: -50px; right: -50px; font-size: 500px; transform: rotate(15deg); }
-
-        @keyframes spin { 100% { transform: rotate(-360deg); } }
 
         @media (max-width: 900px) { .end-layout { grid-template-columns: 1fr; } }
         @media (max-width: 768px) {
             body { padding: 0; display: block; }
             .quiz-container { width: 100%; min-height: 100vh; height: auto; max-height: none; border-radius: 0; border: none; box-shadow: none; overflow-y: visible; }
             .screen { padding: 20px 15px 40px 15px; justify-content: flex-start; height: auto; min-height: calc(100vh - 80px); overflow-y: visible;}
-            h1 { font-size: 34px; } .name-input { font-size: 16px; } .btn { font-size: 18px; width: 100%; }
+            h1 { font-size: 34px; line-height: 1.2;} .name-input { font-size: 16px; } .btn { font-size: 18px; width: 100%; }
             .question-box { width: 100%; padding: 20px 15px; }
             .options-grid { grid-template-columns: 1fr; }
             .end-card, .leaderboard-box { height: auto; max-height: none; }
             .admin-grid-layout { grid-template-columns: 1fr; } .p-options-grid { grid-template-columns: 1fr; }
             .avatar-maker-box { flex-direction: column; }
+            .joystick-panel { padding: 0 15px; justify-content: center; gap: 20px;}
+            .keyboard-hint { display: none; } /* Ẩn hint bàn phím trên mobile */
         }
     </style>
 </head>
@@ -245,9 +272,6 @@
 </div>
 
 <div class="quiz-container" id="quiz-root">
-    <i class="fa-solid fa-wheat-awn shape shape-1"></i>
-    <i class="fa-solid fa-tractor shape shape-2"></i>
-
     <div class="header">
         <div class="logo-box">
             <img id="main-header-logo" src="logo_new.jpg" alt="Megatech Logo" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'150\' height=\'50\'><text x=\'0\' y=\'35\' font-family=\'Arial\' font-size=\'30\' fill=\'#10b981\' font-weight=\'bold\'>MEGATECH</text></svg>'">
@@ -259,7 +283,7 @@
     </div>
     <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
 
-    <!-- START SCREEN (TRANG CHỦ ĐIỀN THÔNG TIN + TẠO AVATAR) -->
+    <!-- START SCREEN (TRANG CHỦ ĐIỀN THÔNG TIN + TẠO AVATAR HEO) -->
     <div class="screen active" id="start-screen">
         <div style="width: 100%; max-width: 600px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
             <h1>CHINH PHỤC <span class="highlight-text">MEGATECH</span></h1>
@@ -271,31 +295,29 @@
             <div class="input-group" id="info-input-group">
                 <input type="text" id="player-name" class="name-input" placeholder="Họ và tên (VD: Nguyễn Văn A)" required autocomplete="off">
                 <input type="text" id="player-dept" class="name-input" placeholder="Phòng ban (VD: Kinh doanh)" required autocomplete="off">
-                
-                <!-- BỔ SUNG LẠI Ô CHỨC VỤ ĐỂ TRÁNH LỖI JS -->
                 <input type="text" id="player-role" class="name-input" placeholder="Chức vụ (VD: Nhân viên)" required autocomplete="off">
                 
-                <!-- BỘ TẠO AVATAR VỊT MEGATECH CUTE (MỞ RỘNG) -->
+                <!-- BỘ TẠO AVATAR HEO MEGATECH CUTE (9x9x9) -->
                 <div class="avatar-maker-box">
                     <div class="avatar-preview-wrapper">
-                        <img id="duck-preview" src="" alt="Duck Avatar">
+                        <img id="pig-preview" src="" alt="Pig Avatar">
                     </div>
                     <div class="maker-controls">
-                        <h4 style="font-family: 'Montserrat'; color: #14532d; font-size: 15px; margin-bottom: 5px;">Tạo "Vịt Megatech" của bạn</h4>
+                        <h4 style="font-family: 'Montserrat'; color: #14532d; font-size: 15px; margin-bottom: 5px;">Tạo "Heo Megatech" của bạn</h4>
                         
-                        <select id="duck-color" class="maker-select" onchange="updateDuckSVG()">
-                            <option value="yellow">Màu Vàng (Truyền thống)</option>
-                            <option value="white">Màu Trắng (Tâm hồn đẹp)</option>
-                            <option value="brown">Màu Nâu (Ngầu)</option>
-                            <option value="black">Màu Đen (Hắc ám)</option>
+                        <select id="pig-color" class="maker-select" onchange="updatePigSVG()">
+                            <option value="pink">Màu Hồng (Mũm mĩm)</option>
+                            <option value="yellow">Màu Vàng (Tài lộc)</option>
+                            <option value="white">Màu Trắng (Thuần khiết)</option>
+                            <option value="brown">Màu Nâu (Rừng)</option>
+                            <option value="black">Màu Đen (Heo Mọi)</option>
                             <option value="blue">Màu Xanh Dương (Hy vọng)</option>
                             <option value="green">Màu Xanh Lá (Megatech)</option>
-                            <option value="pink">Màu Hồng (Bánh bèo)</option>
-                            <option value="purple">Màu Tím (Mộng mơ)</option>
+                            <option value="purple">Màu Tím (Thủy chung)</option>
                             <option value="red">Màu Đỏ (Rực rỡ)</option>
                         </select>
                         
-                        <select id="duck-hat" class="maker-select" onchange="updateDuckSVG()">
+                        <select id="pig-hat" class="maker-select" onchange="updatePigSVG()">
                             <option value="none">Không đội mũ</option>
                             <option value="hardhat">Mũ Kỹ sư Megatech</option>
                             <option value="cap">Mũ lưỡi trai Năng động</option>
@@ -307,7 +329,7 @@
                             <option value="ninja">Khăn rằn Ninja</option>
                         </select>
                         
-                        <select id="duck-acc" class="maker-select" onchange="updateDuckSVG()">
+                        <select id="pig-acc" class="maker-select" onchange="updatePigSVG()">
                             <option value="none">Không phụ kiện</option>
                             <option value="glasses">Kính tri thức</option>
                             <option value="sunglasses">Kính râm đen</option>
@@ -336,32 +358,51 @@
         </div>
     </div>
 
-    <!-- MÀN HÌNH NÔNG TRẠI CHỜ THI (PLAYGROUND) -->
-    <div class="screen" id="waiting-screen" style="padding: 20px;">
-        <h2 style="font-family: 'Montserrat'; color: #1e3a8a; font-size: 28px; margin-bottom: 5px; font-weight: 900;"><i class="fa-solid fa-clock-rotate-left fa-spin" style="color: #3b82f6;"></i> ĐANG CHỜ MỞ ĐỀ</h2>
-        <p style="font-size: 16px; color: #64748b; font-weight: bold; margin-bottom: 15px;">Kéo thả để di chuyển vịt của bạn. Nhấn Menu bên phải để xem các thành viên khác!</p>
+    <!-- MÀN HÌNH NÔNG TRẠI CHỜ THI (PLAYGROUND MULTIPLAYER VỚI JOYSTICK) -->
+    <div class="screen" id="waiting-screen">
+        <div class="waiting-header">
+            <div>
+                <h2><i class="fa-solid fa-clock-rotate-left fa-spin" style="color: #3b82f6;"></i> ĐANG CHỜ MỞ ĐỀ</h2>
+                <p>Sử dụng phím mũi tên hoặc Joystick để di chuyển!</p>
+            </div>
+            <button class="toggle-sidebar-btn" onclick="toggleSidebar()">
+                <i class="fa-solid fa-users"></i> Menu
+            </button>
+        </div>
         
-        <div class="playground-container" id="playground">
-            <!-- Background Decorations -->
-            <div class="cloud c1"></div>
-            <div class="cloud c2"></div>
-            <div style="position: absolute; bottom: 10px; left: 20px; color: white; font-weight: 900; font-size: 24px; font-family: 'Montserrat'; opacity: 0.5;">MEGATECH FARM</div>
-            
-            <!-- Vịt của người chơi -->
-            <div class="draggable-duck" id="my-duck">
-                <div class="duck-nameplate" id="my-duck-name">Name</div>
-                <img id="my-duck-img" src="" alt="My Duck">
+        <div class="playground-wrapper">
+            <div class="playground-container" id="playground">
+                <!-- Map Decoration Elements -->
+                <div class="fence"></div>
+                <div class="scenery barn"></div>
+                <div class="scenery tree" style="top: 80px; right: 100px;"><div class="tree-trunk"></div></div>
+                <div class="scenery tree" style="top: 250px; left: 150px;"><div class="tree-trunk"></div></div>
+                <div class="scenery tree" style="top: 150px; right: 250px;"><div class="tree-trunk"></div></div>
+                
+                <!-- Heo của mình -->
+                <div class="player-pig" id="my-pig">
+                    <div class="pig-nameplate" id="my-pig-name">Tôi</div>
+                    <img id="my-pig-img" src="" alt="My Pig">
+                </div>
             </div>
 
-            <!-- Nút bật Sidebar -->
-            <button class="toggle-sidebar-btn" onclick="toggleSidebar()">
-                <i class="fa-solid fa-users"></i>
-            </button>
-            
+            <!-- Joystick Control Panel nằm ngoài Map -->
+            <div class="joystick-panel">
+                <div class="keyboard-hint">
+                    <div class="key-row"><div class="key">W</div></div>
+                    <div class="key-row"><div class="key">A</div><div class="key">S</div><div class="key">D</div></div>
+                    <span style="font-size: 12px; margin-top: 5px;">hoặc Mũi tên</span>
+                </div>
+                
+                <div class="joystick-zone" id="joystick-zone">
+                    <div class="joystick-stick" id="joystick-stick"></div>
+                </div>
+            </div>
+
             <!-- Sidebar Danh sách người chơi -->
             <div class="player-sidebar" id="player-sidebar">
                 <div class="sidebar-header">
-                    <span><i class="fa-solid fa-list-ul"></i> Hội Vịt Chờ Thi</span>
+                    <span><i class="fa-solid fa-list-ul"></i> Hội Heo Megatech</span>
                     <button class="close-sidebar-btn" onclick="toggleSidebar()"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 <div class="sidebar-list" id="sidebar-player-list">
@@ -470,7 +511,6 @@
                         <button class="action-btn" style="background: #f0abfc; color: #4a044e; border: 1px solid #e879f9; padding: 6px 12px; font-size: 12px;" onclick="updateAdminCredentials()"><i class="fa-solid fa-floppy-disk"></i> Lưu</button>
                     </div>
                     
-                    <!-- THÊM TÍNH NĂNG XUẤT EXCEL -->
                     <button class="action-btn btn-success" onclick="exportExcel()"><i class="fa-solid fa-file-csv"></i> XUẤT EXCEL</button>
                     <button class="action-btn btn-primary" onclick="showPresentation()"><i class="fa-solid fa-person-chalkboard"></i> TRÌNH CHIẾU</button>
                     <button class="action-btn btn-danger" onclick="deleteAllData()"><i class="fa-solid fa-trash-can"></i> XÓA TẤT CẢ</button>
@@ -607,20 +647,20 @@
 
     let isFirebaseListening = false;
 
-    // === HỆ THỐNG TẠO AVATAR VỊT MỞ RỘNG (9x9x9) ===
-    function generateDuckSVG(colorStr, hatType, accType) {
-        // 1. CHỌN MÀU LÔNG (9 MÀU)
-        let bodyColor = '#fde047'; // yellow
-        if (colorStr === 'white') bodyColor = '#f8fafc';
-        else if (colorStr === 'brown') bodyColor = '#78350f';
+    // === HỆ THỐNG TẠO AVATAR HEO MEGATECH CUTE ===
+    function generatePigSVG(colorStr, hatType, accType) {
+        // 1. CHỌN MÀU DA HEO (9 MÀU)
+        let bodyColor = '#fbcfe8'; // Mặc định hồng cute
+        if (colorStr === 'yellow') bodyColor = '#fde047';
+        else if (colorStr === 'white') bodyColor = '#f8fafc';
+        else if (colorStr === 'brown') bodyColor = '#d97706';
         else if (colorStr === 'black') bodyColor = '#334155';
         else if (colorStr === 'blue') bodyColor = '#bae6fd';
         else if (colorStr === 'green') bodyColor = '#86efac';
-        else if (colorStr === 'pink') bodyColor = '#fbcfe8';
         else if (colorStr === 'purple') bodyColor = '#d8b4fe';
         else if (colorStr === 'red') bodyColor = '#fca5a5';
 
-        // 2. CHỌN MŨ (9 LOẠI)
+        // 2. CHỌN MŨ (9 LOẠI - Căn chỉnh theo dáng heo)
         let hatSvg = '';
         let hasNinja = false;
         
@@ -637,150 +677,214 @@
         } else if (hatType === 'halo') {
             hatSvg = `<ellipse cx="50" cy="15" rx="18" ry="6" fill="none" stroke="#fde047" stroke-width="4"/><line x1="50" y1="21" x2="50" y2="35" stroke="#fde047" stroke-width="2"/>`;
         } else if (hatType === 'headphones') {
-            hatSvg = `<path d="M 22 45 A 28 28 0 0 1 78 45" fill="none" stroke="#1e293b" stroke-width="4"/><rect x="15" y="35" width="12" height="25" rx="4" fill="#ef4444"/><rect x="73" y="35" width="12" height="25" rx="4" fill="#ef4444"/>`;
+            hatSvg = `<path d="M 18 50 A 32 32 0 0 1 82 50" fill="none" stroke="#1e293b" stroke-width="4"/><rect x="12" y="40" width="12" height="25" rx="4" fill="#ef4444"/><rect x="76" y="40" width="12" height="25" rx="4" fill="#ef4444"/>`;
         } else if (hatType === 'flower') {
             hatSvg = `<circle cx="35" cy="25" r="8" fill="#fca5a5"/><circle cx="27" cy="30" r="8" fill="#fca5a5"/><circle cx="43" cy="30" r="8" fill="#fca5a5"/><circle cx="35" cy="38" r="8" fill="#fca5a5"/><circle cx="35" cy="30" r="6" fill="#fde047"/>`;
         } else if (hatType === 'ninja') {
             hasNinja = true;
-            // Ninja band is drawn before eyes in the normal flow, so we re-draw eyes inside here to guarantee they are visible
-            hatSvg = `<rect x="25" y="42" width="50" height="12" fill="#ef4444"/><path d="M 25 42 L 15 55 L 25 50 Z" fill="#dc2626"/>
-                      <circle cx="41" cy="48" r="4" fill="#1e293b"/><circle cx="71" cy="48" r="4" fill="#1e293b"/>
-                      <circle cx="42" cy="47" r="1.5" fill="white"/><circle cx="72" cy="47" r="1.5" fill="white"/>`;
+            hatSvg = `<rect x="20" y="42" width="60" height="15" fill="#ef4444"/><path d="M 25 42 L 15 55 L 25 50 Z" fill="#dc2626"/>
+                      <circle cx="40" cy="49" r="4" fill="#1e293b"/><circle cx="60" cy="49" r="4" fill="#1e293b"/>
+                      <circle cx="41" cy="48" r="1.5" fill="white"/><circle cx="61" cy="48" r="1.5" fill="white"/>`;
         }
 
-        // 3. CHỌN PHỤ KIỆN (9 LOẠI)
+        // 3. CHỌN PHỤ KIỆN (9 LOẠI - Căn chỉnh theo mũi heo)
         let accSvg = '';
         if (accType === 'glasses') {
-            accSvg = `<rect x="33" y="42" width="14" height="12" rx="3" fill="none" stroke="#1e293b" stroke-width="2"/><rect x="63" y="42" width="14" height="12" rx="3" fill="none" stroke="#1e293b" stroke-width="2"/><line x1="47" y1="48" x2="63" y2="48" stroke="#1e293b" stroke-width="2"/>`;
+            accSvg = `<rect x="32" y="44" width="14" height="12" rx="3" fill="none" stroke="#1e293b" stroke-width="2"/><rect x="54" y="44" width="14" height="12" rx="3" fill="none" stroke="#1e293b" stroke-width="2"/><line x1="46" y1="50" x2="54" y2="50" stroke="#1e293b" stroke-width="2"/>`;
         } else if (accType === 'sunglasses') {
-            accSvg = `<rect x="32" y="43" width="16" height="10" rx="2" fill="#0f172a"/><rect x="62" y="43" width="16" height="10" rx="2" fill="#0f172a"/><line x1="48" y1="46" x2="62" y2="46" stroke="#0f172a" stroke-width="3"/>`;
+            accSvg = `<rect x="30" y="45" width="18" height="10" rx="2" fill="#0f172a"/><rect x="52" y="45" width="18" height="10" rx="2" fill="#0f172a"/><line x1="48" y1="48" x2="52" y2="48" stroke="#0f172a" stroke-width="3"/>`;
         } else if (accType === 'tie') {
             accSvg = `<path d="M 45 75 L 55 75 L 52 95 L 50 98 L 48 95 Z" fill="#ef4444"/><polygon points="48,70 52,70 55,75 45,75" fill="#dc2626"/>`;
         } else if (accType === 'scarf') {
-            accSvg = `<rect x="28" y="70" width="44" height="8" rx="4" fill="#3b82f6"/><path d="M 60 75 L 65 95 L 55 90 Z" fill="#2563eb"/>`;
+            accSvg = `<rect x="25" y="70" width="50" height="8" rx="4" fill="#3b82f6"/><path d="M 65 75 L 70 95 L 55 90 Z" fill="#2563eb"/>`;
         } else if (accType === 'goldchain') {
-            accSvg = `<path d="M 32 68 Q 50 85 68 68" fill="none" stroke="#eab308" stroke-width="4" stroke-dasharray="6,2"/><circle cx="50" cy="78" r="6" fill="#eab308"/>`;
+            accSvg = `<path d="M 28 68 Q 50 90 72 68" fill="none" stroke="#eab308" stroke-width="4" stroke-dasharray="6,2"/><circle cx="50" cy="80" r="6" fill="#eab308"/>`;
         } else if (accType === 'mask') {
-            accSvg = `<rect x="36" y="50" width="28" height="14" rx="4" fill="#bae6fd"/><line x1="36" y1="52" x2="25" y2="48" stroke="#bae6fd" stroke-width="2"/><line x1="64" y1="52" x2="75" y2="48" stroke="#bae6fd" stroke-width="2"/>`;
+            accSvg = `<rect x="35" y="55" width="30" height="15" rx="4" fill="#bae6fd"/><line x1="35" y1="58" x2="20" y2="52" stroke="#bae6fd" stroke-width="2"/><line x1="65" y1="58" x2="80" y2="52" stroke="#bae6fd" stroke-width="2"/>`;
         } else if (accType === 'bowtie') {
-            accSvg = `<polygon points="43,67 43,77 57,72" fill="#ef4444"/><polygon points="57,67 57,77 43,72" fill="#ef4444"/><circle cx="50" cy="72" r="3" fill="#b91c1c"/>`;
+            accSvg = `<polygon points="40,68 40,78 55,73" fill="#ef4444"/><polygon points="60,68 60,78 45,73" fill="#ef4444"/><circle cx="50" cy="73" r="3" fill="#b91c1c"/>`;
         } else if (accType === 'mustache') {
-            accSvg = `<path d="M 38 60 Q 45 56 50 60 Q 55 56 62 60" fill="none" stroke="#1e293b" stroke-width="3" stroke-linecap="round"/>`;
+            accSvg = `<path d="M 35 65 Q 45 60 50 65 Q 55 60 65 65" fill="none" stroke="#1e293b" stroke-width="3" stroke-linecap="round"/>`;
         } else if (accType === 'blush') {
-            accSvg = `<circle cx="32" cy="55" r="5" fill="#f9a8d4" opacity="0.8"/><circle cx="68" cy="55" r="5" fill="#f9a8d4" opacity="0.8"/>`;
+            accSvg = `<circle cx="28" cy="55" r="5" fill="#f43f5e" opacity="0.6"/><circle cx="72" cy="55" r="5" fill="#f43f5e" opacity="0.6"/>`;
         }
 
-        // Nếu KHÔNG PHẢI ninja thì render mắt bình thường (vì Ninja tự đè mắt lên băng rằn)
         let eyesSvg = '';
         if (!hasNinja) {
-            eyesSvg = `<circle cx="41" cy="48" r="4" fill="#1e293b"/><circle cx="71" cy="48" r="4" fill="#1e293b"/>
-                       <circle cx="42" cy="47" r="1.5" fill="white"/><circle cx="72" cy="47" r="1.5" fill="white"/>`;
+            eyesSvg = `<circle cx="40" cy="49" r="4" fill="#1e293b"/><circle cx="60" cy="49" r="4" fill="#1e293b"/>
+                       <circle cx="41" cy="48" r="1.5" fill="white"/><circle cx="61" cy="48" r="1.5" fill="white"/>`;
         }
 
         const svgContent = `
             <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <!-- Chân -->
-                <rect x="35" y="85" width="8" height="10" rx="4" fill="#ea580c"/>
-                <rect x="57" y="85" width="8" height="10" rx="4" fill="#ea580c"/>
-                <path d="M 31 92 L 43 92 L 39 98 Z" fill="#ea580c"/>
-                <path d="M 53 92 L 65 92 L 61 98 Z" fill="#ea580c"/>
+                <!-- Tai heo -->
+                <path d="M 30 45 Q 15 20 10 45 Q 20 60 30 45 Z" fill="${bodyColor}" stroke="rgba(0,0,0,0.1)" stroke-width="1"/>
+                <path d="M 70 45 Q 85 20 90 45 Q 80 60 70 45 Z" fill="${bodyColor}" stroke="rgba(0,0,0,0.1)" stroke-width="1"/>
                 
-                <!-- Thân -->
-                <path d="M 25 60 Q 20 80 50 80 Q 80 80 75 60 Q 75 35 50 35 Q 25 35 25 60 Z" fill="${bodyColor}"/>
+                <!-- Chân heo -->
+                <rect x="35" y="85" width="8" height="10" rx="4" fill="#1e293b"/>
+                <rect x="57" y="85" width="8" height="10" rx="4" fill="#1e293b"/>
                 
-                <!-- Cánh -->
-                <path d="M 25 55 Q 15 65 25 75 Q 35 65 25 55 Z" fill="${bodyColor}" filter="brightness(0.9)"/>
-                <path d="M 75 55 Q 85 65 75 75 Q 65 65 75 55 Z" fill="${bodyColor}" filter="brightness(0.9)"/>
+                <!-- Thân heo mập mạp -->
+                <ellipse cx="50" cy="60" rx="35" ry="32" fill="${bodyColor}"/>
+                
+                <!-- Đuôi xoắn -->
+                <path d="M 80 70 Q 95 65 85 75 Q 80 80 85 85" fill="none" stroke="${bodyColor}" stroke-width="4" stroke-linecap="round"/>
                 
                 <!-- Mũ/Headband (Ninja vẽ mắt luôn) -->
                 ${hatSvg}
                 
-                <!-- Mặt & Mắt (Nếu chưa có) -->
+                <!-- Mặt & Mắt -->
                 ${eyesSvg}
                 
-                <!-- Mỏ -->
-                <path d="M 45 52 Q 56 48 67 52 Q 60 58 52 58 Q 45 55 45 52 Z" fill="#f97316"/>
-                <path d="M 48 55 Q 56 60 64 55 Z" fill="#ea580c"/>
+                <!-- Mũi heo (Snout) -->
+                <ellipse cx="50" cy="62" rx="14" ry="10" fill="#fca5a5" stroke="#f43f5e" stroke-width="1"/>
+                <circle cx="45" cy="62" r="2.5" fill="#9f1239"/>
+                <circle cx="55" cy="62" r="2.5" fill="#9f1239"/>
                 
-                <!-- Phụ kiện đeo ngoài cùng -->
+                <!-- Phụ kiện -->
                 ${accSvg}
             </svg>
         `;
         return `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svgContent)))}`;
     }
 
-    function updateDuckSVG() {
-        const color = document.getElementById('duck-color').value;
-        const hat = document.getElementById('duck-hat').value;
-        const acc = document.getElementById('duck-acc').value;
-        playerAvatarBase64 = generateDuckSVG(color, hat, acc);
-        document.getElementById('duck-preview').src = playerAvatarBase64;
-    }
+    window.updatePigSVG = function() {
+        const color = document.getElementById('pig-color').value;
+        const hat = document.getElementById('pig-hat').value;
+        const acc = document.getElementById('pig-acc').value;
+        playerAvatarBase64 = generatePigSVG(color, hat, acc);
+        document.getElementById('pig-preview').src = playerAvatarBase64;
+    };
 
-    // Khởi tạo Vịt lần đầu
-    setTimeout(updateDuckSVG, 100);
+    // Khởi tạo Heo lần đầu
+    setTimeout(updatePigSVG, 100);
 
-    // === HỆ THỐNG KÉO THẢ VỊT (PLAYGROUND) ===
-    let isDragging = false;
-    let duckEl = null;
-    let playgroundEl = null;
+
+    // === HỆ THỐNG ĐIỀU KHIỂN MULTIPLAYER (JOYSTICK + KEYBOARD) ===
+    let gameLoop;
+    let myPigX = 50, myPigY = 50; // Tọa độ tương đối 0-100%
+    const speed = 0.5; // Tốc độ di chuyển (%)
+    const keys = { w: false, a: false, s: false, d: false, ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false };
+    let joyVx = 0, joyVy = 0; // Vận tốc từ Joystick ảo
+    let lastSyncTime = 0;
 
     function initPlayground() {
-        duckEl = document.getElementById('my-duck');
-        playgroundEl = document.getElementById('playground');
+        const playgroundEl = document.getElementById('playground');
+        const myPigEl = document.getElementById('my-pig');
+        if(!playgroundEl || !myPigEl) return;
+
+        document.getElementById('my-pig-name').innerText = playerName || "Tôi";
+        document.getElementById('my-pig-img').src = playerAvatarBase64;
+
+        // Bắt đầu vòng lặp game
+        if(!gameLoop) {
+            gameLoop = requestAnimationFrame(updateGame);
+            setupControls();
+        }
+    }
+
+    function setupControls() {
+        // Keyboard
+        window.addEventListener('keydown', e => { if (keys.hasOwnProperty(e.key)) keys[e.key] = true; });
+        window.addEventListener('keyup', e => { if (keys.hasOwnProperty(e.key)) keys[e.key] = false; });
+
+        // Virtual Joystick
+        const zone = document.getElementById('joystick-zone');
+        const stick = document.getElementById('joystick-stick');
+        let stickDragging = false;
+        let baseRect;
+
+        function startJoy(e) {
+            stickDragging = true;
+            baseRect = zone.getBoundingClientRect();
+            moveJoy(e);
+        }
+
+        function moveJoy(e) {
+            if (!stickDragging) return;
+            e.preventDefault();
+            let clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+            let clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+
+            let cx = baseRect.left + baseRect.width / 2;
+            let cy = baseRect.top + baseRect.height / 2;
+            let dx = clientX - cx;
+            let dy = clientY - cy;
+
+            let dist = Math.sqrt(dx*dx + dy*dy);
+            let maxDist = baseRect.width / 2 - 25; // 25 là nửa size của stick
+            
+            if (dist > maxDist) {
+                dx = (dx / dist) * maxDist;
+                dy = (dy / dist) * maxDist;
+            }
+
+            stick.style.transform = `translate(${dx}px, ${dy}px)`;
+            
+            // Tính vận tốc
+            joyVx = (dx / maxDist) * speed;
+            joyVy = (dy / maxDist) * speed;
+        }
+
+        function endJoy() {
+            stickDragging = false;
+            stick.style.transform = `translate(0px, 0px)`;
+            joyVx = 0;
+            joyVy = 0;
+        }
+
+        zone.addEventListener('mousedown', startJoy);
+        document.addEventListener('mousemove', moveJoy, {passive: false});
+        document.addEventListener('mouseup', endJoy);
         
-        if(!duckEl || !playgroundEl) return;
-
-        // Cập nhật tên và hình ảnh vịt vào playground
-        document.getElementById('my-duck-name').innerText = playerName || "Tôi";
-        document.getElementById('my-duck-img').src = playerAvatarBase64;
-
-        duckEl.addEventListener('mousedown', dragStart);
-        duckEl.addEventListener('touchstart', dragStart, {passive: false});
-
-        document.addEventListener('mousemove', drag);
-        document.addEventListener('touchmove', drag, {passive: false});
-
-        document.addEventListener('mouseup', dragEnd);
-        document.addEventListener('touchend', dragEnd);
+        zone.addEventListener('touchstart', startJoy, {passive: false});
+        document.addEventListener('touchmove', moveJoy, {passive: false});
+        document.addEventListener('touchend', endJoy);
     }
 
-    function dragStart(e) {
-        isDragging = true;
+    function updateGame() {
+        if (examStatus === 'running') return; // Dừng chạy nếu đang thi
+
+        let dx = joyVx;
+        let dy = joyVy;
+
+        if (keys.w || keys.ArrowUp) dy = -speed;
+        if (keys.s || keys.ArrowDown) dy = speed;
+        if (keys.a || keys.ArrowLeft) dx = -speed;
+        if (keys.d || keys.ArrowRight) dx = speed;
+
+        if (dx !== 0 || dy !== 0) {
+            myPigX += dx;
+            myPigY += dy;
+
+            // Giữ trong khung (5% - 95% để tránh lẹm mép)
+            if (myPigX < 5) myPigX = 5;
+            if (myPigX > 95) myPigX = 95;
+            if (myPigY < 15) myPigY = 15; // Tránh lẹm trần
+            if (myPigY > 90) myPigY = 90;
+
+            const myPigEl = document.getElementById('my-pig');
+            if(myPigEl) {
+                myPigEl.style.left = `${myPigX}%`;
+                myPigEl.style.top = `${myPigY}%`;
+            }
+
+            // Sync Firebase Throttle (Chỉ gửi 5 lần/giây để tránh nghẽn mạng)
+            if (Date.now() - lastSyncTime > 200 && currentDocId && db) {
+                updateDoc(doc(scoresCollection, currentDocId), { posX: myPigX, posY: myPigY }).catch(()=>{});
+                lastSyncTime = Date.now();
+            }
+        }
+
+        gameLoop = requestAnimationFrame(updateGame);
     }
 
-    function drag(e) {
-        if (!isDragging || !playgroundEl || !duckEl) return;
-        
-        // Ngăn chặn cuộn trang khi đang kéo vịt trên mobile
-        if(e.cancelable) e.preventDefault(); 
-
-        const rect = playgroundEl.getBoundingClientRect();
-        let clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
-        let clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
-
-        let x = clientX - rect.left;
-        let y = clientY - rect.top;
-
-        // Giới hạn trong khung
-        if(x < 40) x = 40;
-        if(x > rect.width - 40) x = rect.width - 40;
-        if(y < 40) y = 40;
-        if(y > rect.height - 40) y = rect.height - 40;
-
-        duckEl.style.left = `${x}px`;
-        duckEl.style.top = `${y}px`;
-    }
-
-    function dragEnd() {
-        isDragging = false;
-    }
-
-    // === HỆ THỐNG SIDEBAR & ĐỒNG BỘ DANH SÁCH NGƯỜI CHƠI TRONG PHÒNG CHỜ ===
-    function toggleSidebar() {
+    // === HỆ THỐNG SIDEBAR & ĐỒNG BỘ MULTIPLAYER TRÊN PHÒNG CHỜ ===
+    window.toggleSidebar = function() {
         const sidebar = document.getElementById('player-sidebar');
         sidebar.classList.toggle('open');
-    }
+    };
 
     function startWaitingRoomListener() {
         if (!currentUser) return;
@@ -788,29 +892,64 @@
         
         publicLeaderboardUnsub = onSnapshot(scoresCollection, (snapshot) => {
             const listEl = document.getElementById('sidebar-player-list');
-            if(!listEl) return;
+            const playground = document.getElementById('playground');
+            if(!listEl || !playground) return;
             
             const players = [];
             snapshot.forEach(doc => {
                 const data = doc.data();
                 if (data.batch === currentBatchName && (data.status === 'Chờ bắt đầu' || data.status === 'Đang làm bài' || data.status === 'Hoàn thành')) {
-                    players.push(data);
+                    players.push({id: doc.id, ...data});
                 }
             });
             
+            // 1. Cập nhật Sidebar
             listEl.innerHTML = '';
             if(players.length === 0) {
                 listEl.innerHTML = '<div style="color:#64748b; font-size:14px; text-align:center;">Phòng chờ trống...</div>';
-                return;
+            } else {
+                players.forEach(p => {
+                    listEl.innerHTML += `
+                        <div class="sidebar-item">
+                            <img src="${p.avatar}" alt="Avatar">
+                            <div class="name">${p.name} <br><span style="font-size:11px; color:#64748b; font-weight:normal;">${p.dept}</span></div>
+                        </div>
+                    `;
+                });
             }
 
+            // 2. Cập nhật nhân vật Multiplayer trên Playground
             players.forEach(p => {
-                listEl.innerHTML += `
-                    <div class="sidebar-item">
-                        <img src="${p.avatar}" alt="Avatar">
-                        <div class="name">${p.name} <br><span style="font-size:11px; color:#64748b; font-weight:normal;">${p.dept}</span></div>
-                    </div>
-                `;
+                if(p.id === currentDocId) return; // Bỏ qua bản thân
+                
+                let otherPig = document.getElementById(`pig-${p.id}`);
+                
+                // Nếu chưa có, tạo mới
+                if (!otherPig) {
+                    otherPig = document.createElement('div');
+                    otherPig.id = `pig-${p.id}`;
+                    otherPig.className = 'player-pig other-pig';
+                    otherPig.innerHTML = `
+                        <div class="pig-nameplate">${p.name}</div>
+                        <img src="${p.avatar}" alt="Pig">
+                    `;
+                    playground.appendChild(otherPig);
+                }
+                
+                // Cập nhật vị trí mượt mà
+                if(p.posX && p.posY) {
+                    otherPig.style.left = `${p.posX}%`;
+                    otherPig.style.top = `${p.posY}%`;
+                }
+            });
+
+            // Xóa người chơi đã thoát hoặc đổi đợt
+            const currentPigIds = players.map(p => `pig-${p.id}`);
+            const allRenderedPigs = playground.querySelectorAll('.other-pig');
+            allRenderedPigs.forEach(pigNode => {
+                if(!currentPigIds.includes(pigNode.id)) {
+                    pigNode.remove();
+                }
             });
         });
     }
@@ -908,6 +1047,15 @@
         }
     });
 
+    setInterval(() => {
+        if (examStatus === 'running' && document.getElementById('waiting-screen').classList.contains('active') && !isCountingDown) {
+            startCountdownAndEnterQuiz();
+        }
+        if (document.getElementById('question-screen').classList.contains('active')) {
+            handleLockStateChange(); 
+        }
+    }, 1000);
+
     function showScreen(screenId) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(screenId).classList.add('active');
@@ -922,15 +1070,6 @@
             adminBtn.style.display = screenId === 'start-screen' ? 'inline-block' : 'none';
         }
     }
-
-    setInterval(() => {
-        if (examStatus === 'running' && document.getElementById('waiting-screen').classList.contains('active') && !isCountingDown) {
-            startCountdownAndEnterQuiz();
-        }
-        if (document.getElementById('question-screen').classList.contains('active')) {
-            handleLockStateChange(); 
-        }
-    }, 1000);
 
     function handleLockStateChange() {
         const overlay = document.getElementById('lock-overlay');
@@ -1050,19 +1189,7 @@
         }
     }
 
-    function toggleFullscreen() {
-        const elem = document.getElementById('quiz-root');
-        if (!document.fullscreenElement) {
-            if (elem.requestFullscreen) elem.requestFullscreen();
-            else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
-            else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
-        } else {
-            if (document.exitFullscreen) document.exitFullscreen();
-        }
-    }
-
-    // HÀM XÁC NHẬN THÔNG TIN ĐÃ FIX LỖI "player-role"
-    function validateAndConfirmInfo() {
+    window.validateAndConfirmInfo = function() {
         const nameInputEl = document.getElementById('player-name');
         const deptInputEl = document.getElementById('player-dept');
         const roleInputEl = document.getElementById('player-role');
@@ -1079,14 +1206,14 @@
         document.getElementById('info-input-group').style.display = 'none';
         document.getElementById('pass-input-group').style.display = 'flex';
         document.getElementById('quiz-password').focus();
-    }
+    };
 
-    function backToInfo() {
+    window.backToInfo = function() {
         document.getElementById('pass-input-group').style.display = 'none';
         document.getElementById('info-input-group').style.display = 'flex';
-    }
+    };
 
-    function handleAdminLogin() {
+    window.handleAdminLogin = function() {
         const userInp = document.getElementById('admin-login-user').value.trim();
         const passInp = document.getElementById('admin-login-pass').value.trim();
 
@@ -1096,12 +1223,12 @@
         } else {
             alert("Sai tên đăng nhập hoặc mật khẩu quản trị!");
         }
-    }
+    };
 
-    function logoutAdmin() {
+    window.logoutAdmin = function() {
         isAdminLoggedIn = false;
         showScreen('start-screen');
-    }
+    };
 
     async function checkResumeSession() {
         if (!currentUser) return;
@@ -1137,7 +1264,7 @@
                         if (data.status === 'Yêu cầu thi lại') updateReplayButtonUI(true);
                     } else if (data.status === 'Chờ bắt đầu') {
                         showScreen('waiting-screen');
-                        initPlayground(); // Khởi tạo vịt ở phòng chờ
+                        initPlayground();
                         startWaitingRoomListener();
                         if (examStatus === 'running') startCountdownAndEnterQuiz();
                     } else {
@@ -1157,7 +1284,7 @@
         }
     }
 
-    async function requestReplay() {
+    window.requestReplay = async function() {
         if (!currentUser) return alert("Kết nối bị gián đoạn. Vui lòng tải lại trang!");
         if (!currentDocId) return;
         try {
@@ -1167,7 +1294,7 @@
         } catch (e) {
             alert("Lỗi kết nối khi gửi yêu cầu!");
         }
-    }
+    };
 
     function updateReplayButtonUI(isPending) {
         const btn = document.getElementById('request-replay-btn');
@@ -1184,7 +1311,7 @@
         }
     }
 
-    async function approveReplayRequest(docId) {
+    window.approveReplayRequest = async function(docId) {
         if (!currentUser) return alert("Kết nối bị gián đoạn. Vui lòng đăng nhập lại Admin!");
         if (confirm("Bạn có chắc chắn muốn duyệt cho học viên này thi lại không?")) {
             try {
@@ -1192,9 +1319,9 @@
                 alert("Đã duyệt thành công! Học viên sẽ tự động được tải lại trang để thi.");
             } catch (error) { alert("Lỗi khi phê duyệt!"); }
         }
-    }
+    };
 
-    async function startQuiz() {
+    window.startQuiz = async function() {
         if (!currentUser) return alert("Chưa kết nối được máy chủ, vui lòng đợi thêm 1 giây và thử lại!");
 
         const nameInputEl = document.getElementById('player-name');
@@ -1237,6 +1364,8 @@
 
         if (db) {
             currentDocId = Date.now().toString() + '_' + Math.floor(Math.random() * 1000);
+            // Vị trí mặc định giữa bản đồ
+            myPigX = 50; myPigY = 50;
             try {
                 await setDoc(doc(scoresCollection, currentDocId), {
                     name: playerName, dept: playerDept, role: playerRole, 
@@ -1244,7 +1373,8 @@
                     status: 'Chờ bắt đầu', timestamp: Date.now(),
                     avatar: playerAvatarBase64,
                     batch: currentBatchName, 
-                    allowedReplay: false
+                    allowedReplay: false,
+                    posX: myPigX, posY: myPigY
                 });
                 localStorage.setItem(SESSION_KEY, currentDocId);
                 localStorage.setItem(QUESTIONS_KEY, JSON.stringify(gameQuestions));
@@ -1284,9 +1414,9 @@
             startBtn.disabled = false; 
             startBtn.innerHTML = examStatus === 'running' ? '<i class="fa-solid fa-bolt"></i> BẮT ĐẦU THI' : '<i class="fa-solid fa-hourglass-half"></i> VÀO PHÒNG CHỜ'; 
         }
-    }
+    };
 
-    function startCountdownAndEnterQuiz() {
+    window.startCountdownAndEnterQuiz = function() {
         if (!currentUser || isCountingDown) return;
         isCountingDown = true;
         
@@ -1320,7 +1450,7 @@
                 loadQuestion();
             }
         }, 1000);
-    }
+    };
 
     function startTimer() {
         clearInterval(timerInterval);
@@ -1414,7 +1544,7 @@
         handleLockStateChange(); 
     }
 
-    function selectAnswer(index, btnElement) {
+    window.selectAnswer = function(index, btnElement) {
         if (hasAnswered || examStatus !== 'running') return;
         hasAnswered = true;
         
@@ -1432,7 +1562,7 @@
         statusMsg.className = 'status-message success';
 
         showControlsAfterAnswer();
-    }
+    };
 
     function showControlsAfterAnswer() {
         if (!currentUser) return;
@@ -1444,11 +1574,11 @@
         document.getElementById('next-btn').style.display = 'block';
     }
 
-    function nextQuestion() {
+    window.nextQuestion = function() {
         currentQuestion++;
         if (currentQuestion < gameQuestions.length) loadQuestion();
         else showEndScreen();
-    }
+    };
 
     function showEndScreen() {
         clearInterval(timerInterval);
@@ -1474,7 +1604,6 @@
         document.getElementById('request-replay-btn').style.display = 'inline-block';
         updateReplayButtonUI(false);
 
-        // Ẩn truy cập admin khỏi Bảng xếp hạng nếu tài khoản chưa từng là Admin (bảo mật thêm)
         if (!isAdminLoggedIn) {
             document.getElementById('admin-access-end').style.display = 'none';
         } else {
@@ -1485,7 +1614,7 @@
         loadLeaderboard();
     }
 
-    async function loadLeaderboard() {
+    window.loadLeaderboard = async function() {
         if (!currentUser) return;
         const lbList = document.getElementById('lb-list');
         lbList.innerHTML = '<div style="text-align: center; color: #94a3b8; padding: 20px;"><i class="fa-solid fa-circle-notch fa-spin"></i> Đang tải dữ liệu...</div>';
@@ -1534,9 +1663,9 @@
         } catch (e) {
             lbList.innerHTML = '<div style="color: red; text-align: center;">Lỗi tải dữ liệu</div>';
         }
-    }
+    };
 
-    function showPresentation() {
+    window.showPresentation = function() {
         showScreen('presentation-screen');
         const container = document.getElementById('presentation-container');
         container.innerHTML = '';
@@ -1573,9 +1702,9 @@
                 </div>
             `;
         });
-    }
+    };
 
-    async function setExamStatus(status) {
+    window.setExamStatus = async function(status) {
         if (!currentUser) return alert("Lỗi: Chưa kết nối hệ thống! Đang tự động kết nối lại, vui lòng chờ...");
         try {
             await setDoc(globalSettingsRef, { examStatus: status }, { merge: true });
@@ -1585,9 +1714,9 @@
             console.error(e); 
             alert(`Lỗi khi thay đổi trạng thái kỳ thi! Chi tiết: ${e.message}`); 
         }
-    }
+    };
 
-    async function saveBatchSettings() {
+    window.saveBatchSettings = async function() {
         if (!currentUser) return alert("Lỗi: Chưa kết nối hệ thống!");
         const batchVal = document.getElementById('admin-batch-name-input').value.trim();
         const durationVal = parseInt(document.getElementById('admin-duration-input').value.trim());
@@ -1598,13 +1727,13 @@
             await setDoc(globalSettingsRef, { 
                 batchName: batchVal, 
                 examDuration: durationVal,
-                examStatus: 'idle' // MẶC ĐỊNH ĐƯA VỀ KHÓA ĐỀ KHI TẠO ĐỢT MỚI
+                examStatus: 'idle' 
             }, { merge: true });
             alert("Đã lưu Đợt thi mới! Đề thi đã tự động trở về trạng thái KHÓA ĐỀ (Chờ mở).");
         } catch (e) { console.error(e); alert("Lỗi khi cập nhật đợt thi!"); }
-    }
+    };
 
-    async function updateQuizPassword() {
+    window.updateQuizPassword = async function() {
         if (!currentUser) return alert("Lỗi: Chưa kết nối hệ thống!");
         const newPass = document.getElementById('admin-change-pass-input').value.trim();
         if(!newPass) return alert("Mật khẩu không được để trống!");
@@ -1613,9 +1742,9 @@
             await setDoc(globalSettingsRef, { quizPassword: newPass }, { merge: true });
             alert("Đã cập nhật mật khẩu thi mới thành công!");
         } catch(e) { console.error(e); alert("Lỗi khi thay đổi mật khẩu!"); }
-    }
+    };
 
-    async function updateAdminCredentials() {
+    window.updateAdminCredentials = async function() {
         if (!currentUser) return alert("Lỗi: Chưa kết nối hệ thống!");
         const newUser = document.getElementById('admin-setting-user').value.trim();
         const newPass = document.getElementById('admin-setting-pass').value.trim();
@@ -1627,14 +1756,14 @@
             currentAdminPass = newPass;
             alert("Cập nhật thông tin đăng nhập Admin thành công!");
         } catch(e) { console.error(e); alert("Lỗi kết nối khi đổi mật khẩu Admin."); }
-    }
+    };
 
-    async function deleteRecord(docId) {
+    window.deleteRecord = async function(docId) {
         if (!currentUser) return;
         if (confirm("Xóa kết quả này?")) await deleteDoc(doc(scoresCollection, docId));
-    }
+    };
 
-    async function deleteAllData() {
+    window.deleteAllData = async function() {
         if (!currentUser) return alert("Lỗi: Chưa kết nối hệ thống!");
         if (confirm("CẢNH BÁO: Hành động này sẽ xóa sạch TOÀN BỘ dữ liệu người chơi trong tất cả các đợt thi. Bạn có chắc chắn?")) {
             const snapshot = await getDocs(scoresCollection);
@@ -1644,26 +1773,25 @@
             localStorage.removeItem(TIMER_START_KEY);
             localStorage.removeItem(PAUSE_FREEZE_KEY);
             
-            // MẶC ĐỊNH KHÓA ĐỀ SAU KHI XÓA TẤT CẢ DỮ LIỆU
             await setDoc(globalSettingsRef, { examStatus: 'idle' }, { merge: true });
 
             alert("Đã xóa sạch toàn bộ cơ sở dữ liệu và đặt lại trạng thái chờ mở đề!");
         }
-    }
+    };
 
-    function switchAdminTab(paneId, tabBtn) {
+    window.switchAdminTab = function(paneId, tabBtn) {
         document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.admin-content-pane').forEach(p => p.classList.remove('active'));
         tabBtn.classList.add('active');
         document.getElementById(paneId).classList.add('active');
-    }
+    };
 
-    function filterAdminByBatch() {
+    window.filterAdminByBatch = function() {
         selectedBatchFilter = document.getElementById('admin-batch-filter').value;
         if (window.refreshAdminDashboard) window.refreshAdminDashboard();
-    }
+    };
 
-    function openAdminDashboard() {
+    window.openAdminDashboard = function() {
         if (!isAdminLoggedIn) { showScreen('admin-login-screen'); return; }
         showScreen('admin-screen');
         
@@ -1767,7 +1895,7 @@
         });
     }
     
-    async function exportExcel() {
+    window.exportExcel = async function() {
         if (!currentUser) return alert("Lỗi: Chưa kết nối hệ thống!");
         try {
             const snapshot = await getDocs(scoresCollection);
@@ -1808,37 +1936,7 @@
             console.error(e);
             alert("Lỗi khi xuất dữ liệu!");
         }
-    }
-
-    // =========================================================================
-    // Đăng ký toàn bộ hàm tương tác với giao diện HTML ra môi trường Global (Window)
-    // =========================================================================
-    window.showScreen = showScreen;
-    window.toggleFullscreen = toggleFullscreen;
-    window.validateAndConfirmInfo = validateAndConfirmInfo;
-    window.backToInfo = backToInfo;
-    window.handleAdminLogin = handleAdminLogin;
-    window.logoutAdmin = logoutAdmin;
-    window.requestReplay = requestReplay;
-    window.approveReplayRequest = approveReplayRequest;
-    window.startQuiz = startQuiz;
-    window.startCountdownAndEnterQuiz = startCountdownAndEnterQuiz;
-    window.selectAnswer = selectAnswer;
-    window.nextQuestion = nextQuestion;
-    window.loadLeaderboard = loadLeaderboard;
-    window.showPresentation = showPresentation;
-    window.setExamStatus = setExamStatus;
-    window.saveBatchSettings = saveBatchSettings;
-    window.updateQuizPassword = updateQuizPassword;
-    window.updateAdminCredentials = updateAdminCredentials;
-    window.deleteRecord = deleteRecord;
-    window.deleteAllData = deleteAllData;
-    window.switchAdminTab = switchAdminTab;
-    window.filterAdminByBatch = filterAdminByBatch;
-    window.openAdminDashboard = openAdminDashboard;
-    window.toggleSidebar = toggleSidebar;
-    window.updateDuckSVG = updateDuckSVG;
-    window.exportExcel = exportExcel;
+    };
 </script>
 </body>
 </html>
