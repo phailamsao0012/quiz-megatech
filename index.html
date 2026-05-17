@@ -303,7 +303,7 @@
         </div>
         <div style="display: flex; gap: 15px; align-items: center;">
             <!-- Nút vào màn hình đăng nhập Admin -->
-            <button onclick="showScreen('admin-login-screen')" class="btn btn-outline btn-small"><i class="fa-solid fa-user-shield"></i> Admin</button>
+            <button id="admin-header-btn" onclick="showScreen('admin-login-screen')" class="btn btn-outline btn-small"><i class="fa-solid fa-user-shield"></i> Admin</button>
             <div class="score-display">CHUYÊN MÔN VÀ ATSH</div>
         </div>
     </div>
@@ -600,6 +600,16 @@
         if(screenId === 'admin-login-screen') {
             document.getElementById('admin-login-user').value = '';
             document.getElementById('admin-login-pass').value = '';
+        }
+
+        // Ẩn/Hiện nút Admin (Chỉ hiện ở màn hình Start Screen để tránh click nhầm khi đang thi)
+        const adminBtn = document.getElementById('admin-header-btn');
+        if (adminBtn) {
+            if (screenId === 'start-screen') {
+                adminBtn.style.display = 'inline-block';
+            } else {
+                adminBtn.style.display = 'none';
+            }
         }
     };
 
@@ -1262,15 +1272,15 @@
     // ===== QUẢN LÝ ADMIN =====
     window.setExamStatus = async function(status) {
         try {
-            await updateDoc(globalSettingsRef, { examStatus: status });
+            await setDoc(globalSettingsRef, { examStatus: status }, { merge: true });
             alert(`Đã cập nhật trạng thái kỳ thi thành công: ${status === 'running' ? 'ĐANG MỞ ĐỀ' : status === 'idle' ? 'ĐANG KHÓA ĐỀ' : 'ĐÃ ĐÓNG ĐỀ'}`);
-        } catch(e) { alert("Lỗi khi thay đổi trạng thái kỳ thi!"); }
+        } catch(e) { console.error(e); alert("Lỗi khi thay đổi trạng thái kỳ thi!"); }
     };
 
     window.toggleQuizLock = async function() {
         try {
-            await updateDoc(globalSettingsRef, { isLocked: !isQuizLocked });
-        } catch(e) { alert("Lỗi khi thay đổi trạng thái!"); }
+            await setDoc(globalSettingsRef, { isLocked: !isQuizLocked }, { merge: true });
+        } catch(e) { console.error(e); alert("Lỗi khi thay đổi trạng thái!"); }
     };
 
     window.saveBatchSettings = async function() {
@@ -1283,12 +1293,13 @@
         }
 
         try {
-            await updateDoc(globalSettingsRef, { 
+            await setDoc(globalSettingsRef, { 
                 batchName: batchVal,
                 examDuration: durationVal
-            });
+            }, { merge: true });
             alert("Đã cập nhật cấu hình đợt thi mới realtime!");
         } catch (e) {
+            console.error(e);
             alert("Lỗi khi cập nhật đợt thi!");
         }
     };
@@ -1300,9 +1311,10 @@
             return;
         }
         try {
-            await updateDoc(globalSettingsRef, { quizPassword: newPass });
+            await setDoc(globalSettingsRef, { quizPassword: newPass }, { merge: true });
             alert("Đã cập nhật mật khẩu thi mới thành công!");
         } catch(e) {
+            console.error(e);
             alert("Lỗi khi thay đổi mật khẩu!");
         }
     };
@@ -1315,11 +1327,12 @@
             return;
         }
         try {
-            await updateDoc(globalSettingsRef, { adminUsername: newUser, adminPassword: newPass });
+            await setDoc(globalSettingsRef, { adminUsername: newUser, adminPassword: newPass }, { merge: true });
             currentAdminUser = newUser;
             currentAdminPass = newPass;
             alert("Cập nhật thông tin đăng nhập Admin thành công!");
         } catch(e) {
+            console.error(e);
             alert("Lỗi kết nối khi đổi mật khẩu Admin.");
         }
     }
