@@ -215,6 +215,7 @@
         .admin-user-card-rank { font-family: 'Montserrat'; font-weight: 900; font-size: 20px; color: #15803d; width: 35px;}
         .admin-user-card-avatar { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid #22c55e; background-color: #fdf4ff;}
         .admin-user-card-info { flex-grow: 1; min-width: 0; }
+        .admin-user-card-info h4 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .admin-user-card-score { text-align: right; margin-right: 15px; flex-shrink: 0; }
         .chart-view-container { display: flex; align-items: flex-end; justify-content: flex-start; gap: 12px; padding: 40px 25px 50px 25px; min-height: 550px; overflow-x: auto; background: #f8fafc; border-radius: 16px; border: 1px solid #e2e8f0; position: relative; width: 100%; -webkit-overflow-scrolling: touch; }
         .quiz-container:fullscreen .chart-view-container { min-height: calc(100vh - 250px); }
@@ -230,21 +231,36 @@
         .status-badge.reset-request { background: #bfdbfe; color: #1d4ed8; border: 1px solid #3b82f6;}
         
         .delete-btn { background: #fee2e2; color: #ef4444; border: none; padding: 6px 10px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 14px;}
+        .delete-btn:hover { background: #fecaca; transform: scale(1.1); }
         .admin-controls { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
         .action-btn { padding: 8px 15px; font-size: 14px; border-radius: 8px; cursor: pointer; font-weight: 800; transition: all 0.2s; border: none; display: flex; align-items: center; gap: 6px;}
         .btn-danger { background: #fee2e2; color: #ef4444; border: 1px solid #fca5a5; }
+        .btn-danger:hover { background: #fecaca; transform: translateY(-2px); }
         .btn-primary { background: #eff6ff; color: #3b82f6; border: 1px solid #bfdbfe; }
+        .btn-primary:hover { background: #dbeafe; transform: translateY(-2px); }
         .btn-warning { background: #fef3c7; color: #d97706; border: 1px solid #fde68a; }
-        .btn-success { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
-        .btn-pause { background: #fef08a; color: #854d0e; border: 1px solid #fde047; }
+        .btn-warning:hover { background: #fde68a; transform: translateY(-2px); }
         .btn-fullscreen { background: #f0fdf4; color: #16a34a; border: 1px solid #86efac; }
+        .btn-fullscreen:hover { background: #dcfce7; transform: translateY(-2px); }
+        .btn-success { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
+        .btn-success:hover { background: #bbf7d0; transform: translateY(-2px); }
+        
+        /* Nút Tạm Dừng */
+        .btn-pause { background: #fef08a; color: #854d0e; border: 1px solid #fde047; }
+        .btn-pause:hover { background: #fde047; transform: translateY(-2px); }
 
         #lock-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); z-index: 1000; display: none; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center;}
+        #lock-overlay i { font-size: 80px; color: #f59e0b; margin-bottom: 20px; animation: pulse 2s infinite;}
+        #lock-overlay h2 { font-family: 'Montserrat'; font-size: 36px; margin-bottom: 15px; color: #f8fafc;}
+        #lock-overlay p { font-size: 20px; color: #94a3b8; max-width: 600px;}
+
+        /* CSS Màn Hình Đếm Ngược */
         #countdown-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(22, 163, 74, 0.95); backdrop-filter: blur(10px); z-index: 2000; display: none; flex-direction: column; justify-content: center; align-items: center; color: white; }
         #countdown-number { font-size: 180px; font-weight: 900; font-family: 'Montserrat'; animation: pulse 1s infinite; text-shadow: 0 10px 30px rgba(0,0,0,0.2); }
 
         .presentation-grid { display: grid; grid-template-columns: 1fr; gap: 20px; width: 100%; max-width: 1000px; margin: 0 auto; text-align: left;}
         .p-card { background: white; border: 2px solid #bbf7d0; border-radius: 16px; padding: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);}
+        .p-q { font-family: 'Montserrat'; font-size: 20px; color: #14532d; font-weight: 800; margin-bottom: 15px;}
         .p-options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         
         .shape { position: absolute; opacity: 0.15; z-index: 1; pointer-events: none; color: #86efac;}
@@ -977,7 +993,9 @@
                     }).catch(e => console.log("Lỗi khởi tạo Setting", e));
                 }
             } catch (err) { console.error("Lỗi:", err); }
-        }, (error) => { console.error("Lỗi lắng nghe cấu hình Server:", error); });
+        }, (error) => {
+            console.error("Lỗi lắng nghe cấu hình Server:", error);
+        });
 
         checkResumeSession();
     }
@@ -1038,13 +1056,25 @@
         if (document.getElementById('question-screen').classList.contains('active')) {
             if (examStatus === 'paused') {
                 overlay.style.display = 'flex';
-                overlay.innerHTML = `<i class="fa-solid fa-circle-pause" style="color: #3b82f6;"></i><h2>ĐỀ ĐANG TẠM DỪNG</h2><p>Thời gian làm bài đã được đóng băng. Vui lòng chờ giám thị mở lại đề để tiếp tục!</p>`;
+                overlay.innerHTML = `
+                    <i class="fa-solid fa-circle-pause" style="color: #3b82f6;"></i>
+                    <h2>ĐỀ ĐANG TẠM DỪNG</h2>
+                    <p>Thời gian làm bài đã được đóng băng. Vui lòng chờ giám thị mở lại đề để tiếp tục!</p>
+                `;
             } else if (examStatus === 'idle') {
                 overlay.style.display = 'flex';
-                overlay.innerHTML = `<i class="fa-solid fa-lock"></i><h2>BÀI THI ĐANG BỊ KHÓA</h2><p>Admin đã tạm dừng hệ thống. Thời gian của bạn vẫn được bảo toàn. Vui lòng chờ!</p>`;
+                overlay.innerHTML = `
+                    <i class="fa-solid fa-lock"></i>
+                    <h2>BÀI THI ĐANG BỊ KHÓA</h2>
+                    <p>Admin đã tạm dừng hệ thống. Thời gian của bạn vẫn được bảo toàn. Vui lòng chờ!</p>
+                `;
             } else if (examStatus === 'ended') {
                 overlay.style.display = 'flex';
-                overlay.innerHTML = `<i class="fa-solid fa-stop-circle" style="color: #ef4444;"></i><h2>BÀI THI ĐÃ KẾT THÚC</h2><p>Giám thị đã ĐÓNG đề thi. Hệ thống đang tự động nộp bài của bạn...</p>`;
+                overlay.innerHTML = `
+                    <i class="fa-solid fa-stop-circle" style="color: #ef4444;"></i>
+                    <h2>BÀI THI ĐÃ KẾT THÚC</h2>
+                    <p>Giám thị đã ĐÓNG đề thi. Hệ thống đang tự động nộp bài của bạn...</p>
+                `;
                 
                 const allBtns = document.querySelectorAll('.option-btn');
                 allBtns.forEach(btn => btn.classList.add('disabled'));
@@ -1182,6 +1212,7 @@
 
     async function checkResumeSession() {
         if (!currentUser) return;
+
         const savedSession = localStorage.getItem(SESSION_KEY);
         const savedQuestions = localStorage.getItem(QUESTIONS_KEY);
         
@@ -1843,7 +1874,7 @@
         });
     }
     
-    window.exportExcel = async function() {
+    async function exportExcel() {
         if (!currentUser) return alert("Lỗi: Chưa kết nối hệ thống!");
         try {
             const snapshot = await getDocs(scoresCollection);
@@ -1884,8 +1915,11 @@
             console.error(e);
             alert("Lỗi khi xuất dữ liệu!");
         }
-    };
+    }
 
+    // =========================================================================
+    // Đăng ký toàn bộ hàm tương tác với giao diện HTML ra môi trường Global (Window)
+    // =========================================================================
     window.showScreen = showScreen;
     window.toggleFullscreen = toggleFullscreen;
     window.validateAndConfirmInfo = validateAndConfirmInfo;
