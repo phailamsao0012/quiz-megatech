@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Megatech - Đấu Trường Kiến Thức</title>
+    
+    <!-- CẤU HÌNH BIỂU TƯỢNG FAVICON TRÊN TAB TRÌNH DUYỆT -->
+    <link rel="icon" type="image/jpg" href="logo_new.jpg">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: #f0fdf4;
+            background-image: radial-gradient(circle at top right, #dcfce7 0%, transparent 50%), radial-gradient(circle at bottom left, #bbf7d0 0%, transparent 50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Nunito', sans-serif;
+            color: #166534;
+            overflow-x: hidden;
+        }
+
+        .quiz-container {
+            width: 1280px;
+            max-width: 100%;
+            height: 720px;
+            max-height: 100vh;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 2px solid #bbf7d0;
+            border-radius: 24px;
+            box-shadow: 0 15px 50px rgba(34, 197, 94, 0.15);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+
+        /* Khi ở chế độ Fullscreen */
+        .quiz-container:fullscreen {
+            width: 100vw;
+            height: 100vh;
+            max-height: none;
+            max-width: none;
+            border-radius: 0;
+            border: none;
+        }
+
+        .header {
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+            border-bottom: 2px solid #bbf7d0;
+            z-index: 10;
+        }
+        .logo-box { display: flex; align-items: center; gap: 15px; }
+        .logo-box img { height: 60px; object-fit: contain; }
+        .score-display { font-size: 20px; font-weight: 800; background: transparent; border: 2px solid #22c55e; color: #16a34a; padding: 8px 20px; border-radius: 30px; letter-spacing: 1px; text-transform: uppercase; }
+        
+        .progress-bar { width: 100%; height: 6px; background: #dcfce7; }
+        .progress-fill { height: 100%; background: #22c55e; width: 0%; transition: width 0.4s ease; box-shadow: 0 0 10px rgba(34, 197, 94, 0.5); }
+
+        .screen { display: none; flex-direction: column; justify-content: center; align-items: center; flex-grow: 1; padding: 30px 40px; text-align: center; z-index: 10; overflow-y: auto; }
+        .screen.active { display: flex; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Welcome Screen */
+        h1 { font-family: 'Montserrat', sans-serif; font-size: 52px; color: #14532d; margin-bottom: 10px; font-weight: 900; letter-spacing: -1px; text-transform: uppercase; }
+        .highlight-text { color: #22c55e; }
+        p.subtitle { font-size: 20px; color: #16a34a; margin-bottom: 25px; font-weight: 700; }
+        
+        .btn { padding: 16px 40px; font-size: 20px; font-weight: 800; font-family: 'Montserrat', sans-serif; color: #ffffff; background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); border: none; border-radius: 50px; cursor: pointer; transition: all 0.3s; box-shadow: 0 8px 20px rgba(21, 128, 61, 0.25); }
+        .btn:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 12px 30px rgba(21, 128, 61, 0.35); }
+        .btn.btn-outline { background: transparent; border: 2px solid #22c55e; color: #16a34a; box-shadow: none; }
+        .btn.btn-outline:hover { background: #f0fdf4; }
+
+        .input-group { margin-bottom: 25px; width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 12px;}
+        .name-input { width: 100%; padding: 15px 25px; font-size: 18px; font-family: 'Nunito', sans-serif; font-weight: 700; background: #ffffff; color: #14532d; border: 2px solid #86efac; border-radius: 16px; outline: none; transition: all 0.3s; box-shadow: 0 5px 15px rgba(34, 197, 94, 0.03); }
+        .name-input::placeholder { color: #86efac; font-weight: 600; }
+        .name-input:focus { border-color: #22c55e; background: #ffffff; box-shadow: 0 0 15px rgba(34, 197, 94, 0.15); }
+
+        /* Avatar Upload Container */
+        .avatar-upload-box {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: #ffffff;
+            border: 2px dashed #86efac;
+            padding: 15px 25px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .avatar-upload-box:hover {
+            border-color: #22c55e;
+            background: #f0fdf4;
+        }
+        .avatar-preview-img {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #22c55e;
+            background: #f0fdf4;
+        }
+        .avatar-upload-text {
+            text-align: left;
+            flex-grow: 1;
+        }
+        .avatar-upload-text h4 {
+            font-size: 16px;
+            font-weight: 800;
+            color: #14532d;
+            font-family: 'Montserrat';
+        }
+        .avatar-upload-text p {
+            font-size: 13px;
+            color: #16a34a;
+            font-weight: 600;
+        }
+
+        /* Timer/Lock Overlay Styles */
+        .timer-container { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 20px; }
+        .timer-text { font-size: 28px; font-weight: 900; font-family: 'Montserrat'; display: flex; align-items: center; gap: 10px; color: #22c55e; transition: color 0.3s;}
+        .timer-text.danger { color: #ef4444; animation: pulse 1s infinite; }
+        .timer-bar-bg { flex-grow: 1; height: 10px; background: #dcfce7; border-radius: 10px; margin-right: 20px; overflow: hidden; }
+        .timer-bar-fill { height: 100%; background: #22c55e; width: 100%; transition: width 0.1s linear, background 0.3s; }
+
+        /* Question Screen */
+        .question-box { background: #ffffff; border: 2px solid #bbf7d0; padding: 40px; border-radius: 24px; width: 90%; max-width: 1000px; box-shadow: 0 15px 30px rgba(34, 197, 94, 0.08); text-align: left; }
+        .q-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px dashed #bbf7d0; padding-bottom: 15px;}
+        .q-counter { font-weight: 800; color: #16a34a; font-size: 20px; font-family: 'Montserrat'; text-transform: uppercase; letter-spacing: 2px;}
+        .question-text { font-family: 'Montserrat', sans-serif; font-size: 32px; color: #14532d; margin-bottom: 35px; line-height: 1.5; font-weight: 800; }
+
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .option-btn { background: #ffffff; border: 2px solid #bbf7d0; border-radius: 16px; padding: 20px 25px; font-size: 20px; font-weight: 700; color: #166534; cursor: pointer; transition: all 0.2s; text-align: left; display: flex; align-items: center; font-family: 'Nunito'; }
+        .option-btn:hover:not(.disabled) { background: #f0fdf4; border-color: #4ade80; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(34, 197, 94, 0.1); }
+        .option-btn.disabled { cursor: not-allowed; opacity: 0.6; }
+        .option-btn.selected { background: #eff6ff; border-color: #3b82f6; color: #1e3a8a; box-shadow: 0 5px 15px rgba(59, 130, 246, 0.15); }
+        .option-btn.selected .option-icon { background: #3b82f6; color: #ffffff; }
+
+        .option-icon { width: 45px; height: 45px; border-radius: 12px; display: flex; justify-content: center; align-items: center; margin-right: 20px; font-weight: 900; color: #14532d; font-size: 20px; flex-shrink: 0; background: #bbf7d0; }
+
+        .controls { margin-top: 30px; display: flex; justify-content: space-between; align-items: center; width: 90%; max-width: 1000px; }
+        .status-message { font-size: 24px; font-weight: 900; font-family: 'Montserrat'; display: none; }
+        .status-message.success { color: #3b82f6; } 
+        .status-message.error { color: #ef4444; }
+        
+        .next-btn { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: #ffffff; border: none; padding: 18px 40px; border-radius: 50px; font-size: 20px; font-weight: 800; cursor: pointer; display: none; font-family: 'Montserrat'; transition: all 0.2s; box-shadow: 0 5px 15px rgba(34, 197, 94, 0.3);}
+        .next-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(34, 197, 94, 0.5); }
+
+        /* End Screen & Leaderboard */
+        .end-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; width: 95%; max-width: 1100px; }
+        
+        /* CỐ ĐỊNH CHIỀU CAO KHUNG ĐỂ CHỐNG LỖI CUỘN TRÊN DESKTOP */
+        .end-card { background: #ffffff; border: 2px solid #bbf7d0; padding: 40px; border-radius: 24px; text-align: center; box-shadow: 0 20px 50px rgba(34, 197, 94, 0.1); height: 480px; display: flex; flex-direction: column; justify-content: center;}
+        .leaderboard-box { background: #ffffff; border: 2px solid #bbf7d0; border-radius: 24px; padding: 30px; text-align: left; box-shadow: 0 20px 50px rgba(34, 197, 94, 0.1); height: 480px; display: flex; flex-direction: column;}
+        
+        .lb-title { font-family: 'Montserrat'; font-size: 24px; color: #14532d; font-weight: 800; margin-bottom: 20px; border-bottom: 2px dashed #bbf7d0; padding-bottom: 15px; display: flex; justify-content: space-between; align-items: center;}
+        .lb-list { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .lb-item { display: grid; grid-template-columns: 40px 50px 1fr 80px 80px; align-items: center; background: #f0fdf4; padding: 12px 15px; border-radius: 12px; font-weight: 700; color: #166534; font-size: 16px; border: 1px solid transparent;}
+        .lb-item.current-user { background: #dcfce7; border-color: #22c55e; box-shadow: 0 4px 10px rgba(34,197,94,0.2); }
+        .lb-rank { font-family: 'Montserrat'; font-weight: 900; font-size: 18px; color: #15803d; }
+        .lb-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #22c55e; background-color: #fff;}
+        .lb-score { color: #10b981; font-weight: 900; text-align: right; }
+        .lb-time { color: #d97706; font-size: 14px; text-align: right;}
+
+        /* Admin Screen & Tab */
+        .admin-box { background: #ffffff; padding: 30px; border-radius: 24px; width: 95%; max-width: 1240px; box-shadow: 0 20px 50px rgba(34, 197, 94, 0.15); text-align: left; max-height: 90vh; border: 2px solid #bbf7d0; display: flex; flex-direction: column;}
+        
+        /* Khi Admin ở chế độ Toàn màn hình */
+        .quiz-container:fullscreen .admin-box {
+            width: 100vw;
+            height: 100vh;
+            max-height: none;
+            max-width: none;
+            border-radius: 0;
+            border: none;
+            padding: 40px;
+        }
+
+        .admin-title { font-size: 28px; color: #14532d; font-family: 'Montserrat', sans-serif; margin-bottom: 15px; border-bottom: 2px solid #bbf7d0; padding-bottom: 15px; display: flex; justify-content: space-between; align-items: center; font-weight: 900; flex-shrink: 0; flex-wrap: wrap; gap: 15px;}
+        
+        .admin-nav-tabs { display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 2px solid #e2e8f0; padding-bottom: 5px; flex-shrink: 0; }
+        .admin-tab { padding: 10px 20px; font-size: 16px; font-weight: 800; font-family: 'Montserrat'; color: #86efac; border: none; background: transparent; cursor: pointer; transition: all 0.2s; border-bottom: 3px solid transparent; }
+        .admin-tab.active { color: #14532d; border-color: #22c55e; }
+
+        .admin-content-pane { display: none; flex-grow: 1; overflow-y: auto; }
+        .admin-content-pane.active { display: block; }
+
+        /* GRID VIEW 2 CỘT ADMIN (Tối ưu hóa gọn hơn để hiển thị 10 người cùng lúc) */
+        .admin-grid-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .admin-user-card { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 10px 15px; display: flex; align-items: center; gap: 12px; position: relative;}
+        .admin-user-card-rank { font-family: 'Montserrat'; font-weight: 900; font-size: 20px; color: #15803d; width: 35px;}
+        .admin-user-card-avatar { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid #22c55e; background-color: #fff;}
+        .admin-user-card-info { flex-grow: 1; min-width: 0; }
+        .admin-user-card-info h4 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .admin-user-card-score { text-align: right; margin-right: 15px; flex-shrink: 0; }
+
+        /* CHART VIEW ADMIN (Tối ưu hóa để hiển thị 10 cột trực quan nhất) */
+        .chart-view-container { display: flex; align-items: flex-end; justify-content: center; gap: 12px; padding: 40px 15px 50px 15px; min-height: 420px; overflow-x: auto; background: #f8fafc; border-radius: 16px; border: 1px solid #e2e8f0; position: relative; width: 100%; }
+        
+        /* Khi Admin ở chế độ Toàn màn hình thì kéo dãn biểu đồ cao lên */
+        .quiz-container:fullscreen .chart-view-container {
+            min-height: calc(100vh - 250px);
+        }
+
+        .chart-bar-item { display: flex; flex-direction: column; align-items: center; width: 85px; flex-shrink: 0; position: relative; }
+        .chart-bar-col { width: 38px; background: linear-gradient(to top, #16a34a, #22c55e); border-radius: 6px 6px 0 0; position: relative; transition: height 0.5s ease-out; box-shadow: 0 4px 10px rgba(34, 197, 94, 0.3); }
+        .chart-bar-score { font-family: 'Montserrat'; font-weight: 900; font-size: 14px; color: #15803d; margin-bottom: 3px; }
+        .chart-bar-time { font-size: 11px; font-weight: bold; color: #d97706; margin-bottom: 3px; }
+        .chart-bar-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid #22c55e; margin-top: 8px; background-color: #fff;}
+        .chart-bar-name { font-size: 11px; font-weight: 800; color: #14532d; text-align: center; margin-top: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+
+        .table-responsive { overflow-x: auto; width: 100%; border-radius: 12px; border: 1px solid #dcfce7; flex-grow: 1;}
+        .admin-table { width: 100%; border-collapse: collapse; font-size: 15px; color: #166534; min-width: 800px;}
+        .admin-table th { background: #dcfce7; color: #14532d; padding: 15px; text-align: left; position: sticky; top: 0; font-family: 'Montserrat'; font-weight: 800; text-transform: uppercase; z-index: 2;}
+        .admin-table td { padding: 12px 15px; border-bottom: 1px solid #dcfce7; font-weight: 600;}
+        .admin-table tr:hover { background-color: #f0fdf4; }
+        
+        .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; display: inline-block;}
+        .status-badge.playing { background: #fef3c7; color: #d97706; border: 1px solid #fcd34d;}
+        .status-badge.done { background: #dcfce7; color: #15803d; border: 1px solid #86efac;}
+        
+        .delete-btn { background: #fee2e2; color: #ef4444; border: none; padding: 6px 10px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 14px;}
+        .delete-btn:hover { background: #fecaca; transform: scale(1.1); }
+        .admin-controls { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+        .action-btn { padding: 8px 15px; font-size: 14px; border-radius: 8px; cursor: pointer; font-weight: 800; transition: all 0.2s; border: none; display: flex; align-items: center; gap: 6px;}
+        .btn-danger { background: #fee2e2; color: #ef4444; border: 1px solid #fca5a5; }
+        .btn-danger:hover { background: #fecaca; transform: translateY(-2px); }
+        .btn-primary { background: #eff6ff; color: #3b82f6; border: 1px solid #bfdbfe; }
+        .btn-primary:hover { background: #dbeafe; transform: translateY(-2px); }
+        .btn-warning { background: #fef3c7; color: #d97706; border: 1px solid #fde68a; }
+        .btn-warning:hover { background: #fde68a; transform: translateY(-2px); }
+        .btn-fullscreen { background: #f0fdf4; color: #16a34a; border: 1px solid #86efac; }
+        .btn-fullscreen:hover { background: #dcfce7; transform: translateY(-2px); }
+
+        /* Lock Overlay */
+        #lock-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); z-index: 1000; display: none; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center;}
+        #lock-overlay i { font-size: 80px; color: #f59e0b; margin-bottom: 20px; animation: pulse 2s infinite;}
+        #lock-overlay h2 { font-family: 'Montserrat'; font-size: 36px; margin-bottom: 15px; color: #f8fafc;}
+        #lock-overlay p { font-size: 20px; color: #94a3b8; max-width: 600px;}
+
+        /* Presentation Screen */
+        .presentation-grid { display: grid; grid-template-columns: 1fr; gap: 20px; width: 100%; max-width: 1000px; margin: 0 auto; text-align: left;}
+        .p-card { background: white; border: 2px solid #bbf7d0; border-radius: 16px; padding: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);}
+        .p-q { font-family: 'Montserrat'; font-size: 20px; color: #14532d; font-weight: 800; margin-bottom: 15px;}
+        .p-ans { background: #dcfce7; color: #15803d; padding: 15px; border-radius: 12px; font-weight: 700; font-size: 18px; border: 1px solid #22c55e; display: flex; align-items: center; gap: 15px;}
+        .p-ans i { background: #22c55e; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px;}
+
+        .shape { position: absolute; opacity: 0.15; z-index: 1; pointer-events: none; color: #86efac;}
+        .shape-1 { top: -20px; left: -20px; font-size: 400px; transform: rotate(-15deg); }
+        .shape-2 { bottom: -50px; right: -50px; font-size: 500px; transform: rotate(15deg); }
+
+        @media (max-width: 900px) {
+            .end-layout { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            body { align-items: flex-start; }
+            .quiz-container { width: 100%; height: 100vh; max-height: none; border-radius: 0; border: none; box-shadow: none; overflow-y: auto;}
+            .header { padding: 12px 20px; }
+            .logo-box img { height: 40px; }
+            .score-display { font-size: 14px; padding: 6px 12px; }
+            .screen { padding: 20px 15px; justify-content: flex-start; }
+            h1 { font-size: 34px; line-height: 1.2; margin-bottom: 15px; }
+            p.subtitle { font-size: 16px; margin-bottom: 30px; }
+            .name-input { font-size: 16px; padding: 15px 20px; }
+            .btn { font-size: 18px; padding: 15px 30px; width: 100%; }
+            .question-box { width: 100%; padding: 20px 15px; border-radius: 16px; }
+            .q-header { margin-bottom: 15px; padding-bottom: 10px; }
+            .q-counter, .timer-text { font-size: 16px; }
+            .question-text { font-size: 20px; margin-bottom: 20px; }
+            .options-grid { grid-template-columns: 1fr; gap: 12px; }
+            .option-btn { font-size: 16px; padding: 12px 15px; border-radius: 12px; }
+            .option-icon { width: 35px; height: 35px; font-size: 16px; margin-right: 15px; }
+            .controls { flex-direction: column; gap: 15px; width: 100%; align-items: stretch; margin-top: 20px;}
+            .status-message { font-size: 18px; text-align: center; }
+            .next-btn { font-size: 16px; padding: 15px; width: 100%; }
+            
+            /* MOBILE THÌ ĐỂ CHIỀU CAO TỰ ĐỘNG */
+            .end-card, .leaderboard-box { padding: 25px 15px; border-radius: 16px; height: auto; max-height: none; }
+            #final-score { font-size: 60px; }
+            .admin-box { padding: 20px 15px; border-radius: 16px; }
+            .admin-title { font-size: 22px; flex-direction: column; gap: 15px; align-items: flex-start; }
+            .admin-grid-layout { grid-template-columns: 1fr; }
+            .shape-1 { font-size: 200px; }
+            .shape-2 { font-size: 250px; bottom: 0; right: -20px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- OVERLAY KHÓA BÀI THI -->
+<div id="lock-overlay">
+    <i class="fa-solid fa-lock"></i>
+    <h2>BÀI THI ĐANG BỊ KHÓA</h2>
+    <p>Admin đã tạm dừng hệ thống. Vui lòng chờ tín hiệu mở khóa từ Ban tổ chức để tiếp tục làm bài!</p>
+</div>
+
+<div class="quiz-container" id="quiz-root">
+    <i class="fa-solid fa-wheat-awn shape shape-1"></i>
+    <i class="fa-solid fa-tractor shape shape-2"></i>
+
+    <div class="header">
+        <div class="logo-box">
+            <!-- ĐÃ CẬP NHẬT TRỎ VỀ TÊN FILE ĐÚNG: logo_new.jpg -->
+            <img id="main-header-logo" src="logo_new.jpg" alt="Megatech Logo" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'150\' height=\'50\'><text x=\'0\' y=\'35\' font-family=\'Arial\' font-size=\'30\' fill=\'#10b981\' font-weight=\'bold\'>MEGATECH</text></svg>'">
+        </div>
+        <div class="score-display">CHUYÊN MÔN VÀ ATSH</div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+
+    <!-- START SCREEN -->
+    <div class="screen active" id="start-screen">
+        <h1>CHINH PHỤC <span class="highlight-text">MEGATECH</span></h1>
+        <p class="subtitle">25 Câu Hỏi | 20s/Câu | Lưu điểm tự động</p>
+        
+        <div class="input-group" id="info-input-group">
+            <input type="text" id="player-name" class="name-input" placeholder="Họ và tên..." required autocomplete="off">
+            <input type="text" id="player-dept" class="name-input" placeholder="Phòng ban (VD: Kinh doanh)" required autocomplete="off">
+            <input type="text" id="player-role" class="name-input" placeholder="Chức vụ (VD: Nhân viên)" required autocomplete="off">
+            
+            <!-- Ô Tải ảnh đại diện bắt buộc -->
+            <div class="avatar-upload-box" onclick="document.getElementById('avatar-file-input').click()">
+                <img id="avatar-preview" class="avatar-preview-img" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%2386efac'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>" alt="Preview">
+                <div class="avatar-upload-text">
+                    <h4 id="upload-status-title">Tải lên ảnh chân dung của bạn</h4>
+                    <p id="upload-status-desc">Bắt buộc để định danh trên bảng điểm live (*)</p>
+                </div>
+                <input type="file" id="avatar-file-input" style="display: none;" accept="image/*" onchange="processAvatarUpload(event)">
+            </div>
+
+            <button class="btn" id="confirm-info-btn" style="margin-top: 10px;" onclick="validateAndConfirmInfo()"><i class="fa-solid fa-circle-check"></i> Xác nhận thông tin</button>
+        </div>
+
+        <div class="input-group" id="pass-input-group" style="display: none; margin-top: 10px;">
+            <input type="password" id="quiz-password" class="name-input" placeholder="Nhập mật khẩu vào bài thi..." autocomplete="off">
+            <div style="display: flex; gap: 10px; width: 100%;">
+                <button class="btn btn-outline" style="flex: 1; padding: 15px;" onclick="backToInfo()"><i class="fa-solid fa-arrow-left"></i> Quay lại</button>
+                <button class="btn" style="flex: 2; padding: 15px;" id="start-btn" onclick="startQuiz()"><i class="fa-solid fa-bolt"></i> BẮT ĐẦU THI</button>
+            </div>
+        </div>
+        
+        <p style="margin-top: 15px; font-size: 14px; color: #64748b;">*Hệ thống sẽ tự động khôi phục nếu bạn bị văng ra ngoài.</p>
+    </div>
+
+    <!-- QUESTION SCREEN -->
+    <div class="screen" id="question-screen">
+        <div class="question-box">
+            <div class="q-header">
+                <div class="q-counter" id="q-counter">CÂU HỎI 1 / 25</div>
+                <div class="timer-container" style="width: auto; margin-bottom: 0;">
+                    <div class="timer-text" id="timer-text"><i class="fa-regular fa-clock"></i> 20s</div>
+                </div>
+            </div>
+            
+            <div style="display: flex; align-items: center; margin-bottom: 25px;">
+                <div class="timer-bar-bg"><div class="timer-bar-fill" id="timer-bar"></div></div>
+            </div>
+
+            <div class="question-text" id="question-text">Đang tải câu hỏi...</div>
+            <div class="options-grid" id="options-grid"></div>
+        </div>
+        
+        <div class="controls">
+            <div class="status-message" id="status-message"></div>
+            <button class="next-btn" id="next-btn" onclick="nextQuestion()">CÂU TIẾP THEO <i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <!-- END SCREEN -->
+    <div class="screen" id="end-screen">
+        <div class="end-layout">
+            <div class="end-card">
+                <p style="font-size: 24px; color: #16a34a; font-weight: 800; margin-bottom: 10px; font-family: 'Montserrat';">ĐIỂM SỐ CỦA BẠN</p>
+                <div style="font-size: 90px; font-weight: 900; color: #22c55e; font-family: 'Montserrat'; line-height: 1;" id="final-score">0</div>
+                <p style="font-size: 18px; color: #64748b; margin-top: 10px; font-weight: 700;">Thời gian: <span id="final-time" style="color: #d97706;">0s</span></p>
+                <p style="font-size: 20px; color: #14532d; margin-top: 20px; font-weight: 800;" id="feedback-msg">Đang đồng bộ kết quả...</p>
+            </div>
+            
+            <div class="leaderboard-box">
+                <div class="lb-title">
+                    <span><i class="fa-solid fa-ranking-star"></i> BẢNG XẾP HẠNG</span>
+                    <i class="fa-solid fa-rotate" style="cursor: pointer; color: #22c55e;" onclick="loadLeaderboard()" title="Làm mới"></i>
+                </div>
+                <div class="lb-list" id="lb-list">
+                    <div style="text-align: center; color: #94a3b8; padding: 20px;">Đang tải bảng xếp hạng...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN SCREEN -->
+    <div class="screen" id="admin-screen">
+        <div class="admin-box">
+            <div class="admin-title">
+                <div><i class="fa-solid fa-satellite-dish" style="color: #ef4444;"></i> TRUNG TÂM ADMIN</div>
+                <div class="admin-controls">
+                    <!-- Nút Phóng to Toàn màn hình -->
+                    <button class="action-btn btn-fullscreen" onclick="toggleFullscreen()"><i class="fa-solid fa-expand"></i> TOÀN MÀN HÌNH</button>
+                    <!-- Thay đổi mật khẩu bài thi -->
+                    <div style="display: flex; align-items: center; gap: 8px; background: #f0fdf4; padding: 8px 12px; border-radius: 10px; border: 1px solid #bbf7d0;">
+                        <span style="font-size: 14px; font-weight: bold; color: #14532d;"><i class="fa-solid fa-key"></i> Pass đề:</span>
+                        <input type="text" id="admin-change-pass-input" style="width: 100px; padding: 5px; border-radius: 6px; border: 1px solid #86efac; font-weight: bold; text-align: center; color: #14532d;" value="220902">
+                        <button class="action-btn btn-primary" style="padding: 6px 12px; font-size: 13px;" onclick="updateQuizPassword()"><i class="fa-solid fa-floppy-disk"></i> Lưu</button>
+                    </div>
+                    <button class="action-btn btn-warning" id="admin-lock-btn" onclick="toggleQuizLock()"><i class="fa-solid fa-lock"></i> KHÓA BÀI THI</button>
+                    <button class="action-btn btn-primary" onclick="showPresentation()"><i class="fa-solid fa-person-chalkboard"></i> TRÌNH CHIẾU</button>
+                    <button class="action-btn btn-danger" onclick="deleteAllData()"><i class="fa-solid fa-trash-can"></i> XÓA TẤT CẢ</button>
+                    <button class="action-btn btn-outline" onclick="location.reload()"><i class="fa-solid fa-right-from-bracket"></i> THOÁT</button>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs cho Admin -->
+            <div class="admin-nav-tabs">
+                <button class="admin-tab active" onclick="switchAdminTab('grid-pane', this)"><i class="fa-solid fa-grip"></i> Bản đồ Grid (Live Grid)</button>
+                <button class="admin-tab" onclick="switchAdminTab('chart-pane', this)"><i class="fa-solid fa-chart-bar"></i> Biểu đồ trực quan (Live Chart)</button>
+            </div>
+
+            <!-- Tab 1: Grid Grid View 2 Cột (Hiển thị tối thiểu 10 người cùng lúc) -->
+            <div class="admin-content-pane active" id="grid-pane">
+                <div class="table-responsive" style="border: none;">
+                    <div class="admin-grid-layout" id="admin-grid-container">
+                        <!-- Học viên sẽ hiển thị 2 cột ở đây -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Live Chart View (Tối ưu hiển thị 10 người dẫn đầu) -->
+            <div class="admin-content-pane" id="chart-pane">
+                <div class="chart-view-container" id="admin-chart-container">
+                    <!-- Học viên sẽ hiển thị cột đồ họa ở đây -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PRESENTATION SCREEN -->
+    <div class="screen" id="presentation-screen">
+        <div class="admin-box" style="background: transparent; border: none; box-shadow: none; align-items: center;">
+            <h1 style="font-size: 40px; margin-bottom: 30px; text-align: center;"><i class="fa-solid fa-book-open-reader"></i> ĐÁP ÁN CHÍNH THỨC</h1>
+            <div class="presentation-grid" id="presentation-container"></div>
+            <button class="btn btn-outline" style="margin-top: 40px;" onclick="showScreen('admin-screen')"><i class="fa-solid fa-arrow-left"></i> QUAY LẠI ADMIN</button>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getFirestore, collection, doc, setDoc, updateDoc, onSnapshot, deleteDoc, getDocs, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+    // 1. CẤU HÌNH FIREBASE
+    const firebaseConfig = {
+      apiKey: "AIzaSyCAFH7ixMpbyNM0HkqhF6tNwI-LSYfd_zs",
+      authDomain: "quiz-megatech.firebaseapp.com",
+      projectId: "quiz-megatech",
+      storageBucket: "quiz-megatech.firebasestorage.app",
+      messagingSenderId: "155994548331",
+      appId: "1:155994548331:web:91122725013381f932a92e"
+    };
+
+    // DỮ LIỆU GỐC 25 CÂU
+    const originalQuestions = [
+        { q: "Biện pháp hiệu quả để giảm ruồi lâu dài là:", options: ["Vệ sinh + sát trùng + goodkill", "Chỉ cần goodkill", "Chỉ mở quạt", "Sử dụng bẫy dính"], answer: 0 },
+        { q: "Tiêu chảy phân trắng ở heo con thường liên quan đến?", options: ["E.coli", "Cầu trùng", "Thiếu khoáng", "Viêm khớp"], answer: 0 },
+        { q: "Yếu tố nào làm tiêu chảy dễ bùng phát sau cai sữa?", options: ["Chuồng quá sáng", "Đổi cám đột ngột", "Tắm quá nhiều", "Heo ngủ nhiều"], answer: 1 },
+        { q: "Khi heo tiêu chảy nặng cần bổ sung gì?", options: ["Điện giải Gluco K-C", "Siêu vỗ béo Nutri Max", "Men tỏi", "Bogaru"], answer: 0 },
+        { q: "Triệu chứng thường gặp của Mycoplasma suis là?", options: ["Thiếu máu, nhợt nhạt", "Sưng chân", "Rụng lông", "Mù mắt"], answer: 0 },
+        { q: "Con đường lây truyền phổ biến của Mycoplasma suis là:", options: ["Thức ăn", "Không khí", "Mẹ truyền sang con", "Tiếp xúc trực tiếp"], answer: 2 },
+        { q: "Khi lợn thở bụng nghĩa là", options: ["Hệ hô hấp đang bị ảnh hưởng", "Heo đang đói", "Heo sắp ngủ", "Heo thiếu canxi"], answer: 0 },
+        { q: "Sau khi dùng kháng sinh dài ngày nên", options: ["Bổ sung men tiêu hóa, đào thải kháng sinh", "Cho uống nhiều nước", "Cho ăn nhiều để bù sức", "Tiêm kháng sinh trợ lực"], answer: 0 },
+        { q: "Loại kháng sinh chính trong sản phẩm Mycos của Megatech là gì", options: ["Oxytetraxylin", "Flofenicol", "Gentamicine", "Doxycycline"], answer: 0 },
+        { q: "Trong bệnh hô hấp phức hợp (PRDC), loại vi khuẩn nào là tác nhân gây bệnh Suyễn heo (ho khan, ho mửa)?", options: ["Actinobacillus pleuropneumoniae (APP)", "Mycoplasma hyopneumoniae", "Pasteurella multocida", "Salmonella choleraesuis"], answer: 1 },
+        { q: "Khi heo bị tiêu chảy cấp do dịch tiêu chảy cấp (PED), đặc điểm phân thường thấy là gì", options: ["Phân khô, vón cục", "Phân có lẫn máu và chất nhầy", "Phân lỏng, màu vàng, mùi tanh", "Phân xanh đen, thối khắm"], answer: 2 },
+        { q: "Khi heo có biểu hiện tiêu chảy phân trắng, phân vàng do nhiễm khuẩn sản phẩm nào của Megatech là lựa chọn điều trị hàng đầu?", options: ["FLO-DOXY", "GENTADOX", "OXYTETRACILINE", "Men tỏi"], answer: 1 },
+        { q: "Mycoplasma suis thường gây ra vấn đề gì trên heo?", options: ["Thiếu máu, da nhợt, chết thai", "Gãy chân", "Viêm móng", "Sưng khớp"], answer: 0 },
+        { q: "Khách hàng thường tin tưởng điều gì nhất?", options: ["Tư vấn đúng bệnh và hiệu quả thực tế", "Nói chuyện ngọt với khách hàng", "Một sản phẩm chữa mọi bệnh", "Cam kết khỏi 100%"], answer: 0 },
+        { q: "Triệu chứng đặc trưng nhất của bệnh Tai xanh trên lợn nái là gì?", options: ["Lợn bỏ cám", "Bụng chướng to", "Lợn con bị liệt 2 chân sau", "Sẩy thai hoặc đẻ con chết lưu"], answer: 3 },
+        { q: "Bệnh Mycoplasma suis chủ yếu tấn công vào cơ quan nào?", options: ["Hệ thống thần kinh trung ương", "Niêm mạc ruột non", "Hồng cầu", "Phế nang phổi"], answer: 2 },
+        { q: "Megatech Việt Nam cần xây dựng hình ảnh như thế nào?", options: ["Chuyên nghiệp - đồng hành - hiệu quả", "Giá rẻ bằng mọi cách", "Chỉ bán theo trend", "Không cần chăm sóc khách"], answer: 0 },
+        { q: "Điện giải có tác dụng chính gì trong thời tiết nắng nóng?", options: ["Làm vật nuôi ăn mạnh hơn", "Bù nước và khoáng chất", "Làm giảm tiếng kêu", "Giúp ngủ nhiều hơn"], answer: 1 },
+        { q: "Thời điểm phù hợp để bổ sung điện giải là:", options: ["Buổi trưa nắng gắt", "Khi vật nuôi sắp chết", "Trước và trong thời tiết nắng nóng", "Chỉ dùng mùa lạnh"], answer: 2 },
+        { q: "Đối tượng nào cần dùng điện giải nhiều trong mùa nóng?", options: ["Gia súc gia cầm nuôi mật độ cao, vừa tiêm vacine xong", "Vật nuôi đang và có dấu hiệu bệnh", "Vật nuôi vừa vận chuyển xa", "Tất cả đáp án trên"], answer: 3 },
+        { q: "Dấu hiệu xuất huyết đặc trưng của bệnh Dịch tả lợn", options: ["Xuất huyết vệt dài ở lưng", "Chỉ xuất huyết ở móng chân", "Không xuất huyết", "Xuất huyết lấm tấm như đinh ghim ở thận và niêm mạc"], answer: 3 },
+        { q: "Khi lợn bị Tai xanh, vùng da nào thường có biểu hiện", options: ["Lông trở nên móng mượt hơn", "Chỉ ở phần đuôi", "Tai, mõm và vùng bụng dưới", "Mũi và bốn chân"], answer: 2 },
+        { q: "Mục đích chính của việc dùng bổ trợ cùng kháng sinh là gì?", options: ["Hỗ trợ vật nuôi phục hồi tốt hơn", "Làm thuốc có màu đẹp hơn", "Để tăng giá trị đơn hàng", "Tăng mùi thức ăn"], answer: 0 },
+        { q: "Trong thời tiết nắng nóng, dùng kháng sinh nên kết hợp sản phẩm gì của Megatech", options: ["All zyme men tỏi đen", "Điện giải Gluco KC (tinh chất rau má)", "Bổ sung nhiều Gentadox", "Bổ sung Nutri Max"], answer: 1 },
+        { q: "Công ty Megatech có bao nhiêu sản phẩm thú y?", options: ["8", "9", "10", "11"], answer: 1 }
+    ];
+
+    let currentQuestion = 0, score = 0, hasAnswered = false;
+    let playerName = "", playerDept = "", playerRole = "", currentDocId = "", playerAvatarBase64 = "";
+    let gameQuestions = []; 
+    const shapesArr = ["A", "B", "C", "D"];
+    const SESSION_KEY = "megatech_quiz_session_v3";
+    const QUESTIONS_KEY = "megatech_quiz_questions_v3";
+    
+    // BIẾN QUẢN LÝ THỜI GIAN
+    const TIME_PER_QUESTION = 20;
+    let timeLeft = TIME_PER_QUESTION;
+    let timerInterval = null;
+    let startTime = 0;
+    let totalTimeTaken = 0;
+
+    // Quản lý Khóa bài thi và Mật khẩu từ Firebase
+    let isQuizLocked = false;
+    let globalUnsubscribe = null;
+    let currentCorrectPassword = "220902"; // Mật khẩu mặc định
+
+    // Khởi tạo Firebase
+    let db, scoresCollection, globalSettingsRef;
+    try {
+        const app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+        scoresCollection = collection(db, "live_scores");
+        globalSettingsRef = doc(db, "quiz_settings", "global_state");
+        
+        // Lắng nghe trạng thái realtime (Khóa & Mật khẩu bài thi)
+        onSnapshot(globalSettingsRef, (docSnap) => {
+            if(docSnap.exists()) {
+                const data = docSnap.data();
+                isQuizLocked = data.isLocked === true;
+                if (data.quizPassword) {
+                    currentCorrectPassword = data.quizPassword;
+                }
+                handleLockStateChange();
+                
+                // Cập nhật giá trị hiển thị mật khẩu trong Admin Dashboard nếu đang mở
+                const adminPassInput = document.getElementById('admin-change-pass-input');
+                if (adminPassInput) {
+                    adminPassInput.value = currentCorrectPassword;
+                }
+            } else {
+                // Khởi tạo doc settings nếu chưa có
+                setDoc(globalSettingsRef, { isLocked: false, quizPassword: "220902" });
+            }
+        });
+        
+        checkResumeSession();
+    } catch (e) { console.log("Lỗi kết nối Firebase.", e); }
+
+    // HÀM XỬ LÝ UP ẢNH & NÉN ẢNH CHÂN DUNG SANG BASE64
+    window.processAvatarUpload = function(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = new Image();
+            img.onload = function() {
+                // Tạo Canvas để nén ảnh tối đa (Tránh quá giới hạn dung lượng lưu trữ)
+                const canvas = document.createElement('canvas');
+                const MAX_WIDTH = 120; // Nén nhỏ vừa đủ hiện avatar
+                const MAX_HEIGHT = 120;
+                let width = img.width;
+                let height = img.height;
+
+                if (width > height) {
+                    if (width > MAX_WIDTH) {
+                        height *= MAX_WIDTH / width;
+                        width = MAX_WIDTH;
+                    }
+                } else {
+                    if (height > MAX_HEIGHT) {
+                        width *= MAX_HEIGHT / height;
+                        height = MAX_HEIGHT;
+                    }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                // Xuất ảnh nén chất lượng thấp (0.6) để lưu trữ tối ưu
+                playerAvatarBase64 = canvas.toDataURL('image/jpeg', 0.6);
+                
+                // Hiển thị preview lên giao diện
+                document.getElementById('avatar-preview').src = playerAvatarBase64;
+                document.getElementById('upload-status-title').innerText = "Đã tải ảnh lên thành công!";
+                document.getElementById('upload-status-title').style.color = "#15803d";
+                document.getElementById('upload-status-desc').innerText = "Click để thay đổi ảnh khác";
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    };
+
+    function showScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        window.scrollTo(0, 0);
+    }
+
+    function handleLockStateChange() {
+        const overlay = document.getElementById('lock-overlay');
+        const adminBtn = document.getElementById('admin-lock-btn');
+        
+        if(adminBtn) {
+            if(isQuizLocked) {
+                adminBtn.innerHTML = '<i class="fa-solid fa-lock-open"></i> MỞ KHÓA BÀI THI';
+                adminBtn.className = 'action-btn btn-primary';
+            } else {
+                adminBtn.innerHTML = '<i class="fa-solid fa-lock"></i> KHÓA BÀI THI';
+                adminBtn.className = 'action-btn btn-warning';
+            }
+        }
+
+        if (isQuizLocked && document.getElementById('question-screen').classList.contains('active')) {
+            overlay.style.display = 'flex';
+            clearInterval(timerInterval);
+        } else {
+            overlay.style.display = 'none';
+            if (!hasAnswered && document.getElementById('question-screen').classList.contains('active')) {
+                startTime = performance.now();
+                timerInterval = setInterval(timerTick, 10);
+            }
+        }
+    }
+
+    // TÍNH NĂNG MỚI: ẨN MẬT MÃ ADMIN KHI NHẬP
+    const nameInputEl = document.getElementById('player-name');
+    nameInputEl.addEventListener('input', function() {
+        const val = nameInputEl.value;
+        if (val.toUpperCase() === 'NAMDZAI') {
+            nameInputEl.type = 'password'; // Chuyển đổi thành dấu ● ẩn đi lập tức
+        }
+    });
+
+    // TÍNH NĂNG TOÀN MÀN HÌNH (FULLSCREEN) CHO TRÌNH CHIẾU ADMIN
+    window.toggleFullscreen = function() {
+        const elem = document.getElementById('quiz-root');
+        if (!document.fullscreenElement) {
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.webkitRequestFullscreen) { /* Safari */
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) { /* IE11 */
+                elem.msRequestFullscreen();
+            }
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+        }
+    };
+
+    // Lắng nghe sự thay đổi fullscreen để thay đổi icon nút bấm
+    document.addEventListener('fullscreenchange', () => {
+        const fsBtn = document.querySelector('.btn-fullscreen');
+        if (fsBtn) {
+            if (document.fullscreenElement) {
+                fsBtn.innerHTML = '<i class="fa-solid fa-compress"></i> THU NHỎ';
+            } else {
+                fsBtn.innerHTML = '<i class="fa-solid fa-expand"></i> TOÀN MÀN HÌNH';
+            }
+        }
+    });
+
+    // ===== XÁC THỰC THÔNG TIN & HIỆN TRƯỜNG PASSWORD =====
+    window.validateAndConfirmInfo = function() {
+        const nameInput = nameInputEl.value.trim();
+        const deptInput = document.getElementById('player-dept').value.trim();
+        const roleInput = document.getElementById('player-role').value.trim();
+
+        // Đi tắt vào Admin bằng pass bảo mật
+        if (nameInput.toUpperCase() === 'NAMDZAI') { 
+            openAdminDashboard(); 
+            return; 
+        }
+
+        if (!nameInput || !deptInput || !roleInput) {
+            alert("Vui lòng điền ĐẦY ĐỦ cả 3 thông tin: Họ và tên, Phòng ban, Chức vụ!");
+            return;
+        }
+
+        if (!playerAvatarBase64) {
+            alert("Vui lòng tải lên một ảnh đại diện chân dung để bắt đầu bài thi!");
+            return;
+        }
+
+        // Ẩn bảng nhập thông tin, hiện bảng nhập mật khẩu
+        document.getElementById('info-input-group').style.display = 'none';
+        document.getElementById('pass-input-group').style.display = 'flex';
+        document.getElementById('quiz-password').focus();
+    };
+
+    window.backToInfo = function() {
+        document.getElementById('pass-input-group').style.display = 'none';
+        document.getElementById('info-input-group').style.display = 'flex';
+    };
+
+    // ===== KIỂM TRA SESSION CŨ =====
+    async function checkResumeSession() {
+        const savedSession = localStorage.getItem(SESSION_KEY);
+        const savedQuestions = localStorage.getItem(QUESTIONS_KEY);
+        
+        if (savedSession && savedQuestions) {
+            try {
+                const docSnap = await getDoc(doc(db, "live_scores", savedSession));
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    currentDocId = savedSession;
+                    playerName = data.name;
+                    score = data.score || 0;
+                    currentQuestion = data.question || 0;
+                    totalTimeTaken = data.totalTime || 0;
+                    gameQuestions = JSON.parse(savedQuestions);
+
+                    if (data.status === 'Hoàn thành' || currentQuestion >= gameQuestions.length) {
+                        showEndScreen();
+                    } else {
+                        showScreen('question-screen');
+                        loadQuestion();
+                    }
+                } else {
+                    localStorage.removeItem(SESSION_KEY);
+                    localStorage.removeItem(QUESTIONS_KEY);
+                }
+            } catch(e) { console.log("Lỗi tải session cũ", e); }
+        }
+    }
+
+    // ===== START QUIZ & RANDOMIZER =====
+    window.startQuiz = async function() {
+        const nameInput = nameInputEl.value.trim();
+        const deptInput = document.getElementById('player-dept').value.trim();
+        const roleInput = document.getElementById('player-role').value.trim();
+        const enteredPassword = document.getElementById('quiz-password').value.trim();
+        
+        if(isQuizLocked) { alert("Bài thi hiện đang bị khóa bởi Ban tổ chức. Vui lòng chờ!"); return; }
+
+        if (!nameInput || !deptInput || !roleInput) { 
+            alert("Thông tin cá nhân bị thiếu. Vui lòng quay lại điền đầy đủ!"); 
+            backToInfo();
+            return; 
+        }
+
+        if (enteredPassword !== currentCorrectPassword) {
+            alert("Mật khẩu vào bài thi không chính xác! Vui lòng liên hệ Admin để nhận mật khẩu.");
+            document.getElementById('quiz-password').focus();
+            return;
+        }
+
+        playerName = nameInput; playerDept = deptInput; playerRole = roleInput;
+        currentQuestion = 0; score = 0; totalTimeTaken = 0;
+
+        // Xáo trộn đáp án và câu hỏi
+        gameQuestions = originalQuestions.map(q => {
+            const correctText = q.options[q.answer]; 
+            const newOptions = [...q.options];
+            for (let i = newOptions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newOptions[i], newOptions[j]] = [newOptions[j], newOptions[i]];
+            }
+            return { ...q, options: newOptions, answer: newOptions.indexOf(correctText) };
+        });
+        
+        for (let i = gameQuestions.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [gameQuestions[i], gameQuestions[j]] = [gameQuestions[j], gameQuestions[i]];
+        }
+
+        // Lưu Database và Local Storage chống gian lận
+        if (db) {
+            currentDocId = Date.now().toString() + '_' + Math.floor(Math.random() * 1000);
+            try {
+                await setDoc(doc(db, "live_scores", currentDocId), {
+                    name: playerName, dept: playerDept, role: playerRole, 
+                    score: 0, question: 0, totalTime: 0, totalQuestions: gameQuestions.length, 
+                    status: 'Đang làm bài', timestamp: Date.now(),
+                    avatar: playerAvatarBase64
+                });
+                localStorage.setItem(SESSION_KEY, currentDocId);
+                localStorage.setItem(QUESTIONS_KEY, JSON.stringify(gameQuestions));
+            } catch (e) { console.log(e); alert("Lỗi kết nối đến máy chủ."); return;}
+        }
+
+        loadQuestion();
+        showScreen('question-screen');
+    };
+
+    // ===== TIMER LOGIC =====
+    function startTimer() {
+        clearInterval(timerInterval);
+        startTime = performance.now();
+        timeLeft = TIME_PER_QUESTION;
+        updateTimerUI();
+        
+        if(!isQuizLocked) {
+            timerInterval = setInterval(timerTick, 10);
+        }
+    }
+
+    // ... (rest of unchanged code)
+    function timerTick() {
+        const elapsed = (performance.now() - startTime) / 1000;
+        timeLeft = Math.max(0, TIME_PER_QUESTION - elapsed);
+        updateTimerUI();
+        
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            timeLeft = 0;
+            handleTimeOut();
+        }
+    }
+
+    function updateTimerUI() {
+        const textEl = document.getElementById('timer-text');
+        const barEl = document.getElementById('timer-bar');
+        
+        textEl.innerHTML = `<i class="fa-regular fa-clock"></i> ${timeLeft.toFixed(2)}s`;
+        const percentage = (timeLeft / TIME_PER_QUESTION) * 100;
+        barEl.style.width = `${percentage}%`;
+
+        if (timeLeft <= 5) {
+            textEl.classList.add('danger');
+            barEl.style.background = '#ef4444';
+        } else {
+            textEl.classList.remove('danger');
+            barEl.style.background = '#22c55e';
+        }
+    }
+
+    function handleTimeOut() {
+        if (hasAnswered) return;
+        hasAnswered = true;
+        
+        totalTimeTaken += TIME_PER_QUESTION;
+        
+        const allBtns = document.querySelectorAll('.option-btn');
+        allBtns.forEach(btn => btn.classList.add('disabled'));
+        
+        // CHẾ ĐỘ THI MÙ: KHÔNG HIỆN ĐÁP ÁN ĐÚNG TRỰC TIẾP
+        const statusMsg = document.getElementById('status-message');
+        statusMsg.innerHTML = '<i class="fa-solid fa-hourglass-end"></i> HẾT THỜI GIAN!';
+        statusMsg.className = 'status-message error';
+        statusMsg.style.display = 'block';
+
+        showControlsAfterAnswer();
+    }
+
+    // ===== LOAD QUESTION =====
+    function loadQuestion() {
+        hasAnswered = false;
+        document.getElementById('next-btn').style.display = 'none';
+        document.getElementById('status-message').style.display = 'none';
+        
+        const q = gameQuestions[currentQuestion];
+        document.getElementById('q-counter').innerText = `CÂU HỎI ${currentQuestion + 1} / ${gameQuestions.length}`;
+        document.getElementById('question-text').innerText = q.q;
+        
+        const optionsGrid = document.getElementById('options-grid');
+        optionsGrid.innerHTML = '';
+        q.options.forEach((opt, index) => {
+            const btn = document.createElement('div');
+            btn.className = 'option-btn';
+            btn.innerHTML = `<div class="option-icon opt-${index}">${shapesArr[index]}</div> <div>${opt}</div>`;
+            btn.onclick = () => selectAnswer(index, btn);
+            optionsGrid.appendChild(btn);
+        });
+
+        startTimer();
+    }
+
+    window.selectAnswer = function(index, btnElement) {
+        if (hasAnswered || isQuizLocked) return;
+        hasAnswered = true;
+        clearInterval(timerInterval);
+        
+        const elapsed = (performance.now() - startTime) / 1000;
+        totalTimeTaken += elapsed;
+        
+        const q = gameQuestions[currentQuestion];
+        const allBtns = document.querySelectorAll('.option-btn');
+        allBtns.forEach(btn => btn.classList.add('disabled'));
+        
+        // CHẾ ĐỘ THI MÙ: CHỈ HIỆN ĐÃ LƯU ĐÁP ÁN, KHÔNG HIỆN XANH ĐỎ
+        btnElement.classList.add('selected');
+        
+        if (index === q.answer) {
+            score += 10;
+        }
+
+        const statusMsg = document.getElementById('status-message');
+        statusMsg.style.display = 'block';
+        statusMsg.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> ĐÃ LƯU ĐÁP ÁN!';
+        statusMsg.className = 'status-message success';
+
+        showControlsAfterAnswer();
+    };
+
+    function showControlsAfterAnswer() {
+        if (db && currentDocId) {
+            updateDoc(doc(db, "live_scores", currentDocId), {
+                score: score, question: currentQuestion + 1, totalTime: totalTimeTaken
+            }).catch(e => console.log(e));
+        }
+        document.getElementById('next-btn').style.display = 'block';
+    }
+
+    window.nextQuestion = function() {
+        currentQuestion++;
+        if (currentQuestion < gameQuestions.length) loadQuestion();
+        else showEndScreen();
+    };
+
+    // ===== END SCREEN & LEADERBOARD =====
+    function showEndScreen() {
+        document.getElementById('final-score').innerText = score;
+        document.getElementById('final-time').innerText = totalTimeTaken.toFixed(2) + 's';
+        
+        if (db && currentDocId) {
+            updateDoc(doc(db, "live_scores", currentDocId), { status: 'Hoàn thành' }).catch(e => console.log(e));
+        }
+
+        const maxScore = gameQuestions.length * 10;
+        let msg = score === maxScore ? "Quá xuất sắc! Chuyên gia Megatech!" : (score >= maxScore * 0.7 ? "Rất tốt, một chút nữa là hoàn hảo!" : "Đã hoàn thành bài kiểm tra!");
+        document.getElementById('feedback-msg').innerText = msg;
+        
+        showScreen('end-screen');
+        loadLeaderboard();
+    }
+
+    window.loadLeaderboard = async function() {
+        const lbList = document.getElementById('lb-list');
+        lbList.innerHTML = '<div style="text-align: center; color: #94a3b8; padding: 20px;"><i class="fa-solid fa-circle-notch fa-spin"></i> Đang tải dữ liệu...</div>';
+        
+        try {
+            const snapshot = await getDocs(scoresCollection);
+            const data = []; 
+            snapshot.forEach(doc => data.push({ id: doc.id, ...doc.data() }));
+            
+            data.sort((a, b) => { 
+                if (b.score !== a.score) return b.score - a.score; 
+                return (a.totalTime || 0) - (b.totalTime || 0); 
+            });
+
+            lbList.innerHTML = '';
+            data.forEach((row, index) => {
+                let medal = `#${index + 1}`;
+                if(index === 0) medal = '🥇'; else if(index === 1) medal = '🥈'; else if(index === 2) medal = '🥉';
+                
+                const isMe = row.id === currentDocId ? 'current-user' : '';
+                const nameDisplay = isMe ? `${row.name} (Bạn)` : row.name;
+                
+                // fallback svg cho avatar rỗng
+                const avatarUrl = row.avatar || "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23a855f7'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>";
+
+                lbList.innerHTML += `
+                    <div class="lb-item ${isMe}">
+                        <div class="lb-rank">${medal}</div>
+                        <img class="lb-avatar" src="${avatarUrl}" alt="Avatar">
+                        <div>
+                            <div>${nameDisplay}</div>
+                            <div style="font-size: 11px; color: #64748b; font-weight: normal;">${row.dept || ''} - ${row.status === 'Hoàn thành' ? 'Đã nộp' : 'Đang làm...'}</div>
+                        </div>
+                        <div class="lb-time">${(row.totalTime || 0).toFixed(2)}s</div>
+                        <div class="lb-score">${row.score}đ</div>
+                    </div>
+                `;
+            });
+        } catch (e) {
+            lbList.innerHTML = '<div style="color: red; text-align: center;">Lỗi tải dữ liệu</div>';
+        }
+    };
+
+    // ===== TRÌNH CHIẾU ĐÁP ÁN (ADMIN) =====
+    window.showPresentation = function() {
+        showScreen('presentation-screen');
+        const container = document.getElementById('presentation-container');
+        container.innerHTML = '';
+
+        originalQuestions.forEach((q, i) => {
+            const correctText = q.options[q.answer];
+            container.innerHTML += `
+                <div class="p-card">
+                    <div class="p-q">Câu ${i + 1}: ${q.q}</div>
+                    <div class="p-ans"><i class="fa-solid fa-check"></i> ${correctText}</div>
+                </div>
+            `;
+        });
+    };
+
+    // ===== QUẢN LÝ ADMIN =====
+    window.toggleQuizLock = async function() {
+        try {
+            await updateDoc(globalSettingsRef, { isLocked: !isQuizLocked });
+        } catch(e) { alert("Lỗi khi thay đổi trạng thái!"); }
+    };
+
+    // Cập nhật mật khẩu bài thi lên Firebase Realtime
+    window.updateQuizPassword = async function() {
+        const newPass = document.getElementById('admin-change-pass-input').value.trim();
+        if(!newPass) {
+            alert("Mật khẩu không được để trống!");
+            return;
+        }
+        try {
+            await updateDoc(globalSettingsRef, { quizPassword: newPass });
+            alert("Đã cập nhật mật khẩu thi mới thành công!");
+        } catch(e) {
+            alert("Lỗi khi thay đổi mật khẩu!");
+        }
+    };
+
+    window.deleteRecord = async function(docId) {
+        if (confirm("Xóa kết quả này?")) await deleteDoc(doc(db, "live_scores", docId));
+    };
+
+    window.deleteAllData = async function() {
+        if (confirm("CẢNH BÁO: Xóa toàn bộ dữ liệu để bắt đầu lượt mới?")) {
+            const snapshot = await getDocs(scoresCollection);
+            snapshot.forEach(async (document) => { await deleteDoc(doc(db, "live_scores", document.id)); });
+            localStorage.removeItem(SESSION_KEY);
+            localStorage.removeItem(QUESTIONS_KEY);
+        }
+    };
+
+    // CHUYỂN ĐỔI TAB ADMIN (GRID VIEW / LIVE CHART)
+    window.switchAdminTab = function(paneId, tabBtn) {
+        // Tắt tất cả tabs và nội dung
+        document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.admin-content-pane').forEach(p => p.classList.remove('active'));
+
+        // Kích hoạt tab được chọn
+        tabBtn.classList.add('active');
+        document.getElementById(paneId).classList.add('active');
+    };
+
+    window.openAdminDashboard = function() {
+        showScreen('admin-screen');
+        const gridContainer = document.getElementById('admin-grid-container');
+        const chartContainer = document.getElementById('admin-chart-container');
+        
+        if(globalUnsubscribe) globalUnsubscribe();
+        
+        globalUnsubscribe = onSnapshot(scoresCollection, (snapshot) => {
+            const data = []; 
+            snapshot.forEach(doc => data.push({ id: doc.id, ...doc.data() }));
+            
+            // Sắp xếp: Điểm cao nhất ➡️ Thời gian ít nhất
+            data.sort((a, b) => { 
+                if (b.score !== a.score) return b.score - a.score; 
+                return (a.totalTime || 0) - (b.totalTime || 0); 
+            });
+            
+            gridContainer.innerHTML = '';
+            chartContainer.innerHTML = '';
+
+            if (data.length === 0) { 
+                gridContainer.innerHTML = "<div style='text-align:center; grid-column: 1 / span 2; padding: 40px; color: #86efac; font-weight:bold;'>Đang đợi đợt thi bắt đầu...</div>"; 
+                chartContainer.innerHTML = "<div style='text-align:center; width: 100%; color: #86efac; font-weight:bold;'>Đang đợi đợt thi bắt đầu...</div>";
+                return; 
+            }
+
+            // ĐỔ DỮ LIỆU VÀO TAB 1: GRID VIEW 2 CỘT (Đã tối ưu gọn gàng hơn để xem được hơn 10 người dễ dàng)
+            data.forEach((row, index) => {
+                const badgeClass = row.status === 'Hoàn thành' ? 'done' : 'playing';
+                const avatarUrl = row.avatar || "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23a855f7'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>";
+                
+                let medal = `#${index + 1}`;
+                if (index === 0) medal = '🥇';
+                else if (index === 1) medal = '🥈';
+                else if (index === 2) medal = '🥉';
+
+                const cardHtml = `
+                    <div class="admin-user-card">
+                        <div class="admin-user-card-rank">${medal}</div>
+                        <img class="admin-user-card-avatar" src="${avatarUrl}" alt="Avatar">
+                        <div class="admin-user-card-info">
+                            <h4 style="font-size:15px; font-weight:800; color:#14532d;" title="${row.name}">${row.name}</h4>
+                            <p style="font-size:11px; color:#64748b; font-weight:normal; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${row.dept || '-'} | ${row.role || '-'}</p>
+                            <p style="font-size:11px; color:#15803d; margin-top:2px;"><span class="status-badge ${badgeClass}">${row.status}</span></p>
+                        </div>
+                        <div class="admin-user-card-score">
+                            <div style="font-size:18px; font-weight:900; color:#16a34a;">${row.score}đ</div>
+                            <div style="font-size:12px; font-weight:bold; color:#d97706; margin-top:1px;">${(row.totalTime || 0).toFixed(2)}s</div>
+                        </div>
+                        <button class="delete-btn" onclick="deleteRecord('${row.id}')"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+                gridContainer.innerHTML += cardHtml;
+
+                // ĐỔ DỮ LIỆU VÀO TAB 2: LIVE CHART VIEW
+                // Chiều cao cột tương ứng với điểm số (Tối đa 250đ)
+                // Hỗ trợ hiển thị mượt mà khi co dãn màn hình lớn
+                const barHeight = Math.max(25, (row.score / 250) * 280); 
+                const chartItemHtml = `
+                    <div class="chart-bar-item">
+                        <span class="chart-bar-score">${row.score}đ</span>
+                        <span class="chart-bar-time">${(row.totalTime || 0).toFixed(2)}s</span>
+                        <div class="chart-bar-col" style="height: ${barHeight}px;"></div>
+                        <img class="chart-bar-avatar" src="${avatarUrl}" alt="Avatar">
+                        <div class="chart-bar-name" title="${row.name}">#${index+1} ${row.name}</div>
+                    </div>
+                `;
+                chartContainer.innerHTML += chartItemHtml;
+            });
+        });
+    };
+</script>
+</body>
+</html>
