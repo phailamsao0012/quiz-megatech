@@ -219,6 +219,8 @@
         .shape-1 { top: -20px; left: -20px; font-size: 400px; transform: rotate(-15deg); }
         .shape-2 { bottom: -50px; right: -50px; font-size: 500px; transform: rotate(15deg); }
 
+        @keyframes spin { 100% { transform: rotate(-360deg); } }
+
         @media (max-width: 900px) { .end-layout { grid-template-columns: 1fr; } }
         @media (max-width: 768px) {
             body { padding: 0; display: block; }
@@ -640,17 +642,16 @@
         return `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svgContent)))}`;
     }
 
-    window.updateDuckSVG = function() {
+    function updateDuckSVG() {
         const color = document.getElementById('duck-color').value;
         const hat = document.getElementById('duck-hat').value;
         const acc = document.getElementById('duck-acc').value;
         playerAvatarBase64 = generateDuckSVG(color, hat, acc);
         document.getElementById('duck-preview').src = playerAvatarBase64;
-    };
+    }
 
     // Khởi tạo Vịt lần đầu
     setTimeout(updateDuckSVG, 100);
-
 
     // === HỆ THỐNG KÉO THẢ VỊT (PLAYGROUND) ===
     let isDragging = false;
@@ -709,10 +710,10 @@
     }
 
     // === HỆ THỐNG SIDEBAR & ĐỒNG BỘ DANH SÁCH NGƯỜI CHƠI TRONG PHÒNG CHỜ ===
-    window.toggleSidebar = function() {
+    function toggleSidebar() {
         const sidebar = document.getElementById('player-sidebar');
         sidebar.classList.toggle('open');
-    };
+    }
 
     function startWaitingRoomListener() {
         if (!currentUser) return;
@@ -747,7 +748,6 @@
         });
     }
 
-    // === LẮNG NGHE FIREBASE GLOBAL ===
     function startFirebaseListeners() {
         if (isFirebaseListening) return;
         isFirebaseListening = true;
@@ -1693,7 +1693,7 @@
         });
     }
     
-    window.exportExcel = async function() {
+    async function exportExcel() {
         if (!currentUser) return alert("Lỗi: Chưa kết nối hệ thống!");
         try {
             const snapshot = await getDocs(scoresCollection);
@@ -1734,13 +1734,13 @@
             console.error(e);
             alert("Lỗi khi xuất dữ liệu!");
         }
-    };
+    }
 
     // =========================================================================
     // Đăng ký toàn bộ hàm tương tác với giao diện HTML ra môi trường Global (Window)
     // =========================================================================
     window.showScreen = showScreen;
-    window.processAvatarUpload = processAvatarUpload;
+    // Đã xóa window.processAvatarUpload để tránh gây lỗi ReferenceError
     window.toggleFullscreen = toggleFullscreen;
     window.validateAndConfirmInfo = validateAndConfirmInfo;
     window.backToInfo = backToInfo;
@@ -1765,6 +1765,7 @@
     window.openAdminDashboard = openAdminDashboard;
     window.toggleSidebar = toggleSidebar;
     window.updateDuckSVG = updateDuckSVG;
+    window.exportExcel = exportExcel;
 </script>
 </body>
 </html>
