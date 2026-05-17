@@ -80,7 +80,7 @@
         .maker-select { width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #cbd5e1; font-family: 'Nunito'; font-weight: bold; color: #1e293b; outline: none; }
         .maker-select:focus { border-color: #3b82f6; }
 
-        /* NÔNG TRẠI HEO MULTIPLAYER (COMPLEX BACKGROUND) */
+        /* NÔNG TRẠI HEO MULTIPLAYER CSS */
         #waiting-screen { padding: 0; display: flex; flex-direction: column; height: 100%; overflow: hidden;}
         .waiting-header { padding: 15px 20px; background: white; width: 100%; z-index: 10; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #bbf7d0;}
         .waiting-header h2 { font-size: 24px; color: #1e3a8a; font-family: 'Montserrat'; font-weight: 900;}
@@ -93,7 +93,6 @@
         .playground-container {
             flex-grow: 1; width: 100%; position: relative; overflow: hidden;
             background-color: #4ade80;
-            /* Vẽ nền thảm cỏ caro + đường đất đẹp mắt */
             background-image: 
                 linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.1) 75%, rgba(255,255,255,0.1)), 
                 linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.1) 75%, rgba(255,255,255,0.1));
@@ -108,28 +107,29 @@
         .barn::before { content: ''; position: absolute; width: 0; height: 0; border-left: 65px solid transparent; border-right: 65px solid transparent; border-bottom: 50px solid #991b1b; top: -50px; left: -9px;}
         .tree { width: 40px; height: 40px; background: #14532d; border-radius: 50%; position: absolute; box-shadow: 20px 10px 0 #166534, -15px 15px 0 #15803d;}
         .tree-trunk { width: 10px; height: 20px; background: #78350f; position: absolute; top: 35px; left: 15px;}
+        .cloud { position: absolute; background: white; border-radius: 50px; opacity: 0.8; }
+        .cloud::before, .cloud::after { content: ''; position: absolute; background: white; border-radius: 50%; }
+        .c1 { width: 100px; height: 30px; top: 10%; left: 10%; animation: floatCloud 20s linear infinite; }
+        .c1::before { width: 50px; height: 50px; top: -20px; left: 15px; } .c1::after { width: 40px; height: 40px; top: -10px; right: 15px; }
+        .c2 { width: 80px; height: 25px; top: 20%; right: 20%; animation: floatCloud 15s linear infinite reverse; }
+        .c2::before { width: 40px; height: 40px; top: -15px; left: 10px; } .c2::after { width: 30px; height: 30px; top: -8px; right: 10px; }
+        @keyframes floatCloud { 0% { transform: translateX(-50px); } 50% { transform: translateX(50px); } 100% { transform: translateX(-50px); } }
 
-        /* Bảng điều khiển Joystick cố định dưới cùng */
+        /* Joystick Panel */
         .joystick-panel {
             height: 120px; width: 100%; background: #ffffff; border-top: 3px solid #cbd5e1; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; flex-shrink: 0; z-index: 50;
         }
-
-        /* Vùng Joystick */
         .joystick-zone {
             width: 100px; height: 100px; position: relative; border-radius: 50%; background: #e2e8f0; border: 4px solid #cbd5e1; display: flex; align-items: center; justify-content: center; touch-action: none;
         }
         .joystick-stick {
             width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #2563eb); position: absolute; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.4); pointer-events: none; transition: transform 0.1s;
         }
-
-        /* Hướng dẫn phím Desktop */
-        .keyboard-hint {
-            display: flex; flex-direction: column; align-items: center; color: #64748b; font-weight: bold;
-        }
+        .keyboard-hint { display: flex; flex-direction: column; align-items: center; color: #64748b; font-weight: bold; }
         .key-row { display: flex; gap: 5px; margin-bottom: 5px;}
         .key { width: 35px; height: 35px; background: #f1f5f9; border: 2px solid #cbd5e1; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-family: monospace; font-size: 16px; color: #1e293b; box-shadow: 0 3px 0 #cbd5e1;}
 
-        /* Nhân vật Heo di chuyển */
+        /* Player Pig */
         .player-pig {
             position: absolute; width: 80px; height: 80px; transform: translate(-50%, -50%);
             display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100;
@@ -140,7 +140,7 @@
             border-radius: 12px; font-weight: 800; font-size: 13px; color: #1e40af; white-space: nowrap;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1); border: 1px solid #bfdbfe; pointer-events: none;
         }
-        .other-pig { transition: left 0.15s linear, top 0.15s linear; z-index: 90;} /* Chuyển động mượt cho người khác */
+        .other-pig { transition: left 0.15s linear, top 0.15s linear; z-index: 90;}
 
         /* Sidebar Danh Sách */
         .player-sidebar {
@@ -246,6 +246,12 @@
         .presentation-grid { display: grid; grid-template-columns: 1fr; gap: 20px; width: 100%; max-width: 1000px; margin: 0 auto; text-align: left;}
         .p-card { background: white; border: 2px solid #bbf7d0; border-radius: 16px; padding: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);}
         .p-options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        
+        .shape { position: absolute; opacity: 0.15; z-index: 1; pointer-events: none; color: #86efac;}
+        .shape-1 { top: -20px; left: -20px; font-size: 400px; transform: rotate(-15deg); }
+        .shape-2 { bottom: -50px; right: -50px; font-size: 500px; transform: rotate(15deg); }
+
+        @keyframes spin { 100% { transform: rotate(-360deg); } }
 
         @media (max-width: 900px) { .end-layout { grid-template-columns: 1fr; } }
         @media (max-width: 768px) {
@@ -295,6 +301,8 @@
             <div class="input-group" id="info-input-group">
                 <input type="text" id="player-name" class="name-input" placeholder="Họ và tên (VD: Nguyễn Văn A)" required autocomplete="off">
                 <input type="text" id="player-dept" class="name-input" placeholder="Phòng ban (VD: Kinh doanh)" required autocomplete="off">
+                
+                <!-- BỔ SUNG LẠI Ô CHỨC VỤ ĐỂ TRÁNH LỖI JS -->
                 <input type="text" id="player-role" class="name-input" placeholder="Chức vụ (VD: Nhân viên)" required autocomplete="off">
                 
                 <!-- BỘ TẠO AVATAR HEO MEGATECH CUTE (9x9x9) -->
@@ -606,10 +614,10 @@
     let cheatFlag = false; 
     const shapesArr = ["A", "B", "C", "D"];
     
-    const SESSION_KEY = "megatech_quiz_session_v5";
-    const QUESTIONS_KEY = "megatech_quiz_questions_v5";
-    const TIMER_START_KEY = "megatech_quiz_start_time_v5";
-    const PAUSE_FREEZE_KEY = "megatech_quiz_freeze_time_v5";
+    const SESSION_KEY = "megatech_quiz_session_v6";
+    const QUESTIONS_KEY = "megatech_quiz_questions_v6";
+    const TIMER_START_KEY = "megatech_quiz_start_time_v6";
+    const PAUSE_FREEZE_KEY = "megatech_quiz_freeze_time_v6";
     
     let examDuration = 9; 
     let timeLeft = examDuration * 60;
@@ -647,10 +655,8 @@
 
     let isFirebaseListening = false;
 
-    // === HỆ THỐNG TẠO AVATAR HEO MEGATECH CUTE ===
     function generatePigSVG(colorStr, hatType, accType) {
-        // 1. CHỌN MÀU DA HEO (9 MÀU)
-        let bodyColor = '#fbcfe8'; // Mặc định hồng cute
+        let bodyColor = '#fbcfe8'; 
         if (colorStr === 'yellow') bodyColor = '#fde047';
         else if (colorStr === 'white') bodyColor = '#f8fafc';
         else if (colorStr === 'brown') bodyColor = '#d97706';
@@ -660,7 +666,6 @@
         else if (colorStr === 'purple') bodyColor = '#d8b4fe';
         else if (colorStr === 'red') bodyColor = '#fca5a5';
 
-        // 2. CHỌN MŨ (9 LOẠI - Căn chỉnh theo dáng heo)
         let hatSvg = '';
         let hasNinja = false;
         
@@ -687,7 +692,6 @@
                       <circle cx="41" cy="48" r="1.5" fill="white"/><circle cx="61" cy="48" r="1.5" fill="white"/>`;
         }
 
-        // 3. CHỌN PHỤ KIỆN (9 LOẠI - Căn chỉnh theo mũi heo)
         let accSvg = '';
         if (accType === 'glasses') {
             accSvg = `<rect x="32" y="44" width="14" height="12" rx="3" fill="none" stroke="#1e293b" stroke-width="2"/><rect x="54" y="44" width="14" height="12" rx="3" fill="none" stroke="#1e293b" stroke-width="2"/><line x1="46" y1="50" x2="54" y2="50" stroke="#1e293b" stroke-width="2"/>`;
@@ -720,53 +724,40 @@
                 <!-- Tai heo -->
                 <path d="M 30 45 Q 15 20 10 45 Q 20 60 30 45 Z" fill="${bodyColor}" stroke="rgba(0,0,0,0.1)" stroke-width="1"/>
                 <path d="M 70 45 Q 85 20 90 45 Q 80 60 70 45 Z" fill="${bodyColor}" stroke="rgba(0,0,0,0.1)" stroke-width="1"/>
-                
                 <!-- Chân heo -->
                 <rect x="35" y="85" width="8" height="10" rx="4" fill="#1e293b"/>
                 <rect x="57" y="85" width="8" height="10" rx="4" fill="#1e293b"/>
-                
                 <!-- Thân heo mập mạp -->
                 <ellipse cx="50" cy="60" rx="35" ry="32" fill="${bodyColor}"/>
-                
                 <!-- Đuôi xoắn -->
                 <path d="M 80 70 Q 95 65 85 75 Q 80 80 85 85" fill="none" stroke="${bodyColor}" stroke-width="4" stroke-linecap="round"/>
-                
-                <!-- Mũ/Headband (Ninja vẽ mắt luôn) -->
                 ${hatSvg}
-                
-                <!-- Mặt & Mắt -->
                 ${eyesSvg}
-                
                 <!-- Mũi heo (Snout) -->
                 <ellipse cx="50" cy="62" rx="14" ry="10" fill="#fca5a5" stroke="#f43f5e" stroke-width="1"/>
                 <circle cx="45" cy="62" r="2.5" fill="#9f1239"/>
                 <circle cx="55" cy="62" r="2.5" fill="#9f1239"/>
-                
-                <!-- Phụ kiện -->
                 ${accSvg}
             </svg>
         `;
         return `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svgContent)))}`;
     }
 
-    window.updatePigSVG = function() {
+    function updatePigSVG() {
         const color = document.getElementById('pig-color').value;
         const hat = document.getElementById('pig-hat').value;
         const acc = document.getElementById('pig-acc').value;
         playerAvatarBase64 = generatePigSVG(color, hat, acc);
         document.getElementById('pig-preview').src = playerAvatarBase64;
-    };
+    }
 
-    // Khởi tạo Heo lần đầu
     setTimeout(updatePigSVG, 100);
 
-
-    // === HỆ THỐNG ĐIỀU KHIỂN MULTIPLAYER (JOYSTICK + KEYBOARD) ===
     let gameLoop;
-    let myPigX = 50, myPigY = 50; // Tọa độ tương đối 0-100%
-    const speed = 0.5; // Tốc độ di chuyển (%)
+    let myPigX = 50, myPigY = 50; 
+    const speed = 0.5; 
     const keys = { w: false, a: false, s: false, d: false, ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false };
-    let joyVx = 0, joyVy = 0; // Vận tốc từ Joystick ảo
+    let joyVx = 0, joyVy = 0; 
     let lastSyncTime = 0;
 
     function initPlayground() {
@@ -777,7 +768,6 @@
         document.getElementById('my-pig-name').innerText = playerName || "Tôi";
         document.getElementById('my-pig-img').src = playerAvatarBase64;
 
-        // Bắt đầu vòng lặp game
         if(!gameLoop) {
             gameLoop = requestAnimationFrame(updateGame);
             setupControls();
@@ -785,11 +775,9 @@
     }
 
     function setupControls() {
-        // Keyboard
         window.addEventListener('keydown', e => { if (keys.hasOwnProperty(e.key)) keys[e.key] = true; });
         window.addEventListener('keyup', e => { if (keys.hasOwnProperty(e.key)) keys[e.key] = false; });
 
-        // Virtual Joystick
         const zone = document.getElementById('joystick-zone');
         const stick = document.getElementById('joystick-stick');
         let stickDragging = false;
@@ -809,45 +797,40 @@
 
             let cx = baseRect.left + baseRect.width / 2;
             let cy = baseRect.top + baseRect.height / 2;
-            let dx = clientX - cx;
-            let dy = clientY - cy;
+            let tempDx = clientX - cx;
+            let tempDy = clientY - cy;
 
-            let dist = Math.sqrt(dx*dx + dy*dy);
-            let maxDist = baseRect.width / 2 - 25; // 25 là nửa size của stick
+            let dist = Math.sqrt(tempDx*tempDx + tempDy*tempDy);
+            let maxDist = baseRect.width / 2 - 25; 
             
             if (dist > maxDist) {
-                dx = (dx / dist) * maxDist;
-                dy = (dy / dist) * maxDist;
+                tempDx = (tempDx / dist) * maxDist;
+                tempDy = (tempDy / dist) * maxDist;
             }
 
-            stick.style.transform = `translate(${dx}px, ${dy}px)`;
-            
-            // Tính vận tốc
-            joyVx = (dx / maxDist) * speed;
-            joyVy = (dy / maxDist) * speed;
+            stick.style.transform = `translate(${tempDx}px, ${tempDy}px)`;
+            joyVx = (tempDx / maxDist) * speed;
+            joyVy = (tempDy / maxDist) * speed;
         }
 
         function endJoy() {
             stickDragging = false;
             stick.style.transform = `translate(0px, 0px)`;
-            joyVx = 0;
-            joyVy = 0;
+            joyVx = 0; joyVy = 0;
         }
 
         zone.addEventListener('mousedown', startJoy);
         document.addEventListener('mousemove', moveJoy, {passive: false});
         document.addEventListener('mouseup', endJoy);
-        
         zone.addEventListener('touchstart', startJoy, {passive: false});
         document.addEventListener('touchmove', moveJoy, {passive: false});
         document.addEventListener('touchend', endJoy);
     }
 
     function updateGame() {
-        if (examStatus === 'running') return; // Dừng chạy nếu đang thi
+        if (examStatus === 'running') return; 
 
-        let dx = joyVx;
-        let dy = joyVy;
+        let dx = joyVx; let dy = joyVy;
 
         if (keys.w || keys.ArrowUp) dy = -speed;
         if (keys.s || keys.ArrowDown) dy = speed;
@@ -855,14 +838,10 @@
         if (keys.d || keys.ArrowRight) dx = speed;
 
         if (dx !== 0 || dy !== 0) {
-            myPigX += dx;
-            myPigY += dy;
+            myPigX += dx; myPigY += dy;
 
-            // Giữ trong khung (5% - 95% để tránh lẹm mép)
-            if (myPigX < 5) myPigX = 5;
-            if (myPigX > 95) myPigX = 95;
-            if (myPigY < 15) myPigY = 15; // Tránh lẹm trần
-            if (myPigY > 90) myPigY = 90;
+            if (myPigX < 5) myPigX = 5; if (myPigX > 95) myPigX = 95;
+            if (myPigY < 15) myPigY = 15; if (myPigY > 90) myPigY = 90;
 
             const myPigEl = document.getElementById('my-pig');
             if(myPigEl) {
@@ -870,7 +849,6 @@
                 myPigEl.style.top = `${myPigY}%`;
             }
 
-            // Sync Firebase Throttle (Chỉ gửi 5 lần/giây để tránh nghẽn mạng)
             if (Date.now() - lastSyncTime > 200 && currentDocId && db) {
                 updateDoc(doc(scoresCollection, currentDocId), { posX: myPigX, posY: myPigY }).catch(()=>{});
                 lastSyncTime = Date.now();
@@ -880,11 +858,9 @@
         gameLoop = requestAnimationFrame(updateGame);
     }
 
-    // === HỆ THỐNG SIDEBAR & ĐỒNG BỘ MULTIPLAYER TRÊN PHÒNG CHỜ ===
-    window.toggleSidebar = function() {
-        const sidebar = document.getElementById('player-sidebar');
-        sidebar.classList.toggle('open');
-    };
+    function toggleSidebar() {
+        document.getElementById('player-sidebar').classList.toggle('open');
+    }
 
     function startWaitingRoomListener() {
         if (!currentUser) return;
@@ -903,7 +879,6 @@
                 }
             });
             
-            // 1. Cập nhật Sidebar
             listEl.innerHTML = '';
             if(players.length === 0) {
                 listEl.innerHTML = '<div style="color:#64748b; font-size:14px; text-align:center;">Phòng chờ trống...</div>';
@@ -918,38 +893,27 @@
                 });
             }
 
-            // 2. Cập nhật nhân vật Multiplayer trên Playground
             players.forEach(p => {
-                if(p.id === currentDocId) return; // Bỏ qua bản thân
-                
+                if(p.id === currentDocId) return; 
                 let otherPig = document.getElementById(`pig-${p.id}`);
                 
-                // Nếu chưa có, tạo mới
                 if (!otherPig) {
                     otherPig = document.createElement('div');
                     otherPig.id = `pig-${p.id}`;
                     otherPig.className = 'player-pig other-pig';
-                    otherPig.innerHTML = `
-                        <div class="pig-nameplate">${p.name}</div>
-                        <img src="${p.avatar}" alt="Pig">
-                    `;
+                    otherPig.innerHTML = `<div class="pig-nameplate">${p.name}</div><img src="${p.avatar}" alt="Pig">`;
                     playground.appendChild(otherPig);
                 }
                 
-                // Cập nhật vị trí mượt mà
                 if(p.posX && p.posY) {
                     otherPig.style.left = `${p.posX}%`;
                     otherPig.style.top = `${p.posY}%`;
                 }
             });
 
-            // Xóa người chơi đã thoát hoặc đổi đợt
             const currentPigIds = players.map(p => `pig-${p.id}`);
-            const allRenderedPigs = playground.querySelectorAll('.other-pig');
-            allRenderedPigs.forEach(pigNode => {
-                if(!currentPigIds.includes(pigNode.id)) {
-                    pigNode.remove();
-                }
+            playground.querySelectorAll('.other-pig').forEach(pigNode => {
+                if(!currentPigIds.includes(pigNode.id)) pigNode.remove();
             });
         });
     }
@@ -1013,9 +977,7 @@
                     }).catch(e => console.log("Lỗi khởi tạo Setting", e));
                 }
             } catch (err) { console.error("Lỗi:", err); }
-        }, (error) => {
-            console.error("Lỗi lắng nghe cấu hình Server:", error);
-        });
+        }, (error) => { console.error("Lỗi lắng nghe cấu hình Server:", error); });
 
         checkResumeSession();
     }
@@ -1047,15 +1009,6 @@
         }
     });
 
-    setInterval(() => {
-        if (examStatus === 'running' && document.getElementById('waiting-screen').classList.contains('active') && !isCountingDown) {
-            startCountdownAndEnterQuiz();
-        }
-        if (document.getElementById('question-screen').classList.contains('active')) {
-            handleLockStateChange(); 
-        }
-    }, 1000);
-
     function showScreen(screenId) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(screenId).classList.add('active');
@@ -1071,30 +1024,27 @@
         }
     }
 
+    setInterval(() => {
+        if (examStatus === 'running' && document.getElementById('waiting-screen').classList.contains('active') && !isCountingDown) {
+            startCountdownAndEnterQuiz();
+        }
+        if (document.getElementById('question-screen').classList.contains('active')) {
+            handleLockStateChange(); 
+        }
+    }, 1000);
+
     function handleLockStateChange() {
         const overlay = document.getElementById('lock-overlay');
         if (document.getElementById('question-screen').classList.contains('active')) {
             if (examStatus === 'paused') {
                 overlay.style.display = 'flex';
-                overlay.innerHTML = `
-                    <i class="fa-solid fa-circle-pause" style="color: #3b82f6;"></i>
-                    <h2>ĐỀ ĐANG TẠM DỪNG</h2>
-                    <p>Thời gian làm bài đã được đóng băng. Vui lòng chờ giám thị mở lại đề để tiếp tục!</p>
-                `;
+                overlay.innerHTML = `<i class="fa-solid fa-circle-pause" style="color: #3b82f6;"></i><h2>ĐỀ ĐANG TẠM DỪNG</h2><p>Thời gian làm bài đã được đóng băng. Vui lòng chờ giám thị mở lại đề để tiếp tục!</p>`;
             } else if (examStatus === 'idle') {
                 overlay.style.display = 'flex';
-                overlay.innerHTML = `
-                    <i class="fa-solid fa-lock"></i>
-                    <h2>BÀI THI ĐANG BỊ KHÓA</h2>
-                    <p>Admin đã tạm dừng hệ thống. Thời gian của bạn vẫn được bảo toàn. Vui lòng chờ!</p>
-                `;
+                overlay.innerHTML = `<i class="fa-solid fa-lock"></i><h2>BÀI THI ĐANG BỊ KHÓA</h2><p>Admin đã tạm dừng hệ thống. Thời gian của bạn vẫn được bảo toàn. Vui lòng chờ!</p>`;
             } else if (examStatus === 'ended') {
                 overlay.style.display = 'flex';
-                overlay.innerHTML = `
-                    <i class="fa-solid fa-stop-circle" style="color: #ef4444;"></i>
-                    <h2>BÀI THI ĐÃ KẾT THÚC</h2>
-                    <p>Giám thị đã ĐÓNG đề thi. Hệ thống đang tự động nộp bài của bạn...</p>
-                `;
+                overlay.innerHTML = `<i class="fa-solid fa-stop-circle" style="color: #ef4444;"></i><h2>BÀI THI ĐÃ KẾT THÚC</h2><p>Giám thị đã ĐÓNG đề thi. Hệ thống đang tự động nộp bài của bạn...</p>`;
                 
                 const allBtns = document.querySelectorAll('.option-btn');
                 allBtns.forEach(btn => btn.classList.add('disabled'));
@@ -1126,40 +1076,29 @@
             if (examStatus === 'ended') {
                 alertBox.style.display = 'block';
                 alertBox.innerHTML = '<i class="fa-solid fa-stop-circle"></i> KỲ THI ĐÃ KẾT THÚC. Bạn không thể làm bài lúc này!';
-                alertBox.style.background = '#fef2f2';
-                alertBox.style.color = '#991b1b';
-                alertBox.style.borderColor = '#fca5a5';
+                alertBox.style.background = '#fef2f2'; alertBox.style.color = '#991b1b'; alertBox.style.borderColor = '#fca5a5';
                 confirmBtn.style.display = 'none';
             } else if (examStatus === 'idle') {
                 alertBox.style.display = 'block';
                 alertBox.innerHTML = '<i class="fa-solid fa-clock"></i> KỲ THI CHƯA MỞ! Vui lòng ghi danh và vào Phòng Chờ.';
-                alertBox.style.background = '#eff6ff';
-                alertBox.style.color = '#1e3a8a';
-                alertBox.style.borderColor = '#bfdbfe';
+                alertBox.style.background = '#eff6ff'; alertBox.style.color = '#1e3a8a'; alertBox.style.borderColor = '#bfdbfe';
                 confirmBtn.style.display = 'block';
             } else if (examStatus === 'paused') {
                 alertBox.style.display = 'block';
                 alertBox.innerHTML = '<i class="fa-solid fa-pause-circle"></i> KỲ THI ĐANG TẠM DỪNG! Bạn có thể ghi danh và vào Phòng Chờ.';
-                alertBox.style.background = '#fef3c7';
-                alertBox.style.color = '#92400e';
-                alertBox.style.borderColor = '#fde68a';
+                alertBox.style.background = '#fef3c7'; alertBox.style.color = '#92400e'; alertBox.style.borderColor = '#fde68a';
                 confirmBtn.style.display = 'block';
             } else {
                 alertBox.style.display = 'block';
                 alertBox.innerHTML = '<i class="fa-solid fa-circle-play"></i> KỲ THI ĐANG DIỄN RA! Bạn có thể vào làm bài ngay.';
-                alertBox.style.background = '#dcfce7';
-                alertBox.style.color = '#14532d';
-                alertBox.style.borderColor = '#86efac';
+                alertBox.style.background = '#dcfce7'; alertBox.style.color = '#14532d'; alertBox.style.borderColor = '#86efac';
                 confirmBtn.style.display = 'block';
             }
         }
         
         if (startBtn) {
-            if (examStatus === 'running') {
-                startBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> BẮT ĐẦU THI';
-            } else {
-                startBtn.innerHTML = '<i class="fa-solid fa-hourglass-half"></i> VÀO PHÒNG CHỜ';
-            }
+            if (examStatus === 'running') startBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> BẮT ĐẦU THI';
+            else startBtn.innerHTML = '<i class="fa-solid fa-hourglass-half"></i> VÀO PHÒNG CHỜ';
         }
     }
 
@@ -1189,7 +1128,18 @@
         }
     }
 
-    window.validateAndConfirmInfo = function() {
+    function toggleFullscreen() {
+        const elem = document.getElementById('quiz-root');
+        if (!document.fullscreenElement) {
+            if (elem.requestFullscreen) elem.requestFullscreen();
+            else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+            else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
+        } else {
+            if (document.exitFullscreen) document.exitFullscreen();
+        }
+    }
+
+    function validateAndConfirmInfo() {
         const nameInputEl = document.getElementById('player-name');
         const deptInputEl = document.getElementById('player-dept');
         const roleInputEl = document.getElementById('player-role');
@@ -1206,14 +1156,14 @@
         document.getElementById('info-input-group').style.display = 'none';
         document.getElementById('pass-input-group').style.display = 'flex';
         document.getElementById('quiz-password').focus();
-    };
+    }
 
-    window.backToInfo = function() {
+    function backToInfo() {
         document.getElementById('pass-input-group').style.display = 'none';
         document.getElementById('info-input-group').style.display = 'flex';
-    };
+    }
 
-    window.handleAdminLogin = function() {
+    function handleAdminLogin() {
         const userInp = document.getElementById('admin-login-user').value.trim();
         const passInp = document.getElementById('admin-login-pass').value.trim();
 
@@ -1223,16 +1173,15 @@
         } else {
             alert("Sai tên đăng nhập hoặc mật khẩu quản trị!");
         }
-    };
+    }
 
-    window.logoutAdmin = function() {
+    function logoutAdmin() {
         isAdminLoggedIn = false;
         showScreen('start-screen');
-    };
+    }
 
     async function checkResumeSession() {
         if (!currentUser) return;
-
         const savedSession = localStorage.getItem(SESSION_KEY);
         const savedQuestions = localStorage.getItem(QUESTIONS_KEY);
         
@@ -1284,7 +1233,7 @@
         }
     }
 
-    window.requestReplay = async function() {
+    async function requestReplay() {
         if (!currentUser) return alert("Kết nối bị gián đoạn. Vui lòng tải lại trang!");
         if (!currentDocId) return;
         try {
@@ -1294,7 +1243,7 @@
         } catch (e) {
             alert("Lỗi kết nối khi gửi yêu cầu!");
         }
-    };
+    }
 
     function updateReplayButtonUI(isPending) {
         const btn = document.getElementById('request-replay-btn');
@@ -1311,7 +1260,7 @@
         }
     }
 
-    window.approveReplayRequest = async function(docId) {
+    async function approveReplayRequest(docId) {
         if (!currentUser) return alert("Kết nối bị gián đoạn. Vui lòng đăng nhập lại Admin!");
         if (confirm("Bạn có chắc chắn muốn duyệt cho học viên này thi lại không?")) {
             try {
@@ -1319,9 +1268,9 @@
                 alert("Đã duyệt thành công! Học viên sẽ tự động được tải lại trang để thi.");
             } catch (error) { alert("Lỗi khi phê duyệt!"); }
         }
-    };
+    }
 
-    window.startQuiz = async function() {
+    async function startQuiz() {
         if (!currentUser) return alert("Chưa kết nối được máy chủ, vui lòng đợi thêm 1 giây và thử lại!");
 
         const nameInputEl = document.getElementById('player-name');
@@ -1364,7 +1313,6 @@
 
         if (db) {
             currentDocId = Date.now().toString() + '_' + Math.floor(Math.random() * 1000);
-            // Vị trí mặc định giữa bản đồ
             myPigX = 50; myPigY = 50;
             try {
                 await setDoc(doc(scoresCollection, currentDocId), {
@@ -1414,9 +1362,9 @@
             startBtn.disabled = false; 
             startBtn.innerHTML = examStatus === 'running' ? '<i class="fa-solid fa-bolt"></i> BẮT ĐẦU THI' : '<i class="fa-solid fa-hourglass-half"></i> VÀO PHÒNG CHỜ'; 
         }
-    };
+    }
 
-    window.startCountdownAndEnterQuiz = function() {
+    function startCountdownAndEnterQuiz() {
         if (!currentUser || isCountingDown) return;
         isCountingDown = true;
         
@@ -1450,7 +1398,7 @@
                 loadQuestion();
             }
         }, 1000);
-    };
+    }
 
     function startTimer() {
         clearInterval(timerInterval);
@@ -1544,7 +1492,7 @@
         handleLockStateChange(); 
     }
 
-    window.selectAnswer = function(index, btnElement) {
+    function selectAnswer(index, btnElement) {
         if (hasAnswered || examStatus !== 'running') return;
         hasAnswered = true;
         
@@ -1562,7 +1510,7 @@
         statusMsg.className = 'status-message success';
 
         showControlsAfterAnswer();
-    };
+    }
 
     function showControlsAfterAnswer() {
         if (!currentUser) return;
@@ -1574,11 +1522,11 @@
         document.getElementById('next-btn').style.display = 'block';
     }
 
-    window.nextQuestion = function() {
+    function nextQuestion() {
         currentQuestion++;
         if (currentQuestion < gameQuestions.length) loadQuestion();
         else showEndScreen();
-    };
+    }
 
     function showEndScreen() {
         clearInterval(timerInterval);
@@ -1614,7 +1562,7 @@
         loadLeaderboard();
     }
 
-    window.loadLeaderboard = async function() {
+    async function loadLeaderboard() {
         if (!currentUser) return;
         const lbList = document.getElementById('lb-list');
         lbList.innerHTML = '<div style="text-align: center; color: #94a3b8; padding: 20px;"><i class="fa-solid fa-circle-notch fa-spin"></i> Đang tải dữ liệu...</div>';
@@ -1663,9 +1611,9 @@
         } catch (e) {
             lbList.innerHTML = '<div style="color: red; text-align: center;">Lỗi tải dữ liệu</div>';
         }
-    };
+    }
 
-    window.showPresentation = function() {
+    function showPresentation() {
         showScreen('presentation-screen');
         const container = document.getElementById('presentation-container');
         container.innerHTML = '';
@@ -1702,9 +1650,9 @@
                 </div>
             `;
         });
-    };
+    }
 
-    window.setExamStatus = async function(status) {
+    async function setExamStatus(status) {
         if (!currentUser) return alert("Lỗi: Chưa kết nối hệ thống! Đang tự động kết nối lại, vui lòng chờ...");
         try {
             await setDoc(globalSettingsRef, { examStatus: status }, { merge: true });
@@ -1714,9 +1662,9 @@
             console.error(e); 
             alert(`Lỗi khi thay đổi trạng thái kỳ thi! Chi tiết: ${e.message}`); 
         }
-    };
+    }
 
-    window.saveBatchSettings = async function() {
+    async function saveBatchSettings() {
         if (!currentUser) return alert("Lỗi: Chưa kết nối hệ thống!");
         const batchVal = document.getElementById('admin-batch-name-input').value.trim();
         const durationVal = parseInt(document.getElementById('admin-duration-input').value.trim());
@@ -1731,9 +1679,9 @@
             }, { merge: true });
             alert("Đã lưu Đợt thi mới! Đề thi đã tự động trở về trạng thái KHÓA ĐỀ (Chờ mở).");
         } catch (e) { console.error(e); alert("Lỗi khi cập nhật đợt thi!"); }
-    };
+    }
 
-    window.updateQuizPassword = async function() {
+    async function updateQuizPassword() {
         if (!currentUser) return alert("Lỗi: Chưa kết nối hệ thống!");
         const newPass = document.getElementById('admin-change-pass-input').value.trim();
         if(!newPass) return alert("Mật khẩu không được để trống!");
@@ -1742,9 +1690,9 @@
             await setDoc(globalSettingsRef, { quizPassword: newPass }, { merge: true });
             alert("Đã cập nhật mật khẩu thi mới thành công!");
         } catch(e) { console.error(e); alert("Lỗi khi thay đổi mật khẩu!"); }
-    };
+    }
 
-    window.updateAdminCredentials = async function() {
+    async function updateAdminCredentials() {
         if (!currentUser) return alert("Lỗi: Chưa kết nối hệ thống!");
         const newUser = document.getElementById('admin-setting-user').value.trim();
         const newPass = document.getElementById('admin-setting-pass').value.trim();
@@ -1756,14 +1704,14 @@
             currentAdminPass = newPass;
             alert("Cập nhật thông tin đăng nhập Admin thành công!");
         } catch(e) { console.error(e); alert("Lỗi kết nối khi đổi mật khẩu Admin."); }
-    };
+    }
 
-    window.deleteRecord = async function(docId) {
+    async function deleteRecord(docId) {
         if (!currentUser) return;
         if (confirm("Xóa kết quả này?")) await deleteDoc(doc(scoresCollection, docId));
-    };
+    }
 
-    window.deleteAllData = async function() {
+    async function deleteAllData() {
         if (!currentUser) return alert("Lỗi: Chưa kết nối hệ thống!");
         if (confirm("CẢNH BÁO: Hành động này sẽ xóa sạch TOÀN BỘ dữ liệu người chơi trong tất cả các đợt thi. Bạn có chắc chắn?")) {
             const snapshot = await getDocs(scoresCollection);
@@ -1777,21 +1725,21 @@
 
             alert("Đã xóa sạch toàn bộ cơ sở dữ liệu và đặt lại trạng thái chờ mở đề!");
         }
-    };
+    }
 
-    window.switchAdminTab = function(paneId, tabBtn) {
+    function switchAdminTab(paneId, tabBtn) {
         document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.admin-content-pane').forEach(p => p.classList.remove('active'));
         tabBtn.classList.add('active');
         document.getElementById(paneId).classList.add('active');
-    };
+    }
 
-    window.filterAdminByBatch = function() {
+    function filterAdminByBatch() {
         selectedBatchFilter = document.getElementById('admin-batch-filter').value;
         if (window.refreshAdminDashboard) window.refreshAdminDashboard();
-    };
+    }
 
-    window.openAdminDashboard = function() {
+    function openAdminDashboard() {
         if (!isAdminLoggedIn) { showScreen('admin-login-screen'); return; }
         showScreen('admin-screen');
         
@@ -1937,6 +1885,33 @@
             alert("Lỗi khi xuất dữ liệu!");
         }
     };
+
+    window.showScreen = showScreen;
+    window.toggleFullscreen = toggleFullscreen;
+    window.validateAndConfirmInfo = validateAndConfirmInfo;
+    window.backToInfo = backToInfo;
+    window.handleAdminLogin = handleAdminLogin;
+    window.logoutAdmin = logoutAdmin;
+    window.requestReplay = requestReplay;
+    window.approveReplayRequest = approveReplayRequest;
+    window.startQuiz = startQuiz;
+    window.startCountdownAndEnterQuiz = startCountdownAndEnterQuiz;
+    window.selectAnswer = selectAnswer;
+    window.nextQuestion = nextQuestion;
+    window.loadLeaderboard = loadLeaderboard;
+    window.showPresentation = showPresentation;
+    window.setExamStatus = setExamStatus;
+    window.saveBatchSettings = saveBatchSettings;
+    window.updateQuizPassword = updateQuizPassword;
+    window.updateAdminCredentials = updateAdminCredentials;
+    window.deleteRecord = deleteRecord;
+    window.deleteAllData = deleteAllData;
+    window.switchAdminTab = switchAdminTab;
+    window.filterAdminByBatch = filterAdminByBatch;
+    window.openAdminDashboard = openAdminDashboard;
+    window.toggleSidebar = toggleSidebar;
+    window.updatePigSVG = updatePigSVG;
+    window.exportExcel = exportExcel;
 </script>
 </body>
 </html>
