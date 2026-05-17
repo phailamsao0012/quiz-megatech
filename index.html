@@ -85,9 +85,10 @@
         p.subtitle { font-size: 20px; color: #16a34a; margin-bottom: 25px; font-weight: 700; }
         
         .btn { padding: 16px 40px; font-size: 20px; font-weight: 800; font-family: 'Montserrat', sans-serif; color: #ffffff; background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); border: none; border-radius: 50px; cursor: pointer; transition: all 0.3s; box-shadow: 0 8px 20px rgba(21, 128, 61, 0.25); }
-        .btn:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 12px 30px rgba(21, 128, 61, 0.35); }
+        .btn:hover:not(:disabled) { transform: translateY(-3px) scale(1.02); box-shadow: 0 12px 30px rgba(21, 128, 61, 0.35); }
+        .btn:disabled { opacity: 0.7; cursor: not-allowed; }
         .btn.btn-outline { background: transparent; border: 2px solid #22c55e; color: #16a34a; box-shadow: none; }
-        .btn.btn-outline:hover { background: #f0fdf4; }
+        .btn.btn-outline:hover:not(:disabled) { background: #f0fdf4; }
         .btn-small { padding: 8px 20px; font-size: 14px; }
 
         .input-group { margin-bottom: 25px; width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 12px;}
@@ -213,6 +214,10 @@
         .btn-fullscreen:hover { background: #dcfce7; transform: translateY(-2px); }
         .btn-success { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
         .btn-success:hover { background: #bbf7d0; transform: translateY(-2px); }
+        
+        /* Nút Tạm Dừng */
+        .btn-pause { background: #fef08a; color: #854d0e; border: 1px solid #fde047; }
+        .btn-pause:hover { background: #fde047; transform: translateY(-2px); }
 
         #lock-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); z-index: 1000; display: none; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center;}
         #lock-overlay i { font-size: 80px; color: #f59e0b; margin-bottom: 20px; animation: pulse 2s infinite;}
@@ -288,11 +293,9 @@
 </head>
 <body>
 
-<!-- OVERLAY KHÓA BÀI THI -->
+<!-- OVERLAY KHÓA/TẠM DỪNG BÀI THI -->
 <div id="lock-overlay">
-    <i class="fa-solid fa-lock"></i>
-    <h2>BÀI THI ĐANG BỊ KHÓA</h2>
-    <p>Admin đã tạm dừng hệ thống. Bạn không thể thao tác chọn đáp án lúc này!</p>
+    <!-- Nội dung được tiêm từ JavaScript dựa vào trạng thái -->
 </div>
 
 <!-- OVERLAY ĐẾM NGƯỢC -->
@@ -450,10 +453,11 @@
                         <button class="action-btn btn-success" style="padding: 6px 12px; font-size: 12px;" onclick="saveBatchSettings()"><i class="fa-solid fa-floppy-disk"></i> Lưu</button>
                     </div>
 
-                    <!-- Trạng thái đợt thi (Mở / Khóa / Kết thúc) -->
+                    <!-- Trạng thái đợt thi (Mở / Khóa / Tạm Dừng / Kết thúc) -->
                     <div style="display: flex; gap: 4px; background: #f8fafc; padding: 4px; border-radius: 10px; border: 1px solid #e2e8f0;">
                         <button class="action-btn btn-success" id="admin-start-exam-btn" style="padding: 6px 12px; font-size: 12px;" onclick="setExamStatus('running')"><i class="fa-solid fa-play"></i> MỞ ĐỀ</button>
-                        <button class="action-btn btn-warning" id="admin-lock-exam-btn" style="padding: 6px 12px; font-size: 12px;" onclick="setExamStatus('idle')"><i class="fa-solid fa-pause"></i> KHÓA ĐỀ</button>
+                        <button class="action-btn btn-pause" id="admin-pause-exam-btn" style="padding: 6px 12px; font-size: 12px;" onclick="setExamStatus('paused')"><i class="fa-solid fa-circle-pause"></i> TẠM DỪNG</button>
+                        <button class="action-btn btn-warning" id="admin-lock-exam-btn" style="padding: 6px 12px; font-size: 12px;" onclick="setExamStatus('idle')"><i class="fa-solid fa-lock"></i> KHÓA ĐỀ</button>
                         <button class="action-btn btn-danger" id="admin-end-exam-btn" style="padding: 6px 12px; font-size: 12px;" onclick="setExamStatus('ended')"><i class="fa-solid fa-stop"></i> ĐÓNG ĐỀ</button>
                     </div>
 
@@ -576,6 +580,7 @@
     const SESSION_KEY = "megatech_quiz_session_v4";
     const QUESTIONS_KEY = "megatech_quiz_questions_v4";
     const TIMER_START_KEY = "megatech_quiz_start_time_v4";
+    const PAUSE_FREEZE_KEY = "megatech_quiz_freeze_time_v4"; // CHÌA KHÓA BẢO TOÀN THỜI GIAN
     
     // BIẾN QUẢN LÝ THỜI GIAN (Đếm ngược tổng thể cho toàn bộ 25 câu)
     let examDuration = 9; // 9 phút mặc định
@@ -588,7 +593,8 @@
     let globalUnsubscribe = null;
     let currentCorrectPassword = "220902"; 
     let currentBatchName = "Đợt 1 ngày 17/05/2026";
-    let examStatus = "idle"; // Mặc định AUTO KHÓA (idle: Khóa, running: Mở, ended: Đóng)
+    let examStatus = "idle"; // Mặc định AUTO KHÓA (idle: Khóa, running: Mở, paused: Tạm Dừng, ended: Đóng)
+    let previousExamStatus = "idle"; // Theo dõi trạng thái trước đó để bảo toàn bộ đếm
 
     // THÔNG TIN ĐĂNG NHẬP ADMIN TỪ FIREBASE
     let currentAdminUser = "admin";
@@ -641,45 +647,126 @@
     initAuth().then(() => {
         // Sau khi Auth thành công, lắng nghe cấu hình đợt thi Realtime từ Admin
         onSnapshot(globalSettingsRef, (docSnap) => {
-            if(docSnap.exists()) {
-                const data = docSnap.data();
-                
-                if (data.quizPassword) currentCorrectPassword = data.quizPassword;
-                if (data.batchName) currentBatchName = data.batchName;
-                if (data.examDuration) examDuration = parseInt(data.examDuration);
-                if (data.examStatus) examStatus = data.examStatus;
-                if (data.adminUsername) currentAdminUser = data.adminUsername;
-                if (data.adminPassword) currentAdminPass = data.adminPassword;
+            try {
+                if(docSnap.exists()) {
+                    const data = docSnap.data();
+                    
+                    if (data.quizPassword) currentCorrectPassword = data.quizPassword;
+                    if (data.batchName) currentBatchName = data.batchName;
+                    if (data.examDuration) examDuration = parseInt(data.examDuration);
+                    if (data.adminUsername) currentAdminUser = data.adminUsername;
+                    if (data.adminPassword) currentAdminPass = data.adminPassword;
+                    
+                    if (data.examStatus) {
+                        const newStatus = data.examStatus;
+                        
+                        // LOGIC BẢO TOÀN THỜI GIAN THI: (FREEZE TIMER)
+                        // Nếu chuyển TỪ trạng thái 'running' SANG bất kỳ trạng thái nào khác (paused, idle, ended) -> Đóng băng thời gian
+                        if (newStatus !== 'running' && previousExamStatus === 'running') {
+                            localStorage.setItem(PAUSE_FREEZE_KEY, Date.now().toString());
+                            clearInterval(timerInterval);
+                        } 
+                        // Nếu chuyển TỪ trạng thái khác VỀ 'running' -> Rã băng thời gian (Cộng thêm khoảng thời gian đã nghỉ vào điểm bắt đầu)
+                        else if (newStatus === 'running' && previousExamStatus !== 'running') {
+                            const freezeStart = localStorage.getItem(PAUSE_FREEZE_KEY);
+                            const origStart = localStorage.getItem(TIMER_START_KEY);
+                            if (freezeStart && origStart) {
+                                const timeOffline = Date.now() - parseInt(freezeStart);
+                                const newStartStamp = parseInt(origStart) + timeOffline;
+                                localStorage.setItem(TIMER_START_KEY, newStartStamp.toString());
+                                localStorage.removeItem(PAUSE_FREEZE_KEY);
+                            }
+                            // Tiếp tục chạy đồng hồ nếu họ đang ở màn hình thi
+                            if (document.getElementById('question-screen').classList.contains('active')) {
+                                startTimer();
+                            }
+                        }
 
-                handleLockStateChange();
-                updateWelcomeScreenUI();
-                syncAdminControlPanelValues();
+                        examStatus = newStatus;
+                        previousExamStatus = newStatus;
+                    }
 
-                // Lắng nghe lệnh MỞ ĐỀ: Kích hoạt đếm ngược nếu đang ở phòng chờ
-                if (examStatus === 'running' && document.getElementById('waiting-screen').classList.contains('active')) {
-                    startCountdownAndEnterQuiz();
+                    handleLockStateChange();
+                    updateWelcomeScreenUI();
+                    syncAdminControlPanelValues();
+
+                    // Lắng nghe lệnh MỞ ĐỀ: Kích hoạt đếm ngược nếu đang ở phòng chờ
+                    if (examStatus === 'running' && document.getElementById('waiting-screen').classList.contains('active')) {
+                        startCountdownAndEnterQuiz();
+                    }
+                } else {
+                    // AUTO KHÓA mặc định khi mới khởi tạo DB (examStatus: idle)
+                    setDoc(globalSettingsRef, { 
+                        quizPassword: "220902", 
+                        batchName: "Đợt 1 ngày 17/05/2026", 
+                        examDuration: 9, 
+                        examStatus: "idle", 
+                        adminUsername: "admin",
+                        adminPassword: "admin"
+                    });
                 }
-            } else {
-                // AUTO KHÓA mặc định khi mới khởi tạo DB (examStatus: idle)
-                setDoc(globalSettingsRef, { 
-                    quizPassword: "220902", 
-                    batchName: "Đợt 1 ngày 17/05/2026", 
-                    examDuration: 9, 
-                    examStatus: "idle", 
-                    adminUsername: "admin",
-                    adminPassword: "admin"
-                });
+            } catch (err) {
+                console.error("Lỗi khi xử lý snapshot cấu hình:", err);
             }
         });
+
+        // FAILSAFE WATCHER: Quét 1 giây/lần chống lỗi nghẽn đồng bộ hoặc đứt kết nối mạng ngắn hạn
+        setInterval(() => {
+            if (examStatus === 'running' && document.getElementById('waiting-screen').classList.contains('active') && !isCountingDown) {
+                startCountdownAndEnterQuiz();
+            }
+            if (document.getElementById('question-screen').classList.contains('active')) {
+                handleLockStateChange(); // Cập nhật liên tục trạng thái khóa/đóng/tạm dừng nếu mạng chậm
+            }
+        }, 1000);
 
         checkResumeSession();
     }).catch(e => console.log("Lỗi xác thực hệ thống Firebase", e));
 
-    // Xử lý màn hình khóa (Chỉ khóa khi đã vào bài thi nhưng bị Admin tạm dừng)
+    // Xử lý các màn hình Overlay khóa (Khóa, Đóng, hoặc Tạm Dừng)
     function handleLockStateChange() {
         const overlay = document.getElementById('lock-overlay');
-        if (examStatus === 'idle' && document.getElementById('question-screen').classList.contains('active')) {
-            overlay.style.display = 'flex';
+        
+        // Chỉ hiển thị lớp khóa/tạm dừng nếu thí sinh ĐANG Ở màn hình làm bài
+        if (document.getElementById('question-screen').classList.contains('active')) {
+            if (examStatus === 'paused') {
+                // XỬ LÝ LỆNH TẠM DỪNG
+                overlay.style.display = 'flex';
+                overlay.innerHTML = `
+                    <i class="fa-solid fa-circle-pause" style="color: #3b82f6;"></i>
+                    <h2>ĐỀ ĐANG TẠM DỪNG</h2>
+                    <p>Thời gian làm bài đã được đóng băng. Vui lòng chờ giám thị mở lại đề để tiếp tục!</p>
+                `;
+            } else if (examStatus === 'idle') {
+                // XỬ LÝ LỆNH KHÓA ĐỀ (Cũng coi như tạm dừng nhưng dùng icon khóa)
+                overlay.style.display = 'flex';
+                overlay.innerHTML = `
+                    <i class="fa-solid fa-lock"></i>
+                    <h2>BÀI THI ĐANG BỊ KHÓA</h2>
+                    <p>Admin đã tạm dừng hệ thống. Thời gian của bạn vẫn được bảo toàn. Vui lòng chờ!</p>
+                `;
+            } else if (examStatus === 'ended') {
+                // XỬ LÝ LỆNH ĐÓNG ĐỀ - KẾT THÚC BÀI THI NGAY LẬP TỨC
+                overlay.style.display = 'flex';
+                overlay.innerHTML = `
+                    <i class="fa-solid fa-stop-circle" style="color: #ef4444;"></i>
+                    <h2>BÀI THI ĐÃ KẾT THÚC</h2>
+                    <p>Giám thị đã ĐÓNG đề thi. Hệ thống đang tự động nộp bài của bạn...</p>
+                `;
+                
+                // Thu hồi nút bấm và tự động nộp bài sau 3s
+                const allBtns = document.querySelectorAll('.option-btn');
+                allBtns.forEach(btn => btn.classList.add('disabled'));
+                hasAnswered = true;
+                
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                    showEndScreen();
+                }, 3000);
+            } else {
+                // examStatus === 'running' -> Ẩn khóa, cho phép thi
+                overlay.style.display = 'none';
+            }
         } else {
             overlay.style.display = 'none';
         }
@@ -704,7 +791,7 @@
                 alertBox.style.borderColor = '#fca5a5';
                 confirmBtn.style.display = 'none';
             } else {
-                // Cho phép đăng nhập bất kể là đang Mở (running) hay đang Khóa (idle) để vào phòng chờ
+                // Cho phép đăng nhập bất kể là đang Mở, Khóa, hay Tạm dừng để vào phòng chờ
                 alertBox.style.display = 'none';
                 confirmBtn.style.display = 'block';
             }
@@ -727,11 +814,13 @@
 
         // Cập nhật hoạt động các nút bấm Trạng thái đề
         const startBtn = document.getElementById('admin-start-exam-btn');
+        const pauseBtn = document.getElementById('admin-pause-exam-btn');
         const lockBtn = document.getElementById('admin-lock-exam-btn');
         const endBtn = document.getElementById('admin-end-exam-btn');
 
-        if(startBtn && lockBtn && endBtn) {
+        if(startBtn && pauseBtn && lockBtn && endBtn) {
             startBtn.style.opacity = examStatus === 'running' ? '1' : '0.4';
+            pauseBtn.style.opacity = examStatus === 'paused' ? '1' : '0.4';
             lockBtn.style.opacity = examStatus === 'idle' ? '1' : '0.4';
             endBtn.style.opacity = examStatus === 'ended' ? '1' : '0.4';
         }
@@ -883,6 +972,7 @@
                             localStorage.removeItem(SESSION_KEY);
                             localStorage.removeItem(QUESTIONS_KEY);
                             localStorage.removeItem(TIMER_START_KEY);
+                            localStorage.removeItem(PAUSE_FREEZE_KEY);
                             alert("Yêu cầu thi lại của bạn đã được Admin phê duyệt! Trang thi sẽ được làm mới ngay bây giờ.");
                             location.reload();
                         }
@@ -899,13 +989,20 @@
                     } else {
                         showScreen('question-screen');
                         loadQuestion();
-                        startTimer();
+                        // Chỉ chạy tiếp timer nếu hệ thống đang RUNNING
+                        if (examStatus === 'running') {
+                            startTimer();
+                        } else {
+                            // Cập nhật lại thanh giao diện timer dựa trên thời điểm bị đóng băng
+                            timerTick(); 
+                        }
                         handleLockStateChange();
                     }
                 } else {
                     localStorage.removeItem(SESSION_KEY);
                     localStorage.removeItem(QUESTIONS_KEY);
                     localStorage.removeItem(TIMER_START_KEY);
+                    localStorage.removeItem(PAUSE_FREEZE_KEY);
                 }
             } catch(e) { console.log("Lỗi khôi phục session cũ", e); }
         }
@@ -960,6 +1057,7 @@
         const deptInput = document.getElementById('player-dept').value.trim();
         const roleInput = document.getElementById('player-role').value.trim();
         const enteredPassword = document.getElementById('quiz-password').value.trim();
+        const startBtn = document.getElementById('start-btn');
         
         if (examStatus === 'ended') { alert("Kỳ thi hiện đang đóng bởi giám thị!"); return; }
 
@@ -973,6 +1071,12 @@
             alert("Mật khẩu vào bài thi không chính xác!");
             document.getElementById('quiz-password').focus();
             return;
+        }
+
+        // Tắt nút để tránh ấn liên tục
+        if (startBtn) {
+            startBtn.disabled = true;
+            startBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ĐANG XỬ LÝ...';
         }
 
         playerName = nameInput; playerDept = deptInput; playerRole = roleInput;
@@ -1009,6 +1113,7 @@
                 });
                 localStorage.setItem(SESSION_KEY, currentDocId);
                 localStorage.setItem(QUESTIONS_KEY, JSON.stringify(gameQuestions));
+                localStorage.removeItem(PAUSE_FREEZE_KEY); // Clean up mọi freeze cũ (nếu có)
 
                 // Lắng nghe lệnh duyệt Reset từ Admin
                 onSnapshot(doc(scoresCollection, currentDocId), (userDoc) => {
@@ -1016,17 +1121,32 @@
                         localStorage.removeItem(SESSION_KEY);
                         localStorage.removeItem(QUESTIONS_KEY);
                         localStorage.removeItem(TIMER_START_KEY);
+                        localStorage.removeItem(PAUSE_FREEZE_KEY);
                         alert("Yêu cầu thi lại của bạn đã được Admin phê duyệt! Đang làm mới...");
                         location.reload();
                     }
                 });
-            } catch (e) { console.log(e); alert("Lỗi kết nối đến máy chủ."); return;}
+            } catch (e) { 
+                console.log(e); 
+                alert("Lỗi kết nối đến máy chủ."); 
+                if (startBtn) {
+                    startBtn.disabled = false;
+                    startBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> VÀO PHÒNG CHỜ';
+                }
+                return;
+            }
         }
 
         if (examStatus === 'running') {
             startCountdownAndEnterQuiz();
         } else {
             showScreen('waiting-screen');
+        }
+        
+        // Khôi phục nút bấm sau khi xử lý thành công (nếu họ refresh page)
+        if (startBtn) {
+            startBtn.disabled = false;
+            startBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> VÀO PHÒNG CHỜ';
         }
     };
 
@@ -1054,6 +1174,7 @@
                 // Lưu vết thời gian thực tế bắt đầu làm bài
                 const startTimeStamp = Date.now();
                 localStorage.setItem(TIMER_START_KEY, startTimeStamp.toString());
+                localStorage.removeItem(PAUSE_FREEZE_KEY); // Clean up
                 
                 if (currentDocId && db) {
                     updateDoc(doc(scoresCollection, currentDocId), { 
@@ -1068,7 +1189,7 @@
         }, 1000);
     };
 
-    // ===== TIMER LOGIC (ĐẾM NGƯỢC TỔNG BÀI THI) =====
+    // ===== TIMER LOGIC (ĐẾM NGƯỢC TỔNG BÀI THI KÈM PAUSE) =====
     function startTimer() {
         clearInterval(timerInterval);
         timerInterval = setInterval(timerTick, 100);
@@ -1078,7 +1199,14 @@
         const savedStartTime = localStorage.getItem(TIMER_START_KEY);
         if (!savedStartTime) return;
 
-        const elapsedSeconds = (Date.now() - parseInt(savedStartTime)) / 1000;
+        let calculateTime = Date.now();
+        // NẾU ĐANG BỊ ĐÓNG BĂNG/TẠM DỪNG: Dùng mốc thời gian đã bị đóng băng để tính toán thay vì thời gian hiện tại
+        const freezeStart = localStorage.getItem(PAUSE_FREEZE_KEY);
+        if (freezeStart) {
+            calculateTime = parseInt(freezeStart);
+        }
+
+        const elapsedSeconds = (calculateTime - parseInt(savedStartTime)) / 1000;
         totalTimeTaken = elapsedSeconds;
         
         const totalDurationSeconds = examDuration * 60;
@@ -1152,13 +1280,13 @@
             optionsGrid.appendChild(btn);
         });
 
-        startTimer();
-        handleLockStateChange(); // Chặn an toàn trường hợp màn load câu tiếp theo đúng lúc bị khóa
+        if (examStatus === 'running') startTimer();
+        handleLockStateChange(); // Chặn an toàn trường hợp màn load câu tiếp theo đúng lúc bị khóa/tạm dừng
     }
 
     window.selectAnswer = function(index, btnElement) {
-        // CHỐT CHẶN: Nếu đang khóa đề thì không cho phép click đáp án
-        if (hasAnswered || examStatus === 'idle') return;
+        // CHỐT CHẶN: Nếu đang Tạm Dừng, Khóa đề hoặc Đóng đề thì không cho phép click đáp án
+        if (hasAnswered || examStatus !== 'running') return;
         hasAnswered = true;
         
         const q = gameQuestions[currentQuestion];
@@ -1329,7 +1457,8 @@
     window.setExamStatus = async function(status) {
         try {
             await setDoc(globalSettingsRef, { examStatus: status }, { merge: true });
-            alert(`Đã cập nhật trạng thái kỳ thi thành công: ${status === 'running' ? 'ĐANG MỞ ĐỀ' : status === 'idle' ? 'ĐANG KHÓA ĐỀ' : 'ĐÃ ĐÓNG ĐỀ'}`);
+            let msg = status === 'running' ? 'ĐANG MỞ ĐỀ' : status === 'idle' ? 'ĐANG KHÓA ĐỀ' : status === 'paused' ? 'ĐANG TẠM DỪNG' : 'ĐÃ ĐÓNG ĐỀ';
+            alert(`Đã cập nhật trạng thái kỳ thi thành công: ${msg}`);
         } catch(e) { console.error(e); alert("Lỗi khi thay đổi trạng thái kỳ thi!"); }
     };
 
@@ -1398,6 +1527,7 @@
             localStorage.removeItem(SESSION_KEY);
             localStorage.removeItem(QUESTIONS_KEY);
             localStorage.removeItem(TIMER_START_KEY);
+            localStorage.removeItem(PAUSE_FREEZE_KEY);
             alert("Đã xóa sạch toàn bộ cơ sở dữ liệu!");
         }
     };
