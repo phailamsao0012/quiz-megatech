@@ -183,7 +183,7 @@
         .admin-user-card-info h4 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .admin-user-card-score { text-align: right; margin-right: 15px; flex-shrink: 0; }
 
-        .chart-view-container { display: flex; align-items: flex-end; justify-content: flex-start; gap: 12px; padding: 40px 25px 50px 25px; min-height: 420px; overflow-x: auto; background: #f8fafc; border-radius: 16px; border: 1px solid #e2e8f0; position: relative; width: 100%; -webkit-overflow-scrolling: touch; }
+        .chart-view-container { display: flex; align-items: flex-end; justify-content: flex-start; gap: 12px; padding: 40px 25px 50px 25px; min-height: 550px; overflow-x: auto; background: #f8fafc; border-radius: 16px; border: 1px solid #e2e8f0; position: relative; width: 100%; -webkit-overflow-scrolling: touch; }
         .quiz-container:fullscreen .chart-view-container { min-height: calc(100vh - 250px); }
 
         .chart-bar-item { display: flex; flex-direction: column; align-items: center; width: 85px; flex-shrink: 0; position: relative; }
@@ -1463,7 +1463,7 @@
                     `;
                     gridContainer.innerHTML += cardHtml;
 
-                    const barHeight = Math.max(25, (row.score / 250) * 280); 
+                    const barHeight = Math.max(25, (row.score / 250) * 380); 
                     const chartItemHtml = `
                         <div class="chart-bar-item">
                             <span class="chart-bar-score">${row.score}đ</span>
