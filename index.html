@@ -12,6 +12,7 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
+        /* CHỐNG BÔI ĐEN VÀ COPY GIAN LẬN */
         body {
             background-color: #f0fdf4;
             background-image: radial-gradient(circle at top right, #dcfce7 0%, transparent 50%), radial-gradient(circle at bottom left, #bbf7d0 0%, transparent 50%);
@@ -271,29 +272,52 @@
                 <input type="text" id="player-name" class="name-input" placeholder="Họ và tên (VD: Nguyễn Văn A)" required autocomplete="off">
                 <input type="text" id="player-dept" class="name-input" placeholder="Phòng ban (VD: Kinh doanh)" required autocomplete="off">
                 
-                <!-- BỘ TẠO AVATAR VỊT MEGATECH CUTE -->
+                <!-- BỔ SUNG LẠI Ô CHỨC VỤ ĐỂ TRÁNH LỖI JS -->
+                <input type="text" id="player-role" class="name-input" placeholder="Chức vụ (VD: Nhân viên)" required autocomplete="off">
+                
+                <!-- BỘ TẠO AVATAR VỊT MEGATECH CUTE (MỞ RỘNG) -->
                 <div class="avatar-maker-box">
                     <div class="avatar-preview-wrapper">
                         <img id="duck-preview" src="" alt="Duck Avatar">
                     </div>
                     <div class="maker-controls">
                         <h4 style="font-family: 'Montserrat'; color: #14532d; font-size: 15px; margin-bottom: 5px;">Tạo "Vịt Megatech" của bạn</h4>
+                        
                         <select id="duck-color" class="maker-select" onchange="updateDuckSVG()">
                             <option value="yellow">Màu Vàng (Truyền thống)</option>
                             <option value="white">Màu Trắng (Tâm hồn đẹp)</option>
                             <option value="brown">Màu Nâu (Ngầu)</option>
+                            <option value="black">Màu Đen (Hắc ám)</option>
+                            <option value="blue">Màu Xanh Dương (Hy vọng)</option>
+                            <option value="green">Màu Xanh Lá (Megatech)</option>
+                            <option value="pink">Màu Hồng (Bánh bèo)</option>
+                            <option value="purple">Màu Tím (Mộng mơ)</option>
+                            <option value="red">Màu Đỏ (Rực rỡ)</option>
                         </select>
+                        
                         <select id="duck-hat" class="maker-select" onchange="updateDuckSVG()">
                             <option value="none">Không đội mũ</option>
                             <option value="hardhat">Mũ Kỹ sư Megatech</option>
                             <option value="cap">Mũ lưỡi trai Năng động</option>
                             <option value="crown">Vương miện VIP</option>
+                            <option value="magichat">Mũ Phù thủy</option>
+                            <option value="chefhat">Mũ Đầu bếp</option>
+                            <option value="halo">Vòng Thiên thần</option>
+                            <option value="headphones">Tai nghe DJ</option>
+                            <option value="ninja">Khăn rằn Ninja</option>
                         </select>
+                        
                         <select id="duck-acc" class="maker-select" onchange="updateDuckSVG()">
                             <option value="none">Không phụ kiện</option>
                             <option value="glasses">Kính tri thức</option>
+                            <option value="sunglasses">Kính râm đen</option>
                             <option value="tie">Cà vạt Chuyên nghiệp</option>
                             <option value="scarf">Khăn quàng Cute</option>
+                            <option value="goldchain">Dây chuyền vàng</option>
+                            <option value="mask">Khẩu trang y tế</option>
+                            <option value="bowtie">Nơ bướm Đỏ</option>
+                            <option value="mustache">Râu kẽm</option>
+                            <option value="blush">Má hồng</option>
                         </select>
                     </div>
                 </div>
@@ -394,7 +418,6 @@
                 
                 <button class="btn btn-outline" id="request-replay-btn" style="margin-top: 25px; display: none; font-size: 16px; padding: 12px 25px;" onclick="requestReplay()"><i class="fa-solid fa-rotate-left"></i> Gửi yêu cầu thi lại lên Admin</button>
                 
-                <!-- NÚT ADMIN Ở BẢNG TỔNG KẾT BỊ ẨN KHI KHÔNG PHẢI LÀ ADMIN, NGƯỜI CHƠI CHỈ THẤY BẢNG ĐIỂM -->
                 <div id="admin-access-end" style="margin-top: 25px; padding-top: 20px; border-top: 1px dashed #bbf7d0;">
                     <button onclick="showScreen('admin-login-screen')" style="background: transparent; border: none; color: #64748b; font-weight: bold; cursor: pointer; font-size: 15px; text-decoration: underline;"><i class="fa-solid fa-user-shield"></i> Truy cập Quản trị viên (Admin)</button>
                 </div>
@@ -486,7 +509,6 @@
             <h1 style="font-size: 40px; margin-bottom: 30px; text-align: center;"><i class="fa-solid fa-book-open-reader"></i> ĐÁP ÁN CHÍNH THỨC</h1>
             <div class="presentation-grid" id="presentation-container" style="padding-bottom: 100px;"></div>
             
-            <!-- NÚT NỔI GHIM CỐ ĐỊNH Ở GÓC PHẢI DƯỚI CÙNG CHO TRÌNH CHIẾU -->
             <button class="btn" style="position: fixed; bottom: 30px; right: 30px; z-index: 1000; background: #ffffff; color: #10b981; border: 2px solid #10b981; box-shadow: 0 10px 25px rgba(0,0,0,0.2);" onclick="openAdminDashboard()">
                 <i class="fa-solid fa-arrow-left"></i> QUAY LẠI ADMIN
             </button>
@@ -585,28 +607,74 @@
 
     let isFirebaseListening = false;
 
-    // === HỆ THỐNG TẠO AVATAR VỊT ===
+    // === HỆ THỐNG TẠO AVATAR VỊT MỞ RỘNG (9x9x9) ===
     function generateDuckSVG(colorStr, hatType, accType) {
+        // 1. CHỌN MÀU LÔNG (9 MÀU)
         let bodyColor = '#fde047'; // yellow
         if (colorStr === 'white') bodyColor = '#f8fafc';
-        if (colorStr === 'brown') bodyColor = '#78350f';
+        else if (colorStr === 'brown') bodyColor = '#78350f';
+        else if (colorStr === 'black') bodyColor = '#334155';
+        else if (colorStr === 'blue') bodyColor = '#bae6fd';
+        else if (colorStr === 'green') bodyColor = '#86efac';
+        else if (colorStr === 'pink') bodyColor = '#fbcfe8';
+        else if (colorStr === 'purple') bodyColor = '#d8b4fe';
+        else if (colorStr === 'red') bodyColor = '#fca5a5';
 
+        // 2. CHỌN MŨ (9 LOẠI)
         let hatSvg = '';
+        let hasNinja = false;
+        
         if (hatType === 'hardhat') {
             hatSvg = `<path d="M 25 35 Q 50 10 75 35 Z" fill="#f59e0b"/><rect x="20" y="35" width="60" height="5" rx="2" fill="#f59e0b"/><circle cx="50" cy="25" r="5" fill="#ffffff" opacity="0.8"/>`;
         } else if (hatType === 'cap') {
             hatSvg = `<path d="M 30 35 Q 50 15 70 35 Z" fill="#ef4444"/><rect x="25" y="35" width="45" height="5" rx="2" fill="#dc2626"/><path d="M 65 35 L 85 35 L 80 40 L 65 40 Z" fill="#ef4444"/>`;
         } else if (hatType === 'crown') {
             hatSvg = `<path d="M 30 15 L 35 35 L 70 35 L 70 15 L 60 25 L 50 10 L 40 25 Z" fill="#fbbf24"/><circle cx="30" cy="15" r="3" fill="#ef4444"/><circle cx="50" cy="10" r="3" fill="#ef4444"/><circle cx="70" cy="15" r="3" fill="#ef4444"/>`;
+        } else if (hatType === 'magichat') {
+            hatSvg = `<polygon points="35,35 65,35 50,5" fill="#6b21a8"/><ellipse cx="50" cy="35" rx="25" ry="5" fill="#9333ea"/>`;
+        } else if (hatType === 'chefhat') {
+            hatSvg = `<path d="M 30 35 L 30 20 Q 20 15 35 5 Q 50 -5 65 5 Q 80 15 70 20 L 70 35 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/><rect x="25" y="30" width="50" height="6" fill="#f8fafc"/>`;
+        } else if (hatType === 'halo') {
+            hatSvg = `<ellipse cx="50" cy="15" rx="18" ry="6" fill="none" stroke="#fde047" stroke-width="4"/><line x1="50" y1="21" x2="50" y2="35" stroke="#fde047" stroke-width="2"/>`;
+        } else if (hatType === 'headphones') {
+            hatSvg = `<path d="M 22 45 A 28 28 0 0 1 78 45" fill="none" stroke="#1e293b" stroke-width="4"/><rect x="15" y="35" width="12" height="25" rx="4" fill="#ef4444"/><rect x="73" y="35" width="12" height="25" rx="4" fill="#ef4444"/>`;
+        } else if (hatType === 'flower') {
+            hatSvg = `<circle cx="35" cy="25" r="8" fill="#fca5a5"/><circle cx="27" cy="30" r="8" fill="#fca5a5"/><circle cx="43" cy="30" r="8" fill="#fca5a5"/><circle cx="35" cy="38" r="8" fill="#fca5a5"/><circle cx="35" cy="30" r="6" fill="#fde047"/>`;
+        } else if (hatType === 'ninja') {
+            hasNinja = true;
+            // Ninja band is drawn before eyes in the normal flow, so we re-draw eyes inside here to guarantee they are visible
+            hatSvg = `<rect x="25" y="42" width="50" height="12" fill="#ef4444"/><path d="M 25 42 L 15 55 L 25 50 Z" fill="#dc2626"/>
+                      <circle cx="41" cy="48" r="4" fill="#1e293b"/><circle cx="71" cy="48" r="4" fill="#1e293b"/>
+                      <circle cx="42" cy="47" r="1.5" fill="white"/><circle cx="72" cy="47" r="1.5" fill="white"/>`;
         }
 
+        // 3. CHỌN PHỤ KIỆN (9 LOẠI)
         let accSvg = '';
         if (accType === 'glasses') {
-            accSvg = `<rect x="35" y="42" width="12" height="12" rx="3" fill="none" stroke="#1e293b" stroke-width="2"/><rect x="65" y="42" width="12" height="12" rx="3" fill="none" stroke="#1e293b" stroke-width="2"/><line x1="47" y1="48" x2="65" y2="48" stroke="#1e293b" stroke-width="2"/>`;
+            accSvg = `<rect x="33" y="42" width="14" height="12" rx="3" fill="none" stroke="#1e293b" stroke-width="2"/><rect x="63" y="42" width="14" height="12" rx="3" fill="none" stroke="#1e293b" stroke-width="2"/><line x1="47" y1="48" x2="63" y2="48" stroke="#1e293b" stroke-width="2"/>`;
+        } else if (accType === 'sunglasses') {
+            accSvg = `<rect x="32" y="43" width="16" height="10" rx="2" fill="#0f172a"/><rect x="62" y="43" width="16" height="10" rx="2" fill="#0f172a"/><line x1="48" y1="46" x2="62" y2="46" stroke="#0f172a" stroke-width="3"/>`;
         } else if (accType === 'tie') {
             accSvg = `<path d="M 45 75 L 55 75 L 52 95 L 50 98 L 48 95 Z" fill="#ef4444"/><polygon points="48,70 52,70 55,75 45,75" fill="#dc2626"/>`;
         } else if (accType === 'scarf') {
             accSvg = `<rect x="28" y="70" width="44" height="8" rx="4" fill="#3b82f6"/><path d="M 60 75 L 65 95 L 55 90 Z" fill="#2563eb"/>`;
+        } else if (accType === 'goldchain') {
+            accSvg = `<path d="M 32 68 Q 50 85 68 68" fill="none" stroke="#eab308" stroke-width="4" stroke-dasharray="6,2"/><circle cx="50" cy="78" r="6" fill="#eab308"/>`;
+        } else if (accType === 'mask') {
+            accSvg = `<rect x="36" y="50" width="28" height="14" rx="4" fill="#bae6fd"/><line x1="36" y1="52" x2="25" y2="48" stroke="#bae6fd" stroke-width="2"/><line x1="64" y1="52" x2="75" y2="48" stroke="#bae6fd" stroke-width="2"/>`;
+        } else if (accType === 'bowtie') {
+            accSvg = `<polygon points="43,67 43,77 57,72" fill="#ef4444"/><polygon points="57,67 57,77 43,72" fill="#ef4444"/><circle cx="50" cy="72" r="3" fill="#b91c1c"/>`;
+        } else if (accType === 'mustache') {
+            accSvg = `<path d="M 38 60 Q 45 56 50 60 Q 55 56 62 60" fill="none" stroke="#1e293b" stroke-width="3" stroke-linecap="round"/>`;
+        } else if (accType === 'blush') {
+            accSvg = `<circle cx="32" cy="55" r="5" fill="#f9a8d4" opacity="0.8"/><circle cx="68" cy="55" r="5" fill="#f9a8d4" opacity="0.8"/>`;
+        }
+
+        // Nếu KHÔNG PHẢI ninja thì render mắt bình thường (vì Ninja tự đè mắt lên băng rằn)
+        let eyesSvg = '';
+        if (!hasNinja) {
+            eyesSvg = `<circle cx="41" cy="48" r="4" fill="#1e293b"/><circle cx="71" cy="48" r="4" fill="#1e293b"/>
+                       <circle cx="42" cy="47" r="1.5" fill="white"/><circle cx="72" cy="47" r="1.5" fill="white"/>`;
         }
 
         const svgContent = `
@@ -624,19 +692,18 @@
                 <path d="M 25 55 Q 15 65 25 75 Q 35 65 25 55 Z" fill="${bodyColor}" filter="brightness(0.9)"/>
                 <path d="M 75 55 Q 85 65 75 75 Q 65 65 75 55 Z" fill="${bodyColor}" filter="brightness(0.9)"/>
                 
-                <!-- Mặt -->
-                <circle cx="41" cy="48" r="4" fill="#1e293b"/>
-                <circle cx="71" cy="48" r="4" fill="#1e293b"/>
-                <circle cx="42" cy="47" r="1.5" fill="white"/>
-                <circle cx="72" cy="47" r="1.5" fill="white"/>
+                <!-- Mũ/Headband (Ninja vẽ mắt luôn) -->
+                ${hatSvg}
+                
+                <!-- Mặt & Mắt (Nếu chưa có) -->
+                ${eyesSvg}
                 
                 <!-- Mỏ -->
                 <path d="M 45 52 Q 56 48 67 52 Q 60 58 52 58 Q 45 55 45 52 Z" fill="#f97316"/>
                 <path d="M 48 55 Q 56 60 64 55 Z" fill="#ea580c"/>
                 
-                <!-- Phụ kiện & Mũ -->
+                <!-- Phụ kiện đeo ngoài cùng -->
                 ${accSvg}
-                ${hatSvg}
             </svg>
         `;
         return `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svgContent)))}`;
@@ -994,11 +1061,15 @@
         }
     }
 
+    // HÀM XÁC NHẬN THÔNG TIN ĐÃ FIX LỖI "player-role"
     function validateAndConfirmInfo() {
         const nameInputEl = document.getElementById('player-name');
+        const deptInputEl = document.getElementById('player-dept');
+        const roleInputEl = document.getElementById('player-role');
+
         const nameInput = nameInputEl ? nameInputEl.value.trim() : "";
-        const deptInput = document.getElementById('player-dept').value.trim();
-        const roleInput = document.getElementById('player-role').value.trim();
+        const deptInput = deptInputEl ? deptInputEl.value.trim() : "";
+        const roleInput = roleInputEl ? roleInputEl.value.trim() : "";
 
         if (nameInput.toUpperCase() === 'NAMDZAI') { openAdminDashboard(); return; }
         if (examStatus === 'ended') return alert("Lỗi: Đề thi đã kết thúc. Không thể thực hiện xác nhận thông tin lúc này!");
@@ -1127,12 +1198,15 @@
         if (!currentUser) return alert("Chưa kết nối được máy chủ, vui lòng đợi thêm 1 giây và thử lại!");
 
         const nameInputEl = document.getElementById('player-name');
-        const nameInput = nameInputEl ? nameInputEl.value.trim() : "";
-        const deptInput = document.getElementById('player-dept').value.trim();
-        const roleInput = document.getElementById('player-role').value.trim();
+        const deptInputEl = document.getElementById('player-dept');
+        const roleInputEl = document.getElementById('player-role');
         const enteredPassword = document.getElementById('quiz-password').value.trim();
         const startBtn = document.getElementById('start-btn');
         
+        const nameInput = nameInputEl ? nameInputEl.value.trim() : "";
+        const deptInput = deptInputEl ? deptInputEl.value.trim() : "";
+        const roleInput = roleInputEl ? roleInputEl.value.trim() : "";
+
         if (examStatus === 'ended') return alert("Kỳ thi hiện đang đóng bởi giám thị!");
         if (!nameInput || !deptInput || !roleInput) { alert("Thông tin cá nhân bị thiếu. Vui lòng điền đầy đủ!"); backToInfo(); return; }
         if (enteredPassword !== currentCorrectPassword) { alert("Mật khẩu vào bài thi không chính xác!"); document.getElementById('quiz-password').focus(); return; }
@@ -1740,7 +1814,6 @@
     // Đăng ký toàn bộ hàm tương tác với giao diện HTML ra môi trường Global (Window)
     // =========================================================================
     window.showScreen = showScreen;
-    // Đã xóa window.processAvatarUpload để tránh gây lỗi ReferenceError
     window.toggleFullscreen = toggleFullscreen;
     window.validateAndConfirmInfo = validateAndConfirmInfo;
     window.backToInfo = backToInfo;
