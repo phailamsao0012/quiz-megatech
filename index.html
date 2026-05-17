@@ -23,11 +23,15 @@
             min-height: 100vh;
             font-family: 'Nunito', sans-serif;
             color: #166534;
-            overflow-x: hidden;
+            /* Đã sửa: Cho phép cuộn dọc tự nhiên trên mobile nếu nội dung dài */
+            overflow-x: hidden; 
+            overflow-y: auto;
             user-select: none;
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
+            /* Đã thêm: Padding để không dính sát viền trên thiết bị nhỏ */
+            padding: 20px; 
         }
 
         .quiz-container {
@@ -41,7 +45,8 @@
             border-radius: 24px;
             box-shadow: 0 15px 50px rgba(34, 197, 94, 0.15);
             position: relative;
-            overflow: hidden;
+            /* Đã sửa: Cho phép cuộn nội dung bên trong container thay vì ẩn đi */
+            overflow: hidden; 
             display: flex;
             flex-direction: column;
             transition: all 0.3s ease;
@@ -86,6 +91,7 @@
         .btn:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 12px 30px rgba(21, 128, 61, 0.35); }
         .btn.btn-outline { background: transparent; border: 2px solid #22c55e; color: #16a34a; box-shadow: none; }
         .btn.btn-outline:hover { background: #f0fdf4; }
+        .btn-small { padding: 8px 20px; font-size: 14px; }
 
         .input-group { margin-bottom: 25px; width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 12px;}
         .name-input { width: 100%; padding: 15px 25px; font-size: 18px; font-family: 'Nunito', sans-serif; font-weight: 700; background: #ffffff; color: #14532d; border: 2px solid #86efac; border-radius: 16px; outline: none; transition: all 0.3s; box-shadow: 0 5px 15px rgba(34, 197, 94, 0.03); }
@@ -104,33 +110,11 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-        .avatar-upload-box:hover {
-            border-color: #22c55e;
-            background: #f0fdf4;
-        }
-        .avatar-preview-img {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid #22c55e;
-            background: #f0fdf4;
-        }
-        .avatar-upload-text {
-            text-align: left;
-            flex-grow: 1;
-        }
-        .avatar-upload-text h4 {
-            font-size: 16px;
-            font-weight: 800;
-            color: #14532d;
-            font-family: 'Montserrat';
-        }
-        .avatar-upload-text p {
-            font-size: 13px;
-            color: #16a34a;
-            font-weight: 600;
-        }
+        .avatar-upload-box:hover { border-color: #22c55e; background: #f0fdf4; }
+        .avatar-preview-img { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 3px solid #22c55e; background: #f0fdf4; }
+        .avatar-upload-text { text-align: left; flex-grow: 1; }
+        .avatar-upload-text h4 { font-size: 16px; font-weight: 800; color: #14532d; font-family: 'Montserrat'; }
+        .avatar-upload-text p { font-size: 13px; color: #16a34a; font-weight: 600; }
 
         /* Timer/Lock Overlay Styles */
         .timer-container { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 20px; }
@@ -165,7 +149,6 @@
         /* End Screen & Leaderboard */
         .end-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; width: 95%; max-width: 1100px; }
         
-        /* CỐ ĐỊNH CHIỀU CAO KHUNG ĐỂ CHỐNG LỖI CUỘN TRÊN DESKTOP */
         .end-card { background: #ffffff; border: 2px solid #bbf7d0; padding: 40px; border-radius: 24px; text-align: center; box-shadow: 0 20px 50px rgba(34, 197, 94, 0.1); height: 480px; display: flex; flex-direction: column; justify-content: center;}
         .leaderboard-box { background: #ffffff; border: 2px solid #bbf7d0; border-radius: 24px; padding: 30px; text-align: left; box-shadow: 0 20px 50px rgba(34, 197, 94, 0.1); height: 480px; display: flex; flex-direction: column;}
         
@@ -181,16 +164,7 @@
         /* Admin Screen & Tab */
         .admin-box { background: #ffffff; padding: 30px; border-radius: 24px; width: 95%; max-width: 1240px; box-shadow: 0 20px 50px rgba(34, 197, 94, 0.15); text-align: left; max-height: 90vh; border: 2px solid #bbf7d0; display: flex; flex-direction: column;}
         
-        /* Khi Admin ở chế độ Toàn màn hình */
-        .quiz-container:fullscreen .admin-box {
-            width: 100vw;
-            height: 100vh;
-            max-height: none;
-            max-width: none;
-            border-radius: 0;
-            border: none;
-            padding: 40px;
-        }
+        .quiz-container:fullscreen .admin-box { width: 100vw; height: 100vh; max-height: none; max-width: none; border-radius: 0; border: none; padding: 40px; }
 
         .admin-title { font-size: 28px; color: #14532d; font-family: 'Montserrat', sans-serif; margin-bottom: 15px; border-bottom: 2px solid #bbf7d0; padding-bottom: 15px; display: flex; justify-content: space-between; align-items: center; font-weight: 900; flex-shrink: 0; flex-wrap: wrap; gap: 15px;}
         
@@ -201,7 +175,6 @@
         .admin-content-pane { display: none; flex-grow: 1; overflow-y: auto; }
         .admin-content-pane.active { display: block; }
 
-        /* GRID VIEW 2 CỘT ADMIN */
         .admin-grid-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .admin-user-card { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 10px 15px; display: flex; align-items: center; gap: 12px; position: relative;}
         .admin-user-card-rank { font-family: 'Montserrat'; font-weight: 900; font-size: 20px; color: #15803d; width: 35px;}
@@ -210,44 +183,12 @@
         .admin-user-card-info h4 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .admin-user-card-score { text-align: right; margin-right: 15px; flex-shrink: 0; }
 
-        /* CHART VIEW ADMIN - SỬA LỖI VUỐT SANG NGANG */
-        .chart-view-container { 
-            display: flex; 
-            align-items: flex-end; 
-            justify-content: flex-start; /* CHÌA KHÓA: Đổi từ 'center' sang 'flex-start' để không bị khóa cuộn ngang và lẹm mép trái khi nội dung tràn */
-            gap: 12px; 
-            padding: 40px 25px 50px 25px; /* Thêm padding hai đầu để tạo khoảng trống thẩm mỹ khi cuộn kịch */
-            min-height: 420px; 
-            overflow-x: auto; 
-            background: #f8fafc; 
-            border-radius: 16px; 
-            border: 1px solid #e2e8f0; 
-            position: relative; 
-            width: 100%; 
-            -webkit-overflow-scrolling: touch; /* Cho phép vuốt mượt mà trên các thiết bị di động */
-        }
-        
-        /* Khi Admin ở chế độ Toàn màn hình thì kéo dãn biểu đồ cao lên */
-        .quiz-container:fullscreen .chart-view-container {
-            min-height: calc(100vh - 250px);
-        }
+        .chart-view-container { display: flex; align-items: flex-end; justify-content: flex-start; gap: 12px; padding: 40px 25px 50px 25px; min-height: 420px; overflow-x: auto; background: #f8fafc; border-radius: 16px; border: 1px solid #e2e8f0; position: relative; width: 100%; -webkit-overflow-scrolling: touch; }
+        .quiz-container:fullscreen .chart-view-container { min-height: calc(100vh - 250px); }
 
         .chart-bar-item { display: flex; flex-direction: column; align-items: center; width: 85px; flex-shrink: 0; position: relative; }
-        
-        /* HIỆU ỨNG CỘT "MỌC" TỪ DƯỚI LÊN ĐẦY SINH ĐỘNG */
-        .chart-bar-col { 
-            width: 38px; 
-            background: linear-gradient(to top, #16a34a, #22c55e); 
-            border-radius: 6px 6px 0 0; 
-            position: relative; 
-            transform-origin: bottom;
-            animation: growUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-            box-shadow: 0 4px 10px rgba(34, 197, 94, 0.3); 
-        }
-        @keyframes growUp {
-            from { transform: scaleY(0); }
-            to { transform: scaleY(1); }
-        }
+        .chart-bar-col { width: 38px; background: linear-gradient(to top, #16a34a, #22c55e); border-radius: 6px 6px 0 0; position: relative; transform-origin: bottom; animation: growUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; box-shadow: 0 4px 10px rgba(34, 197, 94, 0.3); }
+        @keyframes growUp { from { transform: scaleY(0); } to { transform: scaleY(1); } }
 
         .chart-bar-score { font-family: 'Montserrat'; font-weight: 900; font-size: 14px; color: #15803d; margin-bottom: 3px; }
         .chart-bar-time { font-size: 11px; font-weight: bold; color: #d97706; margin-bottom: 3px; }
@@ -255,11 +196,6 @@
         .chart-bar-name { font-size: 11px; font-weight: 800; color: #14532d; text-align: center; margin-top: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
 
         .table-responsive { overflow-x: auto; width: 100%; border-radius: 12px; border: 1px solid #dcfce7; flex-grow: 1;}
-        .admin-table { width: 100%; border-collapse: collapse; font-size: 15px; color: #166534; min-width: 800px;}
-        .admin-table th { background: #dcfce7; color: #14532d; padding: 15px; text-align: left; position: sticky; top: 0; font-family: 'Montserrat'; font-weight: 800; text-transform: uppercase; z-index: 2;}
-        .admin-table td { padding: 12px 15px; border-bottom: 1px solid #dcfce7; font-weight: 600;}
-        .admin-table tr:hover { background-color: #f0fdf4; }
-        
         .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; display: inline-block;}
         .status-badge.playing { background: #fef3c7; color: #d97706; border: 1px solid #fcd34d;}
         .status-badge.done { background: #dcfce7; color: #15803d; border: 1px solid #86efac;}
@@ -281,38 +217,48 @@
         .btn-success { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
         .btn-success:hover { background: #bbf7d0; transform: translateY(-2px); }
 
-        /* Lock Overlay */
         #lock-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); z-index: 1000; display: none; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center;}
         #lock-overlay i { font-size: 80px; color: #f59e0b; margin-bottom: 20px; animation: pulse 2s infinite;}
         #lock-overlay h2 { font-family: 'Montserrat'; font-size: 36px; margin-bottom: 15px; color: #f8fafc;}
         #lock-overlay p { font-size: 20px; color: #94a3b8; max-width: 600px;}
 
-        /* Presentation Screen & Options Grid */
         .presentation-grid { display: grid; grid-template-columns: 1fr; gap: 20px; width: 100%; max-width: 1000px; margin: 0 auto; text-align: left;}
         .p-card { background: white; border: 2px solid #bbf7d0; border-radius: 16px; padding: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);}
         .p-q { font-family: 'Montserrat'; font-size: 20px; color: #14532d; font-weight: 800; margin-bottom: 15px;}
         .p-options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         
-        @media (max-width: 768px) {
-            .p-options-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
         .shape { position: absolute; opacity: 0.15; z-index: 1; pointer-events: none; color: #86efac;}
         .shape-1 { top: -20px; left: -20px; font-size: 400px; transform: rotate(-15deg); }
         .shape-2 { bottom: -50px; right: -50px; font-size: 500px; transform: rotate(15deg); }
 
-        @media (max-width: 900px) {
-            .end-layout { grid-template-columns: 1fr; }
-        }
+        @media (max-width: 900px) { .end-layout { grid-template-columns: 1fr; } }
         @media (max-width: 768px) {
-            body { align-items: flex-start; }
-            .quiz-container { width: 100%; height: 100vh; max-height: none; border-radius: 0; border: none; box-shadow: none; overflow-y: auto;}
+            body { 
+                /* Đã sửa: Bỏ align-items: flex-start để tránh bị cắt top khi cuộn */
+                padding: 0; /* Xóa padding body trên mobile để container full màn */
+                display: block; /* Đổi thành block thay vì flex để cuộn mượt hơn trên mobile */
+            }
+            .quiz-container { 
+                width: 100%; 
+                min-height: 100vh; /* Sửa thành min-height thay vì height cứng */
+                height: auto; 
+                max-height: none; 
+                border-radius: 0; 
+                border: none; 
+                box-shadow: none; 
+                /* Đã thêm: Cho phép cuộn dọc */
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch; /* Hỗ trợ cuộn mượt iOS */
+            }
             .header { padding: 12px 20px; }
             .logo-box img { height: 40px; }
             .score-display { font-size: 14px; padding: 6px 12px; }
-            .screen { padding: 20px 15px; justify-content: flex-start; }
+            .screen { 
+                padding: 20px 15px 40px 15px; /* Thêm padding dưới để dễ cuộn */
+                justify-content: flex-start; 
+                height: auto; /* Chiều cao tự động */
+                min-height: calc(100vh - 80px); /* Bù trừ header */
+            }
             h1 { font-size: 34px; line-height: 1.2; margin-bottom: 15px; }
             p.subtitle { font-size: 16px; margin-bottom: 30px; }
             .name-input { font-size: 16px; padding: 15px 20px; }
@@ -327,8 +273,6 @@
             .controls { flex-direction: column; gap: 15px; width: 100%; align-items: stretch; margin-top: 20px;}
             .status-message { font-size: 18px; text-align: center; }
             .next-btn { font-size: 16px; padding: 15px; width: 100%; }
-            
-            /* MOBILE THÌ ĐỂ CHIỀU CAO TỰ ĐỘNG */
             .end-card, .leaderboard-box { padding: 25px 15px; border-radius: 16px; height: auto; max-height: none; }
             #final-score { font-size: 60px; }
             .admin-box { padding: 20px 15px; border-radius: 16px; }
@@ -336,6 +280,7 @@
             .admin-grid-layout { grid-template-columns: 1fr; }
             .shape-1 { font-size: 200px; }
             .shape-2 { font-size: 250px; bottom: 0; right: -20px; }
+            .p-options-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -354,10 +299,13 @@
 
     <div class="header">
         <div class="logo-box">
-            <!-- ĐÃ CẬP NHẬT TRỎ VỀ TÊN FILE ĐÚNG: logo_new.jpg -->
             <img id="main-header-logo" src="logo_new.jpg" alt="Megatech Logo" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'150\' height=\'50\'><text x=\'0\' y=\'35\' font-family=\'Arial\' font-size=\'30\' fill=\'#10b981\' font-weight=\'bold\'>MEGATECH</text></svg>'">
         </div>
-        <div class="score-display">CHUYÊN MÔN VÀ ATSH</div>
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <!-- Nút vào màn hình đăng nhập Admin -->
+            <button onclick="showScreen('admin-login-screen')" class="btn btn-outline btn-small"><i class="fa-solid fa-user-shield"></i> Admin</button>
+            <div class="score-display">CHUYÊN MÔN VÀ ATSH</div>
+        </div>
     </div>
     <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
 
@@ -399,6 +347,21 @@
         </div>
         
         <p style="margin-top: 15px; font-size: 14px; color: #64748b;">*Hệ thống sẽ tự động khôi phục nếu bạn bị văng ra ngoài.</p>
+    </div>
+
+    <!-- ADMIN LOGIN SCREEN -->
+    <div class="screen" id="admin-login-screen">
+        <div class="question-box" style="max-width: 500px; text-align: center;">
+            <h2 style="font-family: 'Montserrat'; color: #14532d; font-weight: 900; margin-bottom: 20px;"><i class="fa-solid fa-user-shield"></i> ĐĂNG NHẬP ADMIN</h2>
+            <div class="input-group" style="margin-top: 20px;">
+                <input type="text" id="admin-login-user" class="name-input" placeholder="Tên đăng nhập" autocomplete="off">
+                <input type="password" id="admin-login-pass" class="name-input" placeholder="Mật khẩu" style="margin-top: 10px;" autocomplete="off">
+                <div style="display: flex; gap: 10px; margin-top: 25px;">
+                    <button class="btn btn-outline" style="flex: 1;" onclick="showScreen('start-screen')"><i class="fa-solid fa-arrow-left"></i> Hủy</button>
+                    <button class="btn" style="flex: 1;" onclick="handleAdminLogin()"><i class="fa-solid fa-right-to-bracket"></i> Đăng nhập</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- QUESTION SCREEN -->
@@ -477,16 +440,24 @@
                         <button class="action-btn btn-danger" id="admin-end-exam-btn" style="padding: 6px 12px; font-size: 12px;" onclick="setExamStatus('ended')"><i class="fa-solid fa-stop"></i> ĐÓNG ĐỀ</button>
                     </div>
 
-                    <!-- Cấu hình mật khẩu -->
+                    <!-- Cấu hình mật khẩu bài thi -->
                     <div style="display: flex; align-items: center; gap: 8px; background: #f0fdf4; padding: 6px 12px; border-radius: 10px; border: 1px solid #bbf7d0;">
                         <span style="font-size: 13px; font-weight: bold; color: #14532d;"><i class="fa-solid fa-key"></i> Pass đề:</span>
                         <input type="text" id="admin-change-pass-input" style="width: 70px; padding: 5px; border-radius: 6px; border: 1px solid #86efac; font-weight: bold; text-align: center; font-size: 13px; color: #14532d;" value="220902">
                         <button class="action-btn btn-primary" style="padding: 6px 12px; font-size: 12px;" onclick="updateQuizPassword()"><i class="fa-solid fa-floppy-disk"></i> Lưu</button>
                     </div>
 
+                    <!-- Cấu hình tài khoản Admin -->
+                    <div style="display: flex; align-items: center; gap: 8px; background: #fdf4ff; padding: 6px 12px; border-radius: 10px; border: 1px solid #f5d0fe;">
+                        <span style="font-size: 13px; font-weight: bold; color: #701a75;"><i class="fa-solid fa-user-lock"></i> Đổi TK Admin:</span>
+                        <input type="text" id="admin-setting-user" style="width: 80px; padding: 5px; border-radius: 6px; border: 1px solid #e879f9; font-weight: bold; font-size: 13px; color: #701a75;" placeholder="Username">
+                        <input type="text" id="admin-setting-pass" style="width: 80px; padding: 5px; border-radius: 6px; border: 1px solid #e879f9; font-weight: bold; font-size: 13px; color: #701a75;" placeholder="Password">
+                        <button class="action-btn" style="background: #f0abfc; color: #4a044e; border: 1px solid #e879f9; padding: 6px 12px; font-size: 12px;" onclick="updateAdminCredentials()"><i class="fa-solid fa-floppy-disk"></i> Lưu</button>
+                    </div>
+
                     <button class="action-btn btn-primary" onclick="showPresentation()"><i class="fa-solid fa-person-chalkboard"></i> TRÌNH CHIẾU</button>
                     <button class="action-btn btn-danger" onclick="deleteAllData()"><i class="fa-solid fa-trash-can"></i> XÓA TẤT CẢ</button>
-                    <button class="action-btn btn-outline" onclick="location.reload()"><i class="fa-solid fa-right-from-bracket"></i> THOÁT</button>
+                    <button class="action-btn btn-outline" onclick="logoutAdmin()"><i class="fa-solid fa-right-from-bracket"></i> THOÁT</button>
                 </div>
             </div>
 
@@ -528,7 +499,6 @@
         <div class="admin-box" style="background: transparent; border: none; box-shadow: none; align-items: center;">
             <h1 style="font-size: 40px; margin-bottom: 30px; text-align: center;"><i class="fa-solid fa-book-open-reader"></i> ĐÁP ÁN CHÍNH THỨC</h1>
             <div class="presentation-grid" id="presentation-container"></div>
-            <!-- FIX: Thay onclick showScreen bị lỗi thành hàm openAdminDashboard toàn cục -->
             <button class="btn btn-outline" style="margin-top: 40px;" onclick="openAdminDashboard()"><i class="fa-solid fa-arrow-left"></i> QUAY LẠI ADMIN</button>
         </div>
     </div>
@@ -604,6 +574,11 @@
     let currentBatchName = "Đợt 1 ngày 17/05/2026";
     let examStatus = "running"; // idle (Khóa), running (Mở), ended (Đóng)
 
+    // THÔNG TIN ĐĂNG NHẬP ADMIN TỪ FIREBASE
+    let currentAdminUser = "admin";
+    let currentAdminPass = "admin";
+    let isAdminLoggedIn = false;
+
     // Khởi tạo Firebase và thực hiện xác thực bắt buộc theo quy định
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'quiz-megatech';
     let db, scoresCollection, globalSettingsRef, auth;
@@ -615,6 +590,18 @@
     // Sử dụng Strict Paths tuân thủ RULE 1
     scoresCollection = collection(db, 'artifacts', appId, 'public', 'data', 'live_scores');
     globalSettingsRef = doc(db, 'artifacts', appId, 'public', 'data', 'quiz_settings', 'global_state');
+
+    // HÀM HIỂN THỊ CÁC MÀN HÌNH
+    window.showScreen = function(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+        
+        // Clear login inputs when showing admin login
+        if(screenId === 'admin-login-screen') {
+            document.getElementById('admin-login-user').value = '';
+            document.getElementById('admin-login-pass').value = '';
+        }
+    };
 
     // Tiến hành xác thực trước khi truy vấn tuân thủ RULE 3
     const initAuth = async () => {
@@ -636,6 +623,8 @@
                 if (data.batchName) currentBatchName = data.batchName;
                 if (data.examDuration) examDuration = parseInt(data.examDuration);
                 if (data.examStatus) examStatus = data.examStatus;
+                if (data.adminUsername) currentAdminUser = data.adminUsername;
+                if (data.adminPassword) currentAdminPass = data.adminPassword;
 
                 handleLockStateChange();
                 updateWelcomeScreenUI();
@@ -647,13 +636,25 @@
                     quizPassword: "220902", 
                     batchName: "Đợt 1 ngày 17/05/2026", 
                     examDuration: 9, 
-                    examStatus: "running" 
+                    examStatus: "running",
+                    adminUsername: "admin",
+                    adminPassword: "admin"
                 });
             }
         });
 
         checkResumeSession();
     }).catch(e => console.log("Lỗi xác thực hệ thống Firebase", e));
+
+    // Xử lý màn hình khóa
+    function handleLockStateChange() {
+        const overlay = document.getElementById('lock-overlay');
+        if (isQuizLocked && document.getElementById('question-screen').classList.contains('active')) {
+            overlay.style.display = 'flex';
+        } else {
+            overlay.style.display = 'none';
+        }
+    }
 
     // Cập nhật cấu hình lên Welcome UI
     function updateWelcomeScreenUI() {
@@ -692,10 +693,14 @@
         const batchInput = document.getElementById('admin-batch-name-input');
         const durationInput = document.getElementById('admin-duration-input');
         const passInput = document.getElementById('admin-change-pass-input');
+        const userSetInput = document.getElementById('admin-setting-user');
+        const passSetInput = document.getElementById('admin-setting-pass');
 
         if (batchInput && document.activeElement !== batchInput) batchInput.value = currentBatchName;
         if (durationInput && document.activeElement !== durationInput) durationInput.value = examDuration;
         if (passInput && document.activeElement !== passInput) passInput.value = currentCorrectPassword;
+        if (userSetInput && document.activeElement !== userSetInput) userSetInput.value = currentAdminUser;
+        if (passSetInput && document.activeElement !== passSetInput) passSetInput.value = currentAdminPass;
 
         // Cập nhật hoạt động các nút bấm Trạng thái đề
         const startBtn = document.getElementById('admin-start-exam-btn');
@@ -784,15 +789,10 @@
 
     // ===== XÁC THỰC THÔNG TIN & HIỆN TRƯỜNG PASSWORD =====
     window.validateAndConfirmInfo = function() {
-        const nameInput = nameInputEl.value.trim();
+        const nameInputEl = document.getElementById('player-name');
+        const nameInput = nameInputEl ? nameInputEl.value.trim() : "";
         const deptInput = document.getElementById('player-dept').value.trim();
         const roleInput = document.getElementById('player-role').value.trim();
-
-        // Đi tắt vào Admin bằng pass bảo mật
-        if (nameInput.toUpperCase() === 'NAMDZAI') { 
-            openAdminDashboard(); 
-            return; 
-        }
 
         if (examStatus !== 'running') {
             alert("Lỗi: Đề thi đang bị đóng hoặc khóa. Không thể thực hiện xác nhận thông tin lúc này!");
@@ -818,6 +818,24 @@
     window.backToInfo = function() {
         document.getElementById('pass-input-group').style.display = 'none';
         document.getElementById('info-input-group').style.display = 'flex';
+    };
+
+    // ===== ĐĂNG NHẬP ADMIN =====
+    window.handleAdminLogin = function() {
+        const userInp = document.getElementById('admin-login-user').value.trim();
+        const passInp = document.getElementById('admin-login-pass').value.trim();
+
+        if (userInp === currentAdminUser && passInp === currentAdminPass) {
+            isAdminLoggedIn = true;
+            openAdminDashboard();
+        } else {
+            alert("Sai tên đăng nhập hoặc mật khẩu quản trị!");
+        }
+    };
+
+    window.logoutAdmin = function() {
+        isAdminLoggedIn = false;
+        showScreen('start-screen');
     };
 
     // ===== KIỂM TRA SESSION CŨ + CHỐNG LÀM LẠI REALTIME =====
@@ -911,7 +929,8 @@
 
     // ===== START QUIZ & RANDOMIZER =====
     window.startQuiz = async function() {
-        const nameInput = nameInputEl.value.trim();
+        const nameInputEl = document.getElementById('player-name');
+        const nameInput = nameInputEl ? nameInputEl.value.trim() : "";
         const deptInput = document.getElementById('player-dept').value.trim();
         const roleInput = document.getElementById('player-role').value.trim();
         const enteredPassword = document.getElementById('quiz-password').value.trim();
@@ -1200,7 +1219,7 @@
         }
     };
 
-    // ===== TRÌNH CHIẾU ĐÁP ÁN (ADMIN) - NÂNG CẤP HIỂN THỊ CẢ 4 ĐÁP ÁN =====
+    // ===== TRÌNH CHIẾU ĐÁP ÁN (ADMIN) =====
     window.showPresentation = function() {
         showScreen('presentation-screen');
         const container = document.getElementById('presentation-container');
@@ -1288,6 +1307,23 @@
         }
     };
 
+    window.updateAdminCredentials = async function() {
+        const newUser = document.getElementById('admin-setting-user').value.trim();
+        const newPass = document.getElementById('admin-setting-pass').value.trim();
+        if(!newUser || !newPass) {
+            alert("Tên đăng nhập và mật khẩu không được để trống!");
+            return;
+        }
+        try {
+            await updateDoc(globalSettingsRef, { adminUsername: newUser, adminPassword: newPass });
+            currentAdminUser = newUser;
+            currentAdminPass = newPass;
+            alert("Cập nhật thông tin đăng nhập Admin thành công!");
+        } catch(e) {
+            alert("Lỗi kết nối khi đổi mật khẩu Admin.");
+        }
+    }
+
     window.deleteRecord = async function(docId) {
         if (confirm("Xóa kết quả này?")) await deleteDoc(doc(scoresCollection, docId));
     };
@@ -1321,6 +1357,11 @@
     };
 
     window.openAdminDashboard = function() {
+        if (!isAdminLoggedIn) {
+            showScreen('admin-login-screen');
+            return;
+        }
+
         showScreen('admin-screen');
         const gridContainer = document.getElementById('admin-grid-container');
         const chartContainer = document.getElementById('admin-chart-container');
@@ -1440,9 +1481,6 @@
         });
     };
     
-    // Đăng ký dashboard admin và các hàm phụ trợ hoạt động trên window toàn cục
-    window.openAdminDashboard = openAdminDashboard;
-    window.approveReplayRequest = approveReplayRequest;
 </script>
 </body>
 </html>
