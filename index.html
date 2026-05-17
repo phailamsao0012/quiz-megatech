@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        /* CHỐNG BÔI ĐEN VÀ COPY GIAN LẬN */
         body {
             background-color: #f0fdf4;
             background-image: radial-gradient(circle at top right, #dcfce7 0%, transparent 50%), radial-gradient(circle at bottom left, #bbf7d0 0%, transparent 50%);
@@ -22,6 +24,10 @@
             font-family: 'Nunito', sans-serif;
             color: #166534;
             overflow-x: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
         }
 
         .quiz-container {
@@ -195,7 +201,7 @@
         .admin-content-pane { display: none; flex-grow: 1; overflow-y: auto; }
         .admin-content-pane.active { display: block; }
 
-        /* GRID VIEW 2 CỘT ADMIN (Tối ưu hóa gọn hơn để hiển thị 10 người cùng lúc) */
+        /* GRID VIEW 2 CỘT ADMIN */
         .admin-grid-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .admin-user-card { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 10px 15px; display: flex; align-items: center; gap: 12px; position: relative;}
         .admin-user-card-rank { font-family: 'Montserrat'; font-weight: 900; font-size: 20px; color: #15803d; width: 35px;}
@@ -204,8 +210,22 @@
         .admin-user-card-info h4 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .admin-user-card-score { text-align: right; margin-right: 15px; flex-shrink: 0; }
 
-        /* CHART VIEW ADMIN (Tối ưu hóa để hiển thị 10 cột trực quan nhất) */
-        .chart-view-container { display: flex; align-items: flex-end; justify-content: center; gap: 12px; padding: 40px 15px 50px 15px; min-height: 420px; overflow-x: auto; background: #f8fafc; border-radius: 16px; border: 1px solid #e2e8f0; position: relative; width: 100%; }
+        /* CHART VIEW ADMIN - SỬA LỖI VUỐT SANG NGANG */
+        .chart-view-container { 
+            display: flex; 
+            align-items: flex-end; 
+            justify-content: flex-start; /* CHÌA KHÓA: Đổi từ 'center' sang 'flex-start' để không bị khóa cuộn ngang và lẹm mép trái khi nội dung tràn */
+            gap: 12px; 
+            padding: 40px 25px 50px 25px; /* Thêm padding hai đầu để tạo khoảng trống thẩm mỹ khi cuộn kịch */
+            min-height: 420px; 
+            overflow-x: auto; 
+            background: #f8fafc; 
+            border-radius: 16px; 
+            border: 1px solid #e2e8f0; 
+            position: relative; 
+            width: 100%; 
+            -webkit-overflow-scrolling: touch; /* Cho phép vuốt mượt mà trên các thiết bị di động */
+        }
         
         /* Khi Admin ở chế độ Toàn màn hình thì kéo dãn biểu đồ cao lên */
         .quiz-container:fullscreen .chart-view-container {
@@ -213,7 +233,22 @@
         }
 
         .chart-bar-item { display: flex; flex-direction: column; align-items: center; width: 85px; flex-shrink: 0; position: relative; }
-        .chart-bar-col { width: 38px; background: linear-gradient(to top, #16a34a, #22c55e); border-radius: 6px 6px 0 0; position: relative; transition: height 0.5s ease-out; box-shadow: 0 4px 10px rgba(34, 197, 94, 0.3); }
+        
+        /* HIỆU ỨNG CỘT "MỌC" TỪ DƯỚI LÊN ĐẦY SINH ĐỘNG */
+        .chart-bar-col { 
+            width: 38px; 
+            background: linear-gradient(to top, #16a34a, #22c55e); 
+            border-radius: 6px 6px 0 0; 
+            position: relative; 
+            transform-origin: bottom;
+            animation: growUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            box-shadow: 0 4px 10px rgba(34, 197, 94, 0.3); 
+        }
+        @keyframes growUp {
+            from { transform: scaleY(0); }
+            to { transform: scaleY(1); }
+        }
+
         .chart-bar-score { font-family: 'Montserrat'; font-weight: 900; font-size: 14px; color: #15803d; margin-bottom: 3px; }
         .chart-bar-time { font-size: 11px; font-weight: bold; color: #d97706; margin-bottom: 3px; }
         .chart-bar-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid #22c55e; margin-top: 8px; background-color: #fff;}
@@ -228,6 +263,7 @@
         .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; display: inline-block;}
         .status-badge.playing { background: #fef3c7; color: #d97706; border: 1px solid #fcd34d;}
         .status-badge.done { background: #dcfce7; color: #15803d; border: 1px solid #86efac;}
+        .status-badge.warn { background: #fee2e2; color: #ef4444; border: 1px solid #fca5a5;}
         
         .delete-btn { background: #fee2e2; color: #ef4444; border: none; padding: 6px 10px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 14px;}
         .delete-btn:hover { background: #fecaca; transform: scale(1.1); }
@@ -472,38 +508,40 @@
       appId: "1:155994548331:web:91122725013381f932a92e"
     };
 
-    // DỮ LIỆU GỐC 25 CÂU
+    // DỮ LIỆU CÂU HỎI ĐÃ ĐƯỢC MÃ HÓA ĐÁP ÁN BẰNG BASE64 CHỐNG VIEW SOURCE GIAN LẬN
     const originalQuestions = [
-        { q: "Biện pháp hiệu quả để giảm ruồi lâu dài là:", options: ["Vệ sinh + sát trùng + goodkill", "Chỉ cần goodkill", "Chỉ mở quạt", "Sử dụng bẫy dính"], answer: 0 },
-        { q: "Tiêu chảy phân trắng ở heo con thường liên quan đến?", options: ["E.coli", "Cầu trùng", "Thiếu khoáng", "Viêm khớp"], answer: 0 },
-        { q: "Yếu tố nào làm tiêu chảy dễ bùng phát sau cai sữa?", options: ["Chuồng quá sáng", "Đổi cám đột ngột", "Tắm quá nhiều", "Heo ngủ nhiều"], answer: 1 },
-        { q: "Khi heo tiêu chảy nặng cần bổ sung gì?", options: ["Điện giải Gluco K-C", "Siêu vỗ béo Nutri Max", "Men tỏi", "Bogaru"], answer: 0 },
-        { q: "Triệu chứng thường gặp của Mycoplasma suis là?", options: ["Thiếu máu, nhợt nhạt", "Sưng chân", "Rụng lông", "Mù mắt"], answer: 0 },
-        { q: "Con đường lây truyền phổ biến của Mycoplasma suis là:", options: ["Thức ăn", "Không khí", "Mẹ truyền sang con", "Tiếp xúc trực tiếp"], answer: 2 },
-        { q: "Khi lợn thở bụng nghĩa là", options: ["Hệ hô hấp đang bị ảnh hưởng", "Heo đang đói", "Heo sắp ngủ", "Heo thiếu canxi"], answer: 0 },
-        { q: "Sau khi dùng kháng sinh dài ngày nên", options: ["Bổ sung men tiêu hóa, đào thải kháng sinh", "Cho uống nhiều nước", "Cho ăn nhiều để bù sức", "Tiêm kháng sinh trợ lực"], answer: 0 },
-        { q: "Loại kháng sinh chính trong sản phẩm Mycos của Megatech là gì", options: ["Oxytetraxylin", "Flofenicol", "Gentamicine", "Doxycycline"], answer: 0 },
-        { q: "Trong bệnh hô hấp phức hợp (PRDC), loại vi khuẩn nào là tác nhân gây bệnh Suyễn heo (ho khan, ho mửa)?", options: ["Actinobacillus pleuropneumoniae (APP)", "Mycoplasma hyopneumoniae", "Pasteurella multocida", "Salmonella choleraesuis"], answer: 1 },
-        { q: "Khi heo bị tiêu chảy cấp do dịch tiêu chảy cấp (PED), đặc điểm phân thường thấy là gì", options: ["Phân khô, vón cục", "Phân có lẫn máu và chất nhầy", "Phân lỏng, màu vàng, mùi tanh", "Phân xanh đen, thối khắm"], answer: 2 },
-        { q: "Khi heo có biểu hiện tiêu chảy phân trắng, phân vàng do nhiễm khuẩn sản phẩm nào của Megatech là lựa chọn điều trị hàng đầu?", options: ["FLO-DOXY", "GENTADOX", "OXYTETRACILINE", "Men tỏi"], answer: 1 },
-        { q: "Mycoplasma suis thường gây ra vấn đề gì trên heo?", options: ["Thiếu máu, da nhợt, chết thai", "Gãy chân", "Viêm móng", "Sưng khớp"], answer: 0 },
-        { q: "Khách hàng thường tin tưởng điều gì nhất?", options: ["Tư vấn đúng bệnh và hiệu quả thực tế", "Nói chuyện ngọt với khách hàng", "Một sản phẩm chữa mọi bệnh", "Cam kết khỏi 100%"], answer: 0 },
-        { q: "Triệu chứng đặc trưng nhất của bệnh Tai xanh trên lợn nái là gì?", options: ["Lợn bỏ cám", "Bụng chướng to", "Lợn con bị liệt 2 chân sau", "Sẩy thai hoặc đẻ con chết lưu"], answer: 3 },
-        { q: "Bệnh Mycoplasma suis chủ yếu tấn công vào cơ quan nào?", options: ["Hệ thống thần kinh trung ương", "Niêm mạc ruột non", "Hồng cầu", "Phế nang phổi"], answer: 2 },
-        { q: "Megatech Việt Nam cần xây dựng hình ảnh như thế nào?", options: ["Chuyên nghiệp - đồng hành - hiệu quả", "Giá rẻ bằng mọi cách", "Chỉ bán theo trend", "Không cần chăm sóc khách"], answer: 0 },
-        { q: "Điện giải có tác dụng chính gì trong thời tiết nắng nóng?", options: ["Làm vật nuôi ăn mạnh hơn", "Bù nước và khoáng chất", "Làm giảm tiếng kêu", "Giúp ngủ nhiều hơn"], answer: 1 },
-        { q: "Thời điểm phù hợp để bổ sung điện giải là:", options: ["Buổi trưa nắng gắt", "Khi vật nuôi sắp chết", "Trước và trong thời tiết nắng nóng", "Chỉ dùng mùa lạnh"], answer: 2 },
-        { q: "Đối tượng nào cần dùng điện giải nhiều trong mùa nóng?", options: ["Gia súc gia cầm nuôi mật độ cao, vừa tiêm vacine xong", "Vật nuôi đang và có dấu hiệu bệnh", "Vật nuôi vừa vận chuyển xa", "Tất cả đáp án trên"], answer: 3 },
-        { q: "Dấu hiệu xuất huyết đặc trưng của bệnh Dịch tả lợn", options: ["Xuất huyết vệt dài ở lưng", "Chỉ xuất huyết ở móng chân", "Không xuất huyết", "Xuất huyết lấm tấm như đinh ghim ở thận và niêm mạc"], answer: 3 },
-        { q: "Khi lợn bị Tai xanh, vùng da nào thường có biểu hiện", options: ["Lông trở nên móng mượt hơn", "Chỉ ở phần đuôi", "Tai, mõm và vùng bụng dưới", "Mũi và bốn chân"], answer: 2 },
-        { q: "Mục đích chính của việc dùng bổ trợ cùng kháng sinh là gì?", options: ["Hỗ trợ vật nuôi phục hồi tốt hơn", "Làm thuốc có màu đẹp hơn", "Để tăng giá trị đơn hàng", "Tăng mùi thức ăn"], answer: 0 },
-        { q: "Trong thời tiết nắng nóng, dùng kháng sinh nên kết hợp sản phẩm gì của Megatech", options: ["All zyme men tỏi đen", "Điện giải Gluco KC (tinh chất rau má)", "Bổ sung nhiều Gentadox", "Bổ sung Nutri Max"], answer: 1 },
-        { q: "Công ty Megatech có bao nhiêu sản phẩm thú y?", options: ["8", "9", "10", "11"], answer: 1 }
+        { q: "Biện pháp hiệu quả để giảm ruồi lâu dài là:", options: ["Vệ sinh + sát trùng + goodkill", "Chỉ cần goodkill", "Chỉ mở quạt", "Sử dụng bẫy dính"], answerHash: "MA==" }, // 0
+        { q: "Tiêu chảy phân trắng ở heo con thường liên quan đến?", options: ["E.coli", "Cầu trùng", "Thiếu khoáng", "Viêm khớp"], answerHash: "MA==" }, // 0
+        { q: "Yếu tố nào làm tiêu chảy dễ bùng phát sau cai sữa?", options: ["Chuồng quá sáng", "Đổi cám đột ngột", "Tắm quá nhiều", "Heo ngủ nhiều"], answerHash: "MQ==" }, // 1
+        { q: "Khi heo tiêu chảy nặng cần bổ sung gì?", options: ["Điện giải Gluco K-C", "Siêu vỗ béo Nutri Max", "Men tỏi", "Bogaru"], answerHash: "MA==" }, // 0
+        { q: "Triệu chứng thường gặp của Mycoplasma suis là?", options: ["Thiếu máu, nhợt nhạt", "Sưng chân", "Rụng lông", "Mù mắt"], answerHash: "MA==" }, // 0
+        { q: "Con đường lây truyền phổ biến của Mycoplasma suis là:", options: ["Thức ăn", "Không khí", "Mẹ truyền sang con", "Tiếp xúc trực tiếp"], answerHash: "Mg==" }, // 2
+        { q: "Khi lợn thở bụng nghĩa là", options: ["Hệ hô hấp đang bị ảnh hưởng", "Heo đang đói", "Heo sắp ngủ", "Heo thiếu canxi"], answerHash: "MA==" }, // 0
+        { q: "Sau khi dùng kháng sinh dài ngày nên", options: ["Bổ sung men tiêu hóa, đào thải kháng sinh", "Cho uống nhiều nước", "Cho ăn nhiều để bù sức", "Tiêm kháng sinh trợ lực"], answerHash: "MA==" }, // 0
+        { q: "Loại kháng sinh chính trong sản phẩm Mycos của Megatech là gì", options: ["Oxytetraxylin", "Flofenicol", "Gentamicine", "Doxycycline"], answerHash: "MA==" }, // 0
+        { q: "Trong bệnh hô hấp phức hợp (PRDC), loại vi khuẩn nào là tác nhân gây bệnh Suyễn heo (ho khan, ho mửa)?", options: ["Actinobacillus pleuropneumoniae (APP)", "Mycoplasma hyopneumoniae", "Pasteurella multocida", "Salmonella choleraesuis"], answerHash: "MQ==" }, // 1
+        { q: "Khi heo bị tiêu chảy cấp do dịch tiêu chảy cấp (PED), đặc điểm phân thường thấy là gì", options: ["Phân khô, vón cục", "Phân có lẫn máu và chất nhầy", "Phân lỏng, màu vàng, mùi tanh", "Phân xanh đen, thối khắm"], answerHash: "Mg==" }, // 2
+        { q: "Khi heo có biểu hiện tiêu chảy phân trắng, phân vàng do nhiễm khuẩn sản phẩm nào của Megatech là lựa chọn điều trị hàng đầu?", options: ["FLO-DOXY", "GENTADOX", "OXYTETRACILINE", "Men tỏi"], answerHash: "MQ==" }, // 1
+        { q: "Mycoplasma suis thường gây ra vấn đề gì trên heo?", options: ["Thiếu máu, da nhợt, chết thai", "Gãy chân", "Viêm móng", "Sưng khớp"], answerHash: "MA==" }, // 0
+        { q: "Khách hàng thường tin tưởng điều gì nhất?", options: ["Tư vấn đúng bệnh và hiệu quả thực tế", "Nói chuyện ngọt với khách hàng", "Một sản phẩm chữa mọi bệnh", "Cam kết khỏi 100%"], answerHash: "MA==" }, // 0
+        { q: "Triệu chứng đặc trưng nhất của bệnh Tai xanh trên lợn nái là gì?", options: ["Lợn bỏ cám", "Bụng chướng to", "Lợn con bị liệt 2 chân sau", "Sẩy thai hoặc đẻ con chết lưu"], answerHash: "Mw==" }, // 3
+        { q: "Bệnh Mycoplasma suis chủ yếu tấn công vào cơ quan nào?", options: ["Hệ thống thần kinh trung ương", "Niêm mạc ruột non", "Hồng cầu", "Phế nang phổi"], answerHash: "Mg==" }, // 2
+        { q: "Megatech Việt Nam cần xây dựng hình ảnh như thế nào?", options: ["Chuyên nghiệp - đồng hành - hiệu quả", "Giá rẻ bằng mọi cách", "Chỉ bán theo trend", "Không cần chăm sóc khách"], answerHash: "MA==" }, // 0
+        { q: "Điện giải có tác dụng chính gì trong thời tiết nắng nóng?", options: ["Làm vật nuôi ăn mạnh hơn", "Bù nước và khoáng chất", "Làm giảm tiếng kêu", "Giúp ngủ nhiều hơn"], answerHash: "MQ==" }, // 1
+        { q: "Thời điểm phù hợp để bổ sung điện giải là:", options: ["Buổi trưa nắng gắt", "Khi vật nuôi sắp chết", "Trước và trong thời tiết nắng nóng", "Chỉ dùng mùa lạnh"], answerHash: "Mg==" }, // 2
+        { q: "Đối tượng nào cần dùng điện giải nhiều trong mùa nóng?", options: ["Gia súc gia cầm nuôi mật độ cao, vừa tiêm vacine xong", "Vật nuôi đang và có dấu hiệu bệnh", "Vật nuôi vừa vận chuyển xa", "Tất cả đáp án trên"], answerHash: "Mw==" }, // 3
+        { q: "Dấu hiệu xuất huyết đặc trưng của bệnh Dịch tả lợn", options: ["Xuất huyết vệt dài ở lưng", "Chỉ xuất huyết ở móng chân", "Không xuất huyết", "Xuất huyết lấm tấm như đinh ghim ở thận và niêm mạc"], answerHash: "Mw==" }, // 3
+        { q: "Khi lợn bị Tai xanh, vùng da nào thường có biểu hiện", options: ["Lông trở nên móng mượt hơn", "Chỉ ở phần đuôi", "Tai, mõm và vùng bụng dưới", "Mũi và bốn chân"], answerHash: "Mg==" }, // 2
+        { q: "Mục đích chính của việc dùng bổ trợ cùng kháng sinh là gì?", options: ["Hỗ trợ vật nuôi phục hồi tốt hơn", "Làm thuốc có màu đẹp hơn", "Để tăng giá trị đơn hàng", "Tăng mùi thức ăn"], answerHash: "MA==" }, // 0
+        { q: "Trong thời tiết nắng nóng, dùng kháng sinh nên kết hợp sản phẩm gì của Megatech", options: ["All zyme men tỏi đen", "Điện giải Gluco KC (tinh chất rau má)", "Bổ sung nhiều Gentadox", "Bổ sung Nutri Max"], answerHash: "MQ==" }, // 1
+        { q: "Công ty Megatech có bao nhiêu sản phẩm thú y?", options: ["8", "9", "10", "11"], answerHash: "MQ==" } // 1
     ];
 
     let currentQuestion = 0, score = 0, hasAnswered = false;
     let playerName = "", playerDept = "", playerRole = "", currentDocId = "", playerAvatarBase64 = "";
     let gameQuestions = []; 
+    let tabFocusWarnings = 0; // Đếm số lần chuyển tab gian lận
+    let cheatFlag = false; // Đánh dấu đã gian lận
     const shapesArr = ["A", "B", "C", "D"];
     const SESSION_KEY = "megatech_quiz_session_v3";
     const QUESTIONS_KEY = "megatech_quiz_questions_v3";
@@ -561,7 +599,6 @@
         reader.onload = function(e) {
             const img = new Image();
             img.onload = function() {
-                // Tạo Canvas để nén ảnh tối đa (Tránh quá giới hạn dung lượng lưu trữ)
                 const canvas = document.createElement('canvas');
                 const MAX_WIDTH = 120; // Nén nhỏ vừa đủ hiện avatar
                 const MAX_HEIGHT = 120;
@@ -585,10 +622,8 @@
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, width, height);
 
-                // Xuất ảnh nén chất lượng thấp (0.6) để lưu trữ tối ưu
                 playerAvatarBase64 = canvas.toDataURL('image/jpeg', 0.6);
                 
-                // Hiển thị preview lên giao diện
                 document.getElementById('avatar-preview').src = playerAvatarBase64;
                 document.getElementById('upload-status-title').innerText = "Đã tải ảnh lên thành công!";
                 document.getElementById('upload-status-title').style.color = "#15803d";
@@ -640,6 +675,39 @@
         const val = nameInputEl.value;
         if (val.toUpperCase() === 'NAMDZAI') {
             nameInputEl.type = 'password'; // Chuyển đổi thành dấu ● ẩn đi lập tức
+        }
+    });
+
+    // CHỐNG GIAN LẬN: CHẶN CHUỘT PHẢI, F12, PHÍM TỔ HỢP TRA CỨU
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.addEventListener('keydown', e => {
+        if (e.keyCode === 123) { // F12
+            e.preventDefault();
+            return false;
+        }
+        if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) { // Ctrl+Shift+I / J
+            e.preventDefault();
+            return false;
+        }
+        if (e.ctrlKey && e.keyCode === 85) { // Ctrl+U (Xem source)
+            e.preventDefault();
+            return false;
+        }
+    });
+
+    // CHỐNG CHUYỂN TAB TRA CỨU (TAB FOCUS DETECTION)
+    window.addEventListener('blur', () => {
+        // Chỉ phạt khi đang làm bài thi thực tế
+        if (document.getElementById('question-screen').classList.contains('active') && !hasAnswered && !isQuizLocked) {
+            tabFocusWarnings++;
+            if (tabFocusWarnings >= 3) {
+                cheatFlag = true;
+                alert("Cảnh báo: Bạn đã chuyển màn hình quá 3 lần! Hệ thống sẽ tự động dừng bài thi và ghi nhận lỗi.");
+                score = Math.max(0, score - 30); // Phạt trừ điểm
+                showEndScreen();
+            } else {
+                alert(`Cảnh báo chuyển tab lần ${tabFocusWarnings}/3! Vui lòng không thoát ứng dụng hoặc chuyển tab tra cứu.`);
+            }
         }
     });
 
@@ -723,7 +791,7 @@
                     totalTimeTaken = data.totalTime || 0;
                     gameQuestions = JSON.parse(savedQuestions);
 
-                    if (data.status === 'Hoàn thành' || currentQuestion >= gameQuestions.length) {
+                    if (data.status === 'Hoàn thành' || data.status === 'Gian lận' || currentQuestion >= gameQuestions.length) {
                         showEndScreen();
                     } else {
                         showScreen('question-screen');
@@ -759,17 +827,22 @@
         }
 
         playerName = nameInput; playerDept = deptInput; playerRole = roleInput;
-        currentQuestion = 0; score = 0; totalTimeTaken = 0;
+        currentQuestion = 0; score = 0; totalTimeTaken = 0; tabFocusWarnings = 0; cheatFlag = false;
 
-        // Xáo trộn đáp án và câu hỏi
+        // Giải mã cấu trúc đáp án ngẫu nhiên từ Base64 an toàn tuyệt đối
         gameQuestions = originalQuestions.map(q => {
-            const correctText = q.options[q.answer]; 
+            const correctIndex = parseInt(atob(q.answerHash));
+            const correctText = q.options[correctIndex]; 
             const newOptions = [...q.options];
             for (let i = newOptions.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [newOptions[i], newOptions[j]] = [newOptions[j], newOptions[i]];
             }
-            return { ...q, options: newOptions, answer: newOptions.indexOf(correctText) };
+            return { 
+                q: q.q, 
+                options: newOptions, 
+                answer: newOptions.indexOf(correctText) 
+            };
         });
         
         for (let i = gameQuestions.length - 1; i > 0; i--) {
@@ -890,7 +963,6 @@
         const allBtns = document.querySelectorAll('.option-btn');
         allBtns.forEach(btn => btn.classList.add('disabled'));
         
-        // CHẾ ĐỘ THI MÙ: CHỈ HIỆN ĐÃ LƯU ĐÁP ÁN, KHÔNG HIỆN XANH ĐỎ
         btnElement.classList.add('selected');
         
         if (index === q.answer) {
@@ -925,12 +997,20 @@
         document.getElementById('final-score').innerText = score;
         document.getElementById('final-time').innerText = totalTimeTaken.toFixed(2) + 's';
         
+        let targetStatus = cheatFlag ? 'Gian lận' : 'Hoàn thành';
         if (db && currentDocId) {
-            updateDoc(doc(db, "live_scores", currentDocId), { status: 'Hoàn thành' }).catch(e => console.log(e));
+            updateDoc(doc(db, "live_scores", currentDocId), { status: targetStatus }).catch(e => console.log(e));
         }
 
         const maxScore = gameQuestions.length * 10;
-        let msg = score === maxScore ? "Quá xuất sắc! Chuyên gia Megatech!" : (score >= maxScore * 0.7 ? "Rất tốt, một chút nữa là hoàn hảo!" : "Đã hoàn thành bài kiểm tra!");
+        let msg = "";
+        if (cheatFlag) {
+            msg = "Bài làm của bạn bị hệ thống gắn cờ cảnh báo do chuyển đổi tab liên tục!";
+            document.getElementById('feedback-msg').style.color = '#ef4444';
+        } else {
+            msg = score === maxScore ? "Quá xuất sắc! Chuyên gia Megatech!" : (score >= maxScore * 0.7 ? "Rất tốt, một chút nữa là hoàn hảo!" : "Đã hoàn thành bài kiểm tra!");
+            document.getElementById('feedback-msg').style.color = '#14532d';
+        }
         document.getElementById('feedback-msg').innerText = msg;
         
         showScreen('end-screen');
@@ -959,8 +1039,14 @@
                 const isMe = row.id === currentDocId ? 'current-user' : '';
                 const nameDisplay = isMe ? `${row.name} (Bạn)` : row.name;
                 
-                // fallback svg cho avatar rỗng
                 const avatarUrl = row.avatar || "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23a855f7'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>";
+
+                let displayStatus = 'Đang làm...';
+                if (row.status === 'Hoàn thành') {
+                    displayStatus = 'Đã nộp';
+                } else if (row.status === 'Gian lận') {
+                    displayStatus = '⚠️ Vi phạm';
+                }
 
                 lbList.innerHTML += `
                     <div class="lb-item ${isMe}">
@@ -968,7 +1054,7 @@
                         <img class="lb-avatar" src="${avatarUrl}" alt="Avatar">
                         <div>
                             <div>${nameDisplay}</div>
-                            <div style="font-size: 11px; color: #64748b; font-weight: normal;">${row.dept || ''} - ${row.status === 'Hoàn thành' ? 'Đã nộp' : 'Đang làm...'}</div>
+                            <div style="font-size: 11px; color: #64748b; font-weight: normal;">${row.dept || ''} - ${displayStatus}</div>
                         </div>
                         <div class="lb-time">${(row.totalTime || 0).toFixed(2)}s</div>
                         <div class="lb-score">${row.score}đ</div>
@@ -987,9 +1073,10 @@
         container.innerHTML = '';
 
         originalQuestions.forEach((q, i) => {
+            const correctIndex = parseInt(atob(q.answerHash));
             let optionsHtml = '';
             q.options.forEach((opt, optIdx) => {
-                const isCorrect = optIdx === q.answer;
+                const isCorrect = optIdx === correctIndex;
                 const optionLetter = shapesArr[optIdx];
                 if (isCorrect) {
                     optionsHtml += `
@@ -1026,7 +1113,6 @@
         } catch(e) { alert("Lỗi khi thay đổi trạng thái!"); }
     };
 
-    // Cập nhật mật khẩu bài thi lên Firebase Realtime
     window.updateQuizPassword = async function() {
         const newPass = document.getElementById('admin-change-pass-input').value.trim();
         if(!newPass) {
@@ -1054,13 +1140,10 @@
         }
     };
 
-    // CHUYỂN ĐỔI TAB ADMIN (GRID VIEW / LIVE CHART)
     window.switchAdminTab = function(paneId, tabBtn) {
-        // Tắt tất cả tabs và nội dung
         document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.admin-content-pane').forEach(p => p.classList.remove('active'));
 
-        // Kích hoạt tab được chọn
         tabBtn.classList.add('active');
         document.getElementById(paneId).classList.add('active');
     };
@@ -1076,7 +1159,6 @@
             const data = []; 
             snapshot.forEach(doc => data.push({ id: doc.id, ...doc.data() }));
             
-            // Sắp xếp: Điểm cao nhất ➡️ Thời gian ít nhất
             data.sort((a, b) => { 
                 if (b.score !== a.score) return b.score - a.score; 
                 return (a.totalTime || 0) - (b.totalTime || 0); 
@@ -1091,9 +1173,13 @@
                 return; 
             }
 
-            // ĐỔ DỮ LIỆU VÀO TAB 1: GRID VIEW 2 CỘT (Đã tối ưu gọn gàng hơn để xem được hơn 10 người dễ dàng)
             data.forEach((row, index) => {
-                const badgeClass = row.status === 'Hoàn thành' ? 'done' : 'playing';
+                let badgeClass = 'playing';
+                if (row.status === 'Hoàn thành') {
+                    badgeClass = 'done';
+                } else if (row.status === 'Gian lận') {
+                    badgeClass = 'warn';
+                }
                 const avatarUrl = row.avatar || "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23a855f7'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>";
                 
                 let medal = `#${index + 1}`;
@@ -1119,9 +1205,6 @@
                 `;
                 gridContainer.innerHTML += cardHtml;
 
-                // ĐỔ DỮ LIỆU VÀO TAB 2: LIVE CHART VIEW
-                // Chiều cao cột tương ứng với điểm số (Tối đa 250đ)
-                // Hỗ trợ hiển thị mượt mà khi co dãn màn hình lớn
                 const barHeight = Math.max(25, (row.score / 250) * 280); 
                 const chartItemHtml = `
                     <div class="chart-bar-item">
