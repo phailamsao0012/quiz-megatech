@@ -365,6 +365,9 @@
             <i class="fa-solid fa-clock-rotate-left" style="font-size: 60px; color: #3b82f6; margin-bottom: 20px; animation: spin 3s linear infinite;"></i>
             <h2 style="font-family: 'Montserrat'; color: #1e3a8a; font-size: 32px; margin-bottom: 15px; font-weight: 900;">ĐANG CHỜ MỞ ĐỀ</h2>
             <p style="font-size: 18px; color: #64748b; line-height: 1.5; font-weight: bold;">Bạn đã ghi danh thành công. Vui lòng giữ nguyên màn hình và chờ Giám thị mở khóa bài thi để bắt đầu!</p>
+            
+            <!-- THÊM NÚT ADMIN Ở PHÒNG CHỜ -->
+            <button onclick="showScreen('admin-login-screen')" class="btn btn-outline" style="margin-top: 30px; font-size: 14px; padding: 10px 20px;"><i class="fa-solid fa-user-shield"></i> Đăng nhập Admin</button>
         </div>
     </div>
 
@@ -376,7 +379,8 @@
                 <input type="text" id="admin-login-user" class="name-input" placeholder="Tên đăng nhập" autocomplete="off">
                 <input type="password" id="admin-login-pass" class="name-input" placeholder="Mật khẩu" style="margin-top: 10px;" autocomplete="off">
                 <div style="display: flex; gap: 10px; margin-top: 25px;">
-                    <button class="btn btn-outline" style="flex: 1;" onclick="showScreen('start-screen')"><i class="fa-solid fa-arrow-left"></i> Hủy</button>
+                    <!-- SỬA NÚT HỦY ĐỂ QUAY VỀ ĐÚNG TRẠNG THÁI -->
+                    <button class="btn btn-outline" style="flex: 1;" onclick="location.reload()"><i class="fa-solid fa-arrow-left"></i> Hủy</button>
                     <button class="btn" style="flex: 1;" onclick="handleAdminLogin()"><i class="fa-solid fa-right-to-bracket"></i> Đăng nhập</button>
                 </div>
             </div>
@@ -419,6 +423,11 @@
                 
                 <!-- NÚT GỬI YÊU CẦU THI LẠI -->
                 <button class="btn btn-outline" id="request-replay-btn" style="margin-top: 25px; display: none; font-size: 16px; padding: 12px 25px;" onclick="requestReplay()"><i class="fa-solid fa-rotate-left"></i> Gửi yêu cầu thi lại lên Admin</button>
+                
+                <!-- THÊM NÚT ADMIN Ở BẢNG TỔNG KẾT -->
+                <div style="margin-top: 25px; padding-top: 20px; border-top: 1px dashed #bbf7d0;">
+                    <button onclick="showScreen('admin-login-screen')" style="background: transparent; border: none; color: #64748b; font-weight: bold; cursor: pointer; font-size: 15px; text-decoration: underline; transition: color 0.2s;" onmouseover="this.style.color='#10b981'" onmouseout="this.style.color='#64748b'"><i class="fa-solid fa-user-shield"></i> Truy cập Quản trị viên (Admin)</button>
+                </div>
             </div>
             
             <div class="leaderboard-box">
