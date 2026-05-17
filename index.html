@@ -248,12 +248,17 @@
         #lock-overlay h2 { font-family: 'Montserrat'; font-size: 36px; margin-bottom: 15px; color: #f8fafc;}
         #lock-overlay p { font-size: 20px; color: #94a3b8; max-width: 600px;}
 
-        /* Presentation Screen */
+        /* Presentation Screen & Options Grid */
         .presentation-grid { display: grid; grid-template-columns: 1fr; gap: 20px; width: 100%; max-width: 1000px; margin: 0 auto; text-align: left;}
         .p-card { background: white; border: 2px solid #bbf7d0; border-radius: 16px; padding: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);}
         .p-q { font-family: 'Montserrat'; font-size: 20px; color: #14532d; font-weight: 800; margin-bottom: 15px;}
-        .p-ans { background: #dcfce7; color: #15803d; padding: 15px; border-radius: 12px; font-weight: 700; font-size: 18px; border: 1px solid #22c55e; display: flex; align-items: center; gap: 15px;}
-        .p-ans i { background: #22c55e; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px;}
+        .p-options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        
+        @media (max-width: 768px) {
+            .p-options-grid {
+                grid-template-columns: 1fr;
+            }
+        }
 
         .shape { position: absolute; opacity: 0.15; z-index: 1; pointer-events: none; color: #86efac;}
         .shape-1 { top: -20px; left: -20px; font-size: 400px; transform: rotate(-15deg); }
@@ -447,7 +452,8 @@
         <div class="admin-box" style="background: transparent; border: none; box-shadow: none; align-items: center;">
             <h1 style="font-size: 40px; margin-bottom: 30px; text-align: center;"><i class="fa-solid fa-book-open-reader"></i> ĐÁP ÁN CHÍNH THỨC</h1>
             <div class="presentation-grid" id="presentation-container"></div>
-            <button class="btn btn-outline" style="margin-top: 40px;" onclick="showScreen('admin-screen')"><i class="fa-solid fa-arrow-left"></i> QUAY LẠI ADMIN</button>
+            <!-- FIX: Thay onclick showScreen bị lỗi thành hàm openAdminDashboard toàn cục -->
+            <button class="btn btn-outline" style="margin-top: 40px;" onclick="openAdminDashboard()"><i class="fa-solid fa-arrow-left"></i> QUAY LẠI ADMIN</button>
         </div>
     </div>
 </div>
@@ -598,6 +604,9 @@
         document.getElementById(id).classList.add('active');
         window.scrollTo(0, 0);
     }
+
+    // Ánh xạ hàm showScreen ra phạm vi toàn cục để nút trong HTML có thể gọi được
+    window.showScreen = showScreen;
 
     function handleLockStateChange() {
         const overlay = document.getElementById('lock-overlay');
@@ -799,7 +808,6 @@
         }
     }
 
-    // ... (rest of unchanged code)
     function timerTick() {
         const elapsed = (performance.now() - startTime) / 1000;
         timeLeft = Math.max(0, TIME_PER_QUESTION - elapsed);
@@ -972,18 +980,40 @@
         }
     };
 
-    // ===== TRÌNH CHIẾU ĐÁP ÁN (ADMIN) =====
+    // ===== TRÌNH CHIẾU ĐÁP ÁN (ADMIN) - NÂNG CẤP HIỂN THỊ CẢ 4 ĐÁP ÁN =====
     window.showPresentation = function() {
         showScreen('presentation-screen');
         const container = document.getElementById('presentation-container');
         container.innerHTML = '';
 
         originalQuestions.forEach((q, i) => {
-            const correctText = q.options[q.answer];
+            let optionsHtml = '';
+            q.options.forEach((opt, optIdx) => {
+                const isCorrect = optIdx === q.answer;
+                const optionLetter = shapesArr[optIdx];
+                if (isCorrect) {
+                    optionsHtml += `
+                        <div style="background: #dcfce7; border: 2px solid #22c55e; color: #14532d; padding: 12px 18px; border-radius: 10px; font-weight: bold; display: flex; align-items: center; gap: 10px; font-size: 18px;">
+                            <span style="background: #22c55e; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;"><i class="fa-solid fa-check"></i></span>
+                            <span>${optionLetter}. ${opt}</span>
+                        </div>
+                    `;
+                } else {
+                    optionsHtml += `
+                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; color: #64748b; padding: 12px 18px; border-radius: 10px; display: flex; align-items: center; gap: 10px; font-size: 18px; opacity: 0.75;">
+                            <span style="background: #cbd5e1; color: #475569; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; flex-shrink: 0;">${optionLetter}</span>
+                            <span>${opt}</span>
+                        </div>
+                    `;
+                }
+            });
+
             container.innerHTML += `
-                <div class="p-card">
-                    <div class="p-q">Câu ${i + 1}: ${q.q}</div>
-                    <div class="p-ans"><i class="fa-solid fa-check"></i> ${correctText}</div>
+                <div class="p-card" style="margin-bottom: 25px; padding: 25px; border-radius: 20px; background: white; border: 2px solid #bbf7d0; box-shadow: 0 10px 25px rgba(34,197,94,0.05);">
+                    <div class="p-q" style="font-size: 22px; font-weight: 800; color: #14532d; margin-bottom: 15px; font-family: 'Montserrat';">Câu ${i + 1}: ${q.q}</div>
+                    <div class="p-options-grid">
+                        ${optionsHtml}
+                    </div>
                 </div>
             `;
         });
@@ -1106,6 +1136,9 @@
             });
         });
     };
+    
+    // Đăng ký dashboard admin hoạt động trên window
+    window.openAdminDashboard = openAdminDashboard;
 </script>
 </body>
 </html>
