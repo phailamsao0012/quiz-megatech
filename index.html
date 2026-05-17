@@ -798,6 +798,7 @@
         const durationSpan = document.getElementById('welcome-duration');
         const alertBox = document.getElementById('exam-status-alert');
         const confirmBtn = document.getElementById('confirm-info-btn');
+        const startBtn = document.getElementById('start-btn');
 
         if(batchSpan) batchSpan.innerText = currentBatchName;
         if(durationSpan) durationSpan.innerText = examDuration;
@@ -805,14 +806,40 @@
         if (alertBox && confirmBtn) {
             if (examStatus === 'ended') {
                 alertBox.style.display = 'block';
-                alertBox.innerText = "Kỳ thi này đã ĐÓNG/KẾT THÚC. Bạn không thể làm bài lúc này!";
+                alertBox.innerHTML = '<i class="fa-solid fa-stop-circle"></i> KỲ THI ĐÃ KẾT THÚC. Bạn không thể làm bài lúc này!';
                 alertBox.style.background = '#fef2f2';
                 alertBox.style.color = '#991b1b';
                 alertBox.style.borderColor = '#fca5a5';
                 confirmBtn.style.display = 'none';
-            } else {
-                alertBox.style.display = 'none';
+            } else if (examStatus === 'idle') {
+                alertBox.style.display = 'block';
+                alertBox.innerHTML = '<i class="fa-solid fa-clock"></i> KỲ THI CHƯA MỞ! Vui lòng ghi danh và vào Phòng Chờ.';
+                alertBox.style.background = '#eff6ff';
+                alertBox.style.color = '#1e3a8a';
+                alertBox.style.borderColor = '#bfdbfe';
                 confirmBtn.style.display = 'block';
+            } else if (examStatus === 'paused') {
+                alertBox.style.display = 'block';
+                alertBox.innerHTML = '<i class="fa-solid fa-pause-circle"></i> KỲ THI ĐANG TẠM DỪNG! Bạn có thể ghi danh và vào Phòng Chờ.';
+                alertBox.style.background = '#fef3c7';
+                alertBox.style.color = '#92400e';
+                alertBox.style.borderColor = '#fde68a';
+                confirmBtn.style.display = 'block';
+            } else {
+                alertBox.style.display = 'block';
+                alertBox.innerHTML = '<i class="fa-solid fa-circle-play"></i> KỲ THI ĐANG DIỄN RA! Bạn có thể vào làm bài ngay.';
+                alertBox.style.background = '#dcfce7';
+                alertBox.style.color = '#14532d';
+                alertBox.style.borderColor = '#86efac';
+                confirmBtn.style.display = 'block';
+            }
+        }
+        
+        if (startBtn) {
+            if (examStatus === 'running') {
+                startBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> BẮT ĐẦU THI';
+            } else {
+                startBtn.innerHTML = '<i class="fa-solid fa-hourglass-half"></i> VÀO PHÒNG CHỜ';
             }
         }
     }
@@ -1084,7 +1111,10 @@
 
             } catch (e) { 
                 console.log(e); alert("Lỗi kết nối đến máy chủ."); 
-                if (startBtn) { startBtn.disabled = false; startBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> VÀO PHÒNG CHỜ'; }
+                if (startBtn) { 
+                    startBtn.disabled = false; 
+                    startBtn.innerHTML = examStatus === 'running' ? '<i class="fa-solid fa-bolt"></i> BẮT ĐẦU THI' : '<i class="fa-solid fa-hourglass-half"></i> VÀO PHÒNG CHỜ'; 
+                }
                 return;
             }
         }
@@ -1092,7 +1122,10 @@
         if (examStatus === 'running') startCountdownAndEnterQuiz();
         else showScreen('waiting-screen');
         
-        if (startBtn) { startBtn.disabled = false; startBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> VÀO PHÒNG CHỜ'; }
+        if (startBtn) { 
+            startBtn.disabled = false; 
+            startBtn.innerHTML = examStatus === 'running' ? '<i class="fa-solid fa-bolt"></i> BẮT ĐẦU THI' : '<i class="fa-solid fa-hourglass-half"></i> VÀO PHÒNG CHỜ'; 
+        }
     }
 
     function startCountdownAndEnterQuiz() {
@@ -1400,8 +1433,12 @@
         if(!batchVal || isNaN(durationVal) || durationVal < 1) return alert("Vui lòng nhập tên đợt thi hợp lệ và thời lượng thi tối thiểu là 1 phút!");
 
         try {
-            await setDoc(globalSettingsRef, { batchName: batchVal, examDuration: durationVal }, { merge: true });
-            alert("Đã cập nhật cấu hình đợt thi mới realtime!");
+            await setDoc(globalSettingsRef, { 
+                batchName: batchVal, 
+                examDuration: durationVal,
+                examStatus: 'idle' // MẶC ĐỊNH ĐƯA VỀ KHÓA ĐỀ KHI TẠO ĐỢT MỚI
+            }, { merge: true });
+            alert("Đã lưu Đợt thi mới! Đề thi đã tự động trở về trạng thái KHÓA ĐỀ (Chờ mở).");
         } catch (e) { console.error(e); alert("Lỗi khi cập nhật đợt thi!"); }
     }
 
@@ -1444,7 +1481,11 @@
             localStorage.removeItem(QUESTIONS_KEY);
             localStorage.removeItem(TIMER_START_KEY);
             localStorage.removeItem(PAUSE_FREEZE_KEY);
-            alert("Đã xóa sạch toàn bộ cơ sở dữ liệu!");
+            
+            // MẶC ĐỊNH KHÓA ĐỀ SAU KHI XÓA TẤT CẢ DỮ LIỆU
+            await setDoc(globalSettingsRef, { examStatus: 'idle' }, { merge: true });
+
+            alert("Đã xóa sạch toàn bộ cơ sở dữ liệu và đặt lại trạng thái chờ mở đề!");
         }
     }
 
