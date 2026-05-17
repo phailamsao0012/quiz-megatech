@@ -313,7 +313,6 @@
             <img id="main-header-logo" src="logo_new.jpg" alt="Megatech Logo" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'150\' height=\'50\'><text x=\'0\' y=\'35\' font-family=\'Arial\' font-size=\'30\' fill=\'#10b981\' font-weight=\'bold\'>MEGATECH</text></svg>'">
         </div>
         <div style="display: flex; gap: 15px; align-items: center;">
-            <!-- Nút vào màn hình đăng nhập Admin -->
             <button id="admin-header-btn" onclick="showScreen('admin-login-screen')" class="btn btn-outline btn-small"><i class="fa-solid fa-user-shield"></i> Admin</button>
             <div class="score-display">CHUYÊN MÔN VÀ ATSH</div>
         </div>
@@ -472,7 +471,7 @@
                     <div style="display: flex; align-items: center; gap: 8px; background: #fdf4ff; padding: 6px 12px; border-radius: 10px; border: 1px solid #f5d0fe;">
                         <span style="font-size: 13px; font-weight: bold; color: #701a75;"><i class="fa-solid fa-user-lock"></i> Đổi TK Admin:</span>
                         <input type="text" id="admin-setting-user" style="width: 80px; padding: 5px; border-radius: 6px; border: 1px solid #e879f9; font-weight: bold; font-size: 13px; color: #701a75;" placeholder="Username">
-                        <input type="text" id="admin-setting-pass" style="width: 80px; padding: 5px; border-radius: 6px; border: 1px solid #e879f9; font-weight: bold; font-size: 13px; color: #701a75;" placeholder="Password">
+                        <input type="password" id="admin-setting-pass" style="width: 80px; padding: 5px; border-radius: 6px; border: 1px solid #e879f9; font-weight: bold; font-size: 13px; color: #701a75;" placeholder="Password">
                         <button class="action-btn" style="background: #f0abfc; color: #4a044e; border: 1px solid #e879f9; padding: 6px 12px; font-size: 12px;" onclick="updateAdminCredentials()"><i class="fa-solid fa-floppy-disk"></i> Lưu</button>
                     </div>
 
@@ -497,7 +496,7 @@
                 <button class="admin-tab" onclick="switchAdminTab('chart-pane', this)"><i class="fa-solid fa-chart-bar"></i> Biểu đồ trực quan (Live Chart)</button>
             </div>
 
-            <!-- Tab 1: Grid Grid View 2 Cột (Hiển thị tối thiểu 10 người cùng lúc) -->
+            <!-- Tab 1: Grid Grid View 2 Cột -->
             <div class="admin-content-pane active" id="grid-pane">
                 <div class="table-responsive" style="border: none;">
                     <div class="admin-grid-layout" id="admin-grid-container">
@@ -506,7 +505,7 @@
                 </div>
             </div>
 
-            <!-- Tab 2: Live Chart View (Tối ưu hiển thị 10 người dẫn đầu) -->
+            <!-- Tab 2: Live Chart View -->
             <div class="admin-content-pane" id="chart-pane">
                 <div class="chart-view-container" id="admin-chart-container">
                     <!-- Học viên sẽ hiển thị cột đồ họa ở đây -->
@@ -576,77 +575,58 @@
     let cheatFlag = false; 
     const shapesArr = ["A", "B", "C", "D"];
     
-    // ĐƯỜNG DẪN SESSION & TIMER MỚI (LƯU TRỮ TRONG 1 ĐỢT)
+    // ĐƯỜNG DẪN SESSION
     const SESSION_KEY = "megatech_quiz_session_v4";
     const QUESTIONS_KEY = "megatech_quiz_questions_v4";
     const TIMER_START_KEY = "megatech_quiz_start_time_v4";
-    const PAUSE_FREEZE_KEY = "megatech_quiz_freeze_time_v4"; // CHÌA KHÓA BẢO TOÀN THỜI GIAN
+    const PAUSE_FREEZE_KEY = "megatech_quiz_freeze_time_v4";
     
-    // BIẾN QUẢN LÝ THỜI GIAN (Đếm ngược tổng thể cho toàn bộ 25 câu)
-    let examDuration = 9; // 9 phút mặc định
+    // BIẾN QUẢN LÝ THỜI GIAN
+    let examDuration = 9; 
     let timeLeft = examDuration * 60;
     let timerInterval = null;
     let totalTimeTaken = 0;
-    let isCountingDown = false; // Tránh chạy đếm ngược nhiều lần
+    let isCountingDown = false; 
 
-    // Quản lý Khóa bài thi, Trạng thái đợt thi & Mật khẩu từ Firebase
-    let globalUnsubscribe = null;
+    // Quản lý trạng thái
+    let globalStateUnsub = null;
+    let adminLeaderboardUnsub = null;
+    let playerDocUnsub = null;
+    let currentUser = null; 
+    
     let currentCorrectPassword = "220902"; 
     let currentBatchName = "Đợt 1 ngày 17/05/2026";
-    let examStatus = "idle"; // Mặc định AUTO KHÓA (idle: Khóa, running: Mở, paused: Tạm Dừng, ended: Đóng)
-    let previousExamStatus = "idle"; // Theo dõi trạng thái trước đó để bảo toàn bộ đếm
+    let examStatus = "idle"; 
+    let previousExamStatus = "idle"; 
 
-    // THÔNG TIN ĐĂNG NHẬP ADMIN TỪ FIREBASE
+    // THÔNG TIN ĐĂNG NHẬP ADMIN
     let currentAdminUser = "admin";
     let currentAdminPass = "admin";
     let isAdminLoggedIn = false;
+    let selectedBatchFilter = "CURRENT";
 
-    // Khởi tạo Firebase và thực hiện xác thực bắt buộc theo quy định
+    // Khởi tạo Firebase cấu hình linh hoạt
+    const finalFirebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : firebaseConfig;
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'quiz-megatech';
+    
     let db, scoresCollection, globalSettingsRef, auth;
     
-    const app = initializeApp(firebaseConfig);
+    const app = initializeApp(finalFirebaseConfig);
     auth = getAuth(app);
     db = getFirestore(app);
 
-    // Sử dụng Strict Paths tuân thủ RULE 1
     scoresCollection = collection(db, 'artifacts', appId, 'public', 'data', 'live_scores');
     globalSettingsRef = doc(db, 'artifacts', appId, 'public', 'data', 'quiz_settings', 'global_state');
 
-    // HÀM HIỂN THỊ CÁC MÀN HÌNH
-    window.showScreen = function(screenId) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(screenId).classList.add('active');
-        
-        // Clear login inputs when showing admin login
-        if(screenId === 'admin-login-screen') {
-            document.getElementById('admin-login-user').value = '';
-            document.getElementById('admin-login-pass').value = '';
-        }
+    let isFirebaseListening = false;
 
-        // Ẩn/Hiện nút Admin (Chỉ hiện ở màn hình Start Screen để tránh click nhầm khi đang thi)
-        const adminBtn = document.getElementById('admin-header-btn');
-        if (adminBtn) {
-            if (screenId === 'start-screen') {
-                adminBtn.style.display = 'inline-block';
-            } else {
-                adminBtn.style.display = 'none';
-            }
-        }
-    };
+    // Lắng nghe trạng thái realtime sau khi xác thực thành công (hoặc bypass)
+    function startFirebaseListeners() {
+        if (isFirebaseListening) return;
+        isFirebaseListening = true;
 
-    // Tiến hành xác thực trước khi truy vấn tuân thủ RULE 3
-    const initAuth = async () => {
-        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-            await signInWithCustomToken(auth, __initial_auth_token);
-        } else {
-            await signInAnonymously(auth);
-        }
-    };
-
-    initAuth().then(() => {
-        // Sau khi Auth thành công, lắng nghe cấu hình đợt thi Realtime từ Admin
-        onSnapshot(globalSettingsRef, (docSnap) => {
+        if (globalStateUnsub) globalStateUnsub();
+        globalStateUnsub = onSnapshot(globalSettingsRef, (docSnap) => {
             try {
                 if(docSnap.exists()) {
                     const data = docSnap.data();
@@ -660,13 +640,11 @@
                     if (data.examStatus) {
                         const newStatus = data.examStatus;
                         
-                        // LOGIC BẢO TOÀN THỜI GIAN THI: (FREEZE TIMER)
-                        // Nếu chuyển TỪ trạng thái 'running' SANG bất kỳ trạng thái nào khác (paused, idle, ended) -> Đóng băng thời gian
+                        // LOGIC BẢO TOÀN THỜI GIAN THI
                         if (newStatus !== 'running' && previousExamStatus === 'running') {
                             localStorage.setItem(PAUSE_FREEZE_KEY, Date.now().toString());
                             clearInterval(timerInterval);
                         } 
-                        // Nếu chuyển TỪ trạng thái khác VỀ 'running' -> Rã băng thời gian (Cộng thêm khoảng thời gian đã nghỉ vào điểm bắt đầu)
                         else if (newStatus === 'running' && previousExamStatus !== 'running') {
                             const freezeStart = localStorage.getItem(PAUSE_FREEZE_KEY);
                             const origStart = localStorage.getItem(TIMER_START_KEY);
@@ -676,7 +654,6 @@
                                 localStorage.setItem(TIMER_START_KEY, newStartStamp.toString());
                                 localStorage.removeItem(PAUSE_FREEZE_KEY);
                             }
-                            // Tiếp tục chạy đồng hồ nếu họ đang ở màn hình thi
                             if (document.getElementById('question-screen').classList.contains('active')) {
                                 startTimer();
                             }
@@ -690,12 +667,11 @@
                     updateWelcomeScreenUI();
                     syncAdminControlPanelValues();
 
-                    // Lắng nghe lệnh MỞ ĐỀ: Kích hoạt đếm ngược nếu đang ở phòng chờ
+                    // Lắng nghe lệnh MỞ ĐỀ
                     if (examStatus === 'running' && document.getElementById('waiting-screen').classList.contains('active')) {
                         startCountdownAndEnterQuiz();
                     }
                 } else {
-                    // AUTO KHÓA mặc định khi mới khởi tạo DB (examStatus: idle)
                     setDoc(globalSettingsRef, { 
                         quizPassword: "220902", 
                         batchName: "Đợt 1 ngày 17/05/2026", 
@@ -703,34 +679,74 @@
                         examStatus: "idle", 
                         adminUsername: "admin",
                         adminPassword: "admin"
-                    });
+                    }).catch(e => console.log("Lỗi khởi tạo Setting", e));
                 }
-            } catch (err) {
-                console.error("Lỗi khi xử lý snapshot cấu hình:", err);
-            }
+            } catch (err) { console.error("Lỗi:", err); }
+        }, (error) => {
+            console.error("Lỗi lắng nghe cấu hình Server:", error);
         });
 
-        // FAILSAFE WATCHER: Quét 1 giây/lần chống lỗi nghẽn đồng bộ hoặc đứt kết nối mạng ngắn hạn
-        setInterval(() => {
-            if (examStatus === 'running' && document.getElementById('waiting-screen').classList.contains('active') && !isCountingDown) {
-                startCountdownAndEnterQuiz();
-            }
-            if (document.getElementById('question-screen').classList.contains('active')) {
-                handleLockStateChange(); // Cập nhật liên tục trạng thái khóa/đóng/tạm dừng nếu mạng chậm
-            }
-        }, 1000);
-
         checkResumeSession();
-    }).catch(e => console.log("Lỗi xác thực hệ thống Firebase", e));
+    }
 
-    // Xử lý các màn hình Overlay khóa (Khóa, Đóng, hoặc Tạm Dừng)
+    // Tiến hành xác thực trước khi truy vấn tuân thủ RULE 3
+    const initAuth = async () => {
+        try {
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                try {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } catch (err) {
+                    await signInAnonymously(auth);
+                }
+            } else {
+                await signInAnonymously(auth);
+            }
+        } catch (error) { 
+            // Fallback Guest Mode khi Firebase chưa bật chế độ Login Ẩn Danh
+            console.warn("Lỗi Auth: Dự án chưa bật Đăng nhập ẩn danh. Tự động chuyển sang chế độ Khách.", error);
+            currentUser = { uid: "guest_user_megatech" };
+            startFirebaseListeners();
+        }
+    };
+
+    initAuth();
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            currentUser = user;
+            startFirebaseListeners();
+        }
+    });
+
+    // HÀM HIỂN THỊ CÁC MÀN HÌNH NỘI BỘ
+    function showScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+        
+        if(screenId === 'admin-login-screen') {
+            document.getElementById('admin-login-user').value = '';
+            document.getElementById('admin-login-pass').value = '';
+        }
+
+        const adminBtn = document.getElementById('admin-header-btn');
+        if (adminBtn) {
+            adminBtn.style.display = screenId === 'start-screen' ? 'inline-block' : 'none';
+        }
+    }
+
+    setInterval(() => {
+        if (examStatus === 'running' && document.getElementById('waiting-screen').classList.contains('active') && !isCountingDown) {
+            startCountdownAndEnterQuiz();
+        }
+        if (document.getElementById('question-screen').classList.contains('active')) {
+            handleLockStateChange(); 
+        }
+    }, 1000);
+
     function handleLockStateChange() {
         const overlay = document.getElementById('lock-overlay');
-        
-        // Chỉ hiển thị lớp khóa/tạm dừng nếu thí sinh ĐANG Ở màn hình làm bài
         if (document.getElementById('question-screen').classList.contains('active')) {
             if (examStatus === 'paused') {
-                // XỬ LÝ LỆNH TẠM DỪNG
                 overlay.style.display = 'flex';
                 overlay.innerHTML = `
                     <i class="fa-solid fa-circle-pause" style="color: #3b82f6;"></i>
@@ -738,7 +754,6 @@
                     <p>Thời gian làm bài đã được đóng băng. Vui lòng chờ giám thị mở lại đề để tiếp tục!</p>
                 `;
             } else if (examStatus === 'idle') {
-                // XỬ LÝ LỆNH KHÓA ĐỀ (Cũng coi như tạm dừng nhưng dùng icon khóa)
                 overlay.style.display = 'flex';
                 overlay.innerHTML = `
                     <i class="fa-solid fa-lock"></i>
@@ -746,7 +761,6 @@
                     <p>Admin đã tạm dừng hệ thống. Thời gian của bạn vẫn được bảo toàn. Vui lòng chờ!</p>
                 `;
             } else if (examStatus === 'ended') {
-                // XỬ LÝ LỆNH ĐÓNG ĐỀ - KẾT THÚC BÀI THI NGAY LẬP TỨC
                 overlay.style.display = 'flex';
                 overlay.innerHTML = `
                     <i class="fa-solid fa-stop-circle" style="color: #ef4444;"></i>
@@ -754,7 +768,6 @@
                     <p>Giám thị đã ĐÓNG đề thi. Hệ thống đang tự động nộp bài của bạn...</p>
                 `;
                 
-                // Thu hồi nút bấm và tự động nộp bài sau 3s
                 const allBtns = document.querySelectorAll('.option-btn');
                 allBtns.forEach(btn => btn.classList.add('disabled'));
                 hasAnswered = true;
@@ -764,7 +777,6 @@
                     showEndScreen();
                 }, 3000);
             } else {
-                // examStatus === 'running' -> Ẩn khóa, cho phép thi
                 overlay.style.display = 'none';
             }
         } else {
@@ -772,7 +784,6 @@
         }
     }
 
-    // Cập nhật cấu hình lên Welcome UI
     function updateWelcomeScreenUI() {
         const batchSpan = document.getElementById('welcome-batch-name');
         const durationSpan = document.getElementById('welcome-duration');
@@ -791,14 +802,12 @@
                 alertBox.style.borderColor = '#fca5a5';
                 confirmBtn.style.display = 'none';
             } else {
-                // Cho phép đăng nhập bất kể là đang Mở, Khóa, hay Tạm dừng để vào phòng chờ
                 alertBox.style.display = 'none';
                 confirmBtn.style.display = 'block';
             }
         }
     }
 
-    // Đồng bộ các ô nhập dữ liệu của Admin
     function syncAdminControlPanelValues() {
         const batchInput = document.getElementById('admin-batch-name-input');
         const durationInput = document.getElementById('admin-duration-input');
@@ -812,7 +821,6 @@
         if (userSetInput && document.activeElement !== userSetInput) userSetInput.value = currentAdminUser;
         if (passSetInput && document.activeElement !== passSetInput) passSetInput.value = currentAdminPass;
 
-        // Cập nhật hoạt động các nút bấm Trạng thái đề
         const startBtn = document.getElementById('admin-start-exam-btn');
         const pauseBtn = document.getElementById('admin-pause-exam-btn');
         const lockBtn = document.getElementById('admin-lock-exam-btn');
@@ -826,8 +834,7 @@
         }
     }
 
-    // HÀM XỬ LÝ UP ẢNH & NÉN ẢNH CHÂN DUNG SANG BASE64
-    window.processAvatarUpload = function(event) {
+    function processAvatarUpload(event) {
         const file = event.target.files[0];
         if (!file) return;
 
@@ -842,15 +849,9 @@
                 let height = img.height;
 
                 if (width > height) {
-                    if (width > MAX_WIDTH) {
-                        height *= MAX_WIDTH / width;
-                        width = MAX_WIDTH;
-                    }
+                    if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
                 } else {
-                    if (height > MAX_HEIGHT) {
-                        width *= MAX_HEIGHT / height;
-                        height = MAX_HEIGHT;
-                    }
+                    if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
                 }
 
                 canvas.width = width;
@@ -859,7 +860,6 @@
                 ctx.drawImage(img, 0, 0, width, height);
 
                 playerAvatarBase64 = canvas.toDataURL('image/jpeg', 0.6);
-                
                 document.getElementById('avatar-preview').src = playerAvatarBase64;
                 document.getElementById('upload-status-title').innerText = "Đã tải ảnh lên thành công!";
                 document.getElementById('upload-status-title').style.color = "#15803d";
@@ -868,72 +868,41 @@
             img.src = e.target.result;
         };
         reader.readAsDataURL(file);
-    };
+    }
 
-    // TÍNH NĂNG TOÀN MÀN HÌNH (FULLSCREEN) CHO TRÌNH CHIẾU ADMIN
-    window.toggleFullscreen = function() {
+    function toggleFullscreen() {
         const elem = document.getElementById('quiz-root');
         if (!document.fullscreenElement) {
-            if (elem.requestFullscreen) {
-                elem.requestFullscreen();
-            } else if (elem.webkitRequestFullscreen) { 
-                elem.webkitRequestFullscreen();
-            } else if (elem.msRequestFullscreen) { 
-                elem.msRequestFullscreen();
-            }
+            if (elem.requestFullscreen) elem.requestFullscreen();
+            else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+            else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
         } else {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            }
+            if (document.exitFullscreen) document.exitFullscreen();
         }
-    };
+    }
 
-    document.addEventListener('fullscreenchange', () => {
-        const fsBtn = document.querySelector('.btn-fullscreen');
-        if (fsBtn) {
-            if (document.fullscreenElement) {
-                fsBtn.innerHTML = '<i class="fa-solid fa-compress"></i> THU NHỎ';
-            } else {
-                fsBtn.innerHTML = '<i class="fa-solid fa-expand"></i> TOÀN MÀN HÌNH';
-            }
-        }
-    });
-
-    // ===== XÁC THỰC THÔNG TIN & HIỆN TRƯỜNG PASSWORD =====
-    window.validateAndConfirmInfo = function() {
+    function validateAndConfirmInfo() {
         const nameInputEl = document.getElementById('player-name');
         const nameInput = nameInputEl ? nameInputEl.value.trim() : "";
         const deptInput = document.getElementById('player-dept').value.trim();
         const roleInput = document.getElementById('player-role').value.trim();
 
-        if (examStatus === 'ended') {
-            alert("Lỗi: Đề thi đã kết thúc. Không thể thực hiện xác nhận thông tin lúc này!");
-            return;
-        }
+        if (nameInput.toUpperCase() === 'NAMDZAI') { openAdminDashboard(); return; }
+        if (examStatus === 'ended') return alert("Lỗi: Đề thi đã kết thúc. Không thể thực hiện xác nhận thông tin lúc này!");
+        if (!nameInput || !deptInput || !roleInput) return alert("Vui lòng điền ĐẦY ĐỦ cả 3 thông tin: Họ và tên, Phòng ban, Chức vụ!");
+        if (!playerAvatarBase64) return alert("Vui lòng tải lên một ảnh đại diện chân dung để định danh!");
 
-        if (!nameInput || !deptInput || !roleInput) {
-            alert("Vui lòng điền ĐẦY ĐỦ cả 3 thông tin: Họ và tên, Phòng ban, Chức vụ!");
-            return;
-        }
-
-        if (!playerAvatarBase64) {
-            alert("Vui lòng tải lên một ảnh đại diện chân dung để định danh!");
-            return;
-        }
-
-        // Ẩn bảng nhập thông tin, hiện bảng nhập mật khẩu
         document.getElementById('info-input-group').style.display = 'none';
         document.getElementById('pass-input-group').style.display = 'flex';
         document.getElementById('quiz-password').focus();
-    };
+    }
 
-    window.backToInfo = function() {
+    function backToInfo() {
         document.getElementById('pass-input-group').style.display = 'none';
         document.getElementById('info-input-group').style.display = 'flex';
-    };
+    }
 
-    // ===== ĐĂNG NHẬP ADMIN =====
-    window.handleAdminLogin = function() {
+    function handleAdminLogin() {
         const userInp = document.getElementById('admin-login-user').value.trim();
         const passInp = document.getElementById('admin-login-pass').value.trim();
 
@@ -943,15 +912,16 @@
         } else {
             alert("Sai tên đăng nhập hoặc mật khẩu quản trị!");
         }
-    };
+    }
 
-    window.logoutAdmin = function() {
+    function logoutAdmin() {
         isAdminLoggedIn = false;
         showScreen('start-screen');
-    };
+    }
 
-    // ===== KIỂM TRA SESSION CŨ + CHỐNG LÀM LẠI REALTIME =====
     async function checkResumeSession() {
+        if (!currentUser) return;
+
         const savedSession = localStorage.getItem(SESSION_KEY);
         const savedQuestions = localStorage.getItem(QUESTIONS_KEY);
         
@@ -966,8 +936,8 @@
                     currentQuestion = data.question || 0;
                     gameQuestions = JSON.parse(savedQuestions);
 
-                    // THIẾT LẬP LẮNG NGHE CHO RIÊNG ACCOUNT NÀY ĐỂ NHẬN DUYỆT THI LẠI REALTIME
-                    onSnapshot(doc(scoresCollection, currentDocId), (userDoc) => {
+                    if (playerDocUnsub) playerDocUnsub();
+                    playerDocUnsub = onSnapshot(doc(scoresCollection, currentDocId), (userDoc) => {
                         if (userDoc.exists() && userDoc.data().allowedReplay === true) {
                             localStorage.removeItem(SESSION_KEY);
                             localStorage.removeItem(QUESTIONS_KEY);
@@ -976,26 +946,19 @@
                             alert("Yêu cầu thi lại của bạn đã được Admin phê duyệt! Trang thi sẽ được làm mới ngay bây giờ.");
                             location.reload();
                         }
-                    });
+                    }, (error) => console.error("Lỗi lắng nghe:", error));
 
                     if (data.status === 'Hoàn thành' || data.status === 'Gian lận' || data.status === 'Yêu cầu thi lại') {
                         showEndScreen();
-                        if (data.status === 'Yêu cầu thi lại') {
-                            updateReplayButtonUI(true);
-                        }
+                        if (data.status === 'Yêu cầu thi lại') updateReplayButtonUI(true);
                     } else if (data.status === 'Chờ bắt đầu') {
                         showScreen('waiting-screen');
                         if (examStatus === 'running') startCountdownAndEnterQuiz();
                     } else {
                         showScreen('question-screen');
                         loadQuestion();
-                        // Chỉ chạy tiếp timer nếu hệ thống đang RUNNING
-                        if (examStatus === 'running') {
-                            startTimer();
-                        } else {
-                            // Cập nhật lại thanh giao diện timer dựa trên thời điểm bị đóng băng
-                            timerTick(); 
-                        }
+                        if (examStatus === 'running') startTimer();
+                        else timerTick(); 
                         handleLockStateChange();
                     }
                 } else {
@@ -1008,8 +971,8 @@
         }
     }
 
-    // ===== GỬI YÊU CẦU THI LẠI ĐẾN ADMIN =====
-    window.requestReplay = async function() {
+    async function requestReplay() {
+        if (!currentUser) return alert("Kết nối bị gián đoạn. Vui lòng tải lại trang!");
         if (!currentDocId) return;
         try {
             await updateDoc(doc(scoresCollection, currentDocId), { status: 'Yêu cầu thi lại' });
@@ -1018,7 +981,7 @@
         } catch (e) {
             alert("Lỗi kết nối khi gửi yêu cầu!");
         }
-    };
+    }
 
     function updateReplayButtonUI(isPending) {
         const btn = document.getElementById('request-replay-btn');
@@ -1035,23 +998,19 @@
         }
     }
 
-    // ===== PHÊ DUYỆT THI LẠI TRỰC TIẾP TỪ ADMIN =====
-    window.approveReplayRequest = async function(docId) {
+    async function approveReplayRequest(docId) {
+        if (!currentUser) return alert("Kết nối bị gián đoạn. Vui lòng đăng nhập lại Admin!");
         if (confirm("Bạn có chắc chắn muốn duyệt cho học viên này thi lại không?")) {
             try {
-                await updateDoc(doc(scoresCollection, docId), { 
-                    allowedReplay: true,
-                    status: 'Chờ bắt đầu' 
-                });
+                await updateDoc(doc(scoresCollection, docId), { allowedReplay: true, status: 'Chờ bắt đầu' });
                 alert("Đã duyệt thành công! Học viên sẽ tự động được tải lại trang để thi.");
-            } catch (error) {
-                alert("Lỗi khi phê duyệt!");
-            }
+            } catch (error) { alert("Lỗi khi phê duyệt!"); }
         }
-    };
+    }
 
-    // ===== LUỒNG BẮT ĐẦU VÀO PHÒNG CHỜ =====
-    window.startQuiz = async function() {
+    async function startQuiz() {
+        if (!currentUser) return alert("Chưa kết nối được máy chủ, vui lòng đợi thêm 1 giây và thử lại!");
+
         const nameInputEl = document.getElementById('player-name');
         const nameInput = nameInputEl ? nameInputEl.value.trim() : "";
         const deptInput = document.getElementById('player-dept').value.trim();
@@ -1059,21 +1018,10 @@
         const enteredPassword = document.getElementById('quiz-password').value.trim();
         const startBtn = document.getElementById('start-btn');
         
-        if (examStatus === 'ended') { alert("Kỳ thi hiện đang đóng bởi giám thị!"); return; }
+        if (examStatus === 'ended') return alert("Kỳ thi hiện đang đóng bởi giám thị!");
+        if (!nameInput || !deptInput || !roleInput) { alert("Thông tin cá nhân bị thiếu. Vui lòng điền đầy đủ!"); backToInfo(); return; }
+        if (enteredPassword !== currentCorrectPassword) { alert("Mật khẩu vào bài thi không chính xác!"); document.getElementById('quiz-password').focus(); return; }
 
-        if (!nameInput || !deptInput || !roleInput) { 
-            alert("Thông tin cá nhân bị thiếu. Vui lòng quay lại điền đầy đủ!"); 
-            backToInfo();
-            return; 
-        }
-
-        if (enteredPassword !== currentCorrectPassword) {
-            alert("Mật khẩu vào bài thi không chính xác!");
-            document.getElementById('quiz-password').focus();
-            return;
-        }
-
-        // Tắt nút để tránh ấn liên tục
         if (startBtn) {
             startBtn.disabled = true;
             startBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ĐANG XỬ LÝ...';
@@ -1082,7 +1030,6 @@
         playerName = nameInput; playerDept = deptInput; playerRole = roleInput;
         currentQuestion = 0; score = 0; totalTimeTaken = 0; tabFocusWarnings = 0; cheatFlag = false;
 
-        // Giải mã đáp án ngẫu nhiên từ Base64 an toàn tuyệt đối
         gameQuestions = originalQuestions.map(q => {
             const correctIndex = parseInt(atob(q.answerHash));
             const correctText = q.options[correctIndex]; 
@@ -1099,7 +1046,6 @@
             [gameQuestions[i], gameQuestions[j]] = [gameQuestions[j], gameQuestions[i]];
         }
 
-        // Lưu Database và Local Storage, thiết lập trạng thái Chờ Bắt Đầu
         if (db) {
             currentDocId = Date.now().toString() + '_' + Math.floor(Math.random() * 1000);
             try {
@@ -1113,10 +1059,10 @@
                 });
                 localStorage.setItem(SESSION_KEY, currentDocId);
                 localStorage.setItem(QUESTIONS_KEY, JSON.stringify(gameQuestions));
-                localStorage.removeItem(PAUSE_FREEZE_KEY); // Clean up mọi freeze cũ (nếu có)
+                localStorage.removeItem(PAUSE_FREEZE_KEY); 
 
-                // Lắng nghe lệnh duyệt Reset từ Admin
-                onSnapshot(doc(scoresCollection, currentDocId), (userDoc) => {
+                if (playerDocUnsub) playerDocUnsub();
+                playerDocUnsub = onSnapshot(doc(scoresCollection, currentDocId), (userDoc) => {
                     if (userDoc.exists() && userDoc.data().allowedReplay === true) {
                         localStorage.removeItem(SESSION_KEY);
                         localStorage.removeItem(QUESTIONS_KEY);
@@ -1125,34 +1071,23 @@
                         alert("Yêu cầu thi lại của bạn đã được Admin phê duyệt! Đang làm mới...");
                         location.reload();
                     }
-                });
+                }, (error) => console.error(error));
+
             } catch (e) { 
-                console.log(e); 
-                alert("Lỗi kết nối đến máy chủ."); 
-                if (startBtn) {
-                    startBtn.disabled = false;
-                    startBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> VÀO PHÒNG CHỜ';
-                }
+                console.log(e); alert("Lỗi kết nối đến máy chủ."); 
+                if (startBtn) { startBtn.disabled = false; startBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> VÀO PHÒNG CHỜ'; }
                 return;
             }
         }
 
-        if (examStatus === 'running') {
-            startCountdownAndEnterQuiz();
-        } else {
-            showScreen('waiting-screen');
-        }
+        if (examStatus === 'running') startCountdownAndEnterQuiz();
+        else showScreen('waiting-screen');
         
-        // Khôi phục nút bấm sau khi xử lý thành công (nếu họ refresh page)
-        if (startBtn) {
-            startBtn.disabled = false;
-            startBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> VÀO PHÒNG CHỜ';
-        }
-    };
+        if (startBtn) { startBtn.disabled = false; startBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> VÀO PHÒNG CHỜ'; }
+    }
 
-    // ===== ĐẾM NGƯỢC 5S ĐỒNG LOẠT VÀO BÀI THI =====
-    window.startCountdownAndEnterQuiz = function() {
-        if (isCountingDown) return;
+    function startCountdownAndEnterQuiz() {
+        if (!currentUser || isCountingDown) return;
         isCountingDown = true;
         
         const overlay = document.getElementById('countdown-overlay');
@@ -1171,15 +1106,13 @@
                 overlay.style.display = 'none';
                 isCountingDown = false;
                 
-                // Lưu vết thời gian thực tế bắt đầu làm bài
                 const startTimeStamp = Date.now();
                 localStorage.setItem(TIMER_START_KEY, startTimeStamp.toString());
-                localStorage.removeItem(PAUSE_FREEZE_KEY); // Clean up
+                localStorage.removeItem(PAUSE_FREEZE_KEY); 
                 
                 if (currentDocId && db) {
                     updateDoc(doc(scoresCollection, currentDocId), { 
-                        status: 'Đang làm bài', 
-                        timestamp: startTimeStamp 
+                        status: 'Đang làm bài', timestamp: startTimeStamp 
                     }).catch(e=>console.log(e));
                 }
 
@@ -1187,9 +1120,8 @@
                 loadQuestion();
             }
         }, 1000);
-    };
+    }
 
-    // ===== TIMER LOGIC (ĐẾM NGƯỢC TỔNG BÀI THI KÈM PAUSE) =====
     function startTimer() {
         clearInterval(timerInterval);
         timerInterval = setInterval(timerTick, 100);
@@ -1200,7 +1132,6 @@
         if (!savedStartTime) return;
 
         let calculateTime = Date.now();
-        // NẾU ĐANG BỊ ĐÓNG BĂNG/TẠM DỪNG: Dùng mốc thời gian đã bị đóng băng để tính toán thay vì thời gian hiện tại
         const freezeStart = localStorage.getItem(PAUSE_FREEZE_KEY);
         if (freezeStart) {
             calculateTime = parseInt(freezeStart);
@@ -1260,7 +1191,6 @@
         showEndScreen();
     }
 
-    // ===== LOAD QUESTION =====
     function loadQuestion() {
         hasAnswered = false;
         document.getElementById('next-btn').style.display = 'none';
@@ -1281,11 +1211,10 @@
         });
 
         if (examStatus === 'running') startTimer();
-        handleLockStateChange(); // Chặn an toàn trường hợp màn load câu tiếp theo đúng lúc bị khóa/tạm dừng
+        handleLockStateChange(); 
     }
 
-    window.selectAnswer = function(index, btnElement) {
-        // CHỐT CHẶN: Nếu đang Tạm Dừng, Khóa đề hoặc Đóng đề thì không cho phép click đáp án
+    function selectAnswer(index, btnElement) {
         if (hasAnswered || examStatus !== 'running') return;
         hasAnswered = true;
         
@@ -1295,9 +1224,7 @@
         
         btnElement.classList.add('selected');
         
-        if (index === q.answer) {
-            score += 10;
-        }
+        if (index === q.answer) score += 10;
 
         const statusMsg = document.getElementById('status-message');
         statusMsg.style.display = 'block';
@@ -1305,32 +1232,32 @@
         statusMsg.className = 'status-message success';
 
         showControlsAfterAnswer();
-    };
+    }
 
     function showControlsAfterAnswer() {
+        if (!currentUser) return;
         if (db && currentDocId) {
             updateDoc(doc(scoresCollection, currentDocId), {
                 score: score, question: currentQuestion + 1, totalTime: totalTimeTaken
-            }).catch(e => console.log(e));
+            }).catch(e => console.error(e));
         }
         document.getElementById('next-btn').style.display = 'block';
     }
 
-    window.nextQuestion = function() {
+    function nextQuestion() {
         currentQuestion++;
         if (currentQuestion < gameQuestions.length) loadQuestion();
         else showEndScreen();
-    };
+    }
 
-    // ===== END SCREEN & LEADERBOARD =====
     function showEndScreen() {
         clearInterval(timerInterval);
         document.getElementById('final-score').innerText = score;
         document.getElementById('final-time').innerText = totalTimeTaken.toFixed(2) + 's';
         
         let targetStatus = cheatFlag ? 'Gian lận' : 'Hoàn thành';
-        if (db && currentDocId) {
-            updateDoc(doc(scoresCollection, currentDocId), { status: targetStatus, totalTime: totalTimeTaken }).catch(e => console.log(e));
+        if (currentUser && db && currentDocId) {
+            updateDoc(doc(scoresCollection, currentDocId), { status: targetStatus, totalTime: totalTimeTaken }).catch(e => console.error(e));
         }
 
         const maxScore = gameQuestions.length * 10;
@@ -1344,7 +1271,6 @@
         }
         document.getElementById('feedback-msg').innerText = msg;
         
-        // Hiện nút xin thi lại cho thí sinh
         document.getElementById('request-replay-btn').style.display = 'inline-block';
         updateReplayButtonUI(false);
 
@@ -1352,7 +1278,8 @@
         loadLeaderboard();
     }
 
-    window.loadLeaderboard = async function() {
+    async function loadLeaderboard() {
+        if (!currentUser) return;
         const lbList = document.getElementById('lb-list');
         lbList.innerHTML = '<div style="text-align: center; color: #94a3b8; padding: 20px;"><i class="fa-solid fa-circle-notch fa-spin"></i> Đang tải dữ liệu...</div>';
         
@@ -1361,9 +1288,7 @@
             const data = []; 
             snapshot.forEach(doc => data.push({ id: doc.id, ...doc.data() }));
             
-            // LỌC CHỈ HIỂN THỊ ĐỢT THI HIỆN TẠI TRÊN BẢNG ĐIỂM NGƯỜI CHƠI
             const filteredData = data.filter(item => item.batch === currentBatchName);
-
             filteredData.sort((a, b) => { 
                 if (b.score !== a.score) return b.score - a.score; 
                 return (a.totalTime || 0) - (b.totalTime || 0); 
@@ -1381,19 +1306,13 @@
                 
                 const isMe = row.id === currentDocId ? 'current-user' : '';
                 const nameDisplay = isMe ? `${row.name} (Bạn)` : row.name;
-                
                 const avatarUrl = row.avatar || "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23a855f7'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>";
 
                 let displayStatus = 'Đang làm...';
-                if (row.status === 'Hoàn thành') {
-                    displayStatus = 'Đã nộp';
-                } else if (row.status === 'Gian lận') {
-                    displayStatus = '⚠️ Vi phạm';
-                } else if (row.status === 'Yêu cầu thi lại') {
-                    displayStatus = 'Xin thi lại';
-                } else if (row.status === 'Chờ bắt đầu') {
-                    displayStatus = 'Đang đợi';
-                }
+                if (row.status === 'Hoàn thành') displayStatus = 'Đã nộp';
+                else if (row.status === 'Gian lận') displayStatus = '⚠️ Vi phạm';
+                else if (row.status === 'Yêu cầu thi lại') displayStatus = 'Xin thi lại';
+                else if (row.status === 'Chờ bắt đầu') displayStatus = 'Đang đợi';
 
                 lbList.innerHTML += `
                     <div class="lb-item ${isMe}">
@@ -1411,10 +1330,9 @@
         } catch (e) {
             lbList.innerHTML = '<div style="color: red; text-align: center;">Lỗi tải dữ liệu</div>';
         }
-    };
+    }
 
-    // ===== TRÌNH CHIẾU ĐÁP ÁN (ADMIN) =====
-    window.showPresentation = function() {
+    function showPresentation() {
         showScreen('presentation-screen');
         const container = document.getElementById('presentation-container');
         container.innerHTML = '';
@@ -1451,76 +1369,65 @@
                 </div>
             `;
         });
-    };
+    }
 
-    // ===== QUẢN LÝ ADMIN =====
-    window.setExamStatus = async function(status) {
+    async function setExamStatus(status) {
+        if (!currentUser) return alert("Lỗi: Chưa kết nối hệ thống! Đang tự động kết nối lại, vui lòng chờ...");
         try {
             await setDoc(globalSettingsRef, { examStatus: status }, { merge: true });
             let msg = status === 'running' ? 'ĐANG MỞ ĐỀ' : status === 'idle' ? 'ĐANG KHÓA ĐỀ' : status === 'paused' ? 'ĐANG TẠM DỪNG' : 'ĐÃ ĐÓNG ĐỀ';
             alert(`Đã cập nhật trạng thái kỳ thi thành công: ${msg}`);
-        } catch(e) { console.error(e); alert("Lỗi khi thay đổi trạng thái kỳ thi!"); }
-    };
+        } catch(e) { 
+            console.error(e); 
+            alert(`Lỗi khi thay đổi trạng thái kỳ thi! Chi tiết: ${e.message}`); 
+        }
+    }
 
-    window.saveBatchSettings = async function() {
+    async function saveBatchSettings() {
+        if (!currentUser) return alert("Lỗi: Chưa kết nối hệ thống!");
         const batchVal = document.getElementById('admin-batch-name-input').value.trim();
         const durationVal = parseInt(document.getElementById('admin-duration-input').value.trim());
 
-        if(!batchVal || isNaN(durationVal) || durationVal < 1) {
-            alert("Vui lòng nhập tên đợt thi hợp lệ và thời lượng thi tối thiểu là 1 phút!");
-            return;
-        }
+        if(!batchVal || isNaN(durationVal) || durationVal < 1) return alert("Vui lòng nhập tên đợt thi hợp lệ và thời lượng thi tối thiểu là 1 phút!");
 
         try {
-            await setDoc(globalSettingsRef, { 
-                batchName: batchVal,
-                examDuration: durationVal
-            }, { merge: true });
+            await setDoc(globalSettingsRef, { batchName: batchVal, examDuration: durationVal }, { merge: true });
             alert("Đã cập nhật cấu hình đợt thi mới realtime!");
-        } catch (e) {
-            console.error(e);
-            alert("Lỗi khi cập nhật đợt thi!");
-        }
-    };
+        } catch (e) { console.error(e); alert("Lỗi khi cập nhật đợt thi!"); }
+    }
 
-    window.updateQuizPassword = async function() {
+    async function updateQuizPassword() {
+        if (!currentUser) return alert("Lỗi: Chưa kết nối hệ thống!");
         const newPass = document.getElementById('admin-change-pass-input').value.trim();
-        if(!newPass) {
-            alert("Mật khẩu không được để trống!");
-            return;
-        }
+        if(!newPass) return alert("Mật khẩu không được để trống!");
+        
         try {
             await setDoc(globalSettingsRef, { quizPassword: newPass }, { merge: true });
             alert("Đã cập nhật mật khẩu thi mới thành công!");
-        } catch(e) {
-            console.error(e);
-            alert("Lỗi khi thay đổi mật khẩu!");
-        }
-    };
+        } catch(e) { console.error(e); alert("Lỗi khi thay đổi mật khẩu!"); }
+    }
 
-    window.updateAdminCredentials = async function() {
+    async function updateAdminCredentials() {
+        if (!currentUser) return alert("Lỗi: Chưa kết nối hệ thống!");
         const newUser = document.getElementById('admin-setting-user').value.trim();
         const newPass = document.getElementById('admin-setting-pass').value.trim();
-        if(!newUser || !newPass) {
-            alert("Tên đăng nhập và mật khẩu không được để trống!");
-            return;
-        }
+        if(!newUser || !newPass) return alert("Tên đăng nhập và mật khẩu không được để trống!");
+        
         try {
             await setDoc(globalSettingsRef, { adminUsername: newUser, adminPassword: newPass }, { merge: true });
             currentAdminUser = newUser;
             currentAdminPass = newPass;
             alert("Cập nhật thông tin đăng nhập Admin thành công!");
-        } catch(e) {
-            console.error(e);
-            alert("Lỗi kết nối khi đổi mật khẩu Admin.");
-        }
+        } catch(e) { console.error(e); alert("Lỗi kết nối khi đổi mật khẩu Admin."); }
     }
 
-    window.deleteRecord = async function(docId) {
+    async function deleteRecord(docId) {
+        if (!currentUser) return;
         if (confirm("Xóa kết quả này?")) await deleteDoc(doc(scoresCollection, docId));
-    };
+    }
 
-    window.deleteAllData = async function() {
+    async function deleteAllData() {
+        if (!currentUser) return alert("Lỗi: Chưa kết nối hệ thống!");
         if (confirm("CẢNH BÁO: Hành động này sẽ xóa sạch TOÀN BỘ dữ liệu người chơi trong tất cả các đợt thi. Bạn có chắc chắn?")) {
             const snapshot = await getDocs(scoresCollection);
             snapshot.forEach(async (document) => { await deleteDoc(doc(scoresCollection, document.id)); });
@@ -1530,39 +1437,31 @@
             localStorage.removeItem(PAUSE_FREEZE_KEY);
             alert("Đã xóa sạch toàn bộ cơ sở dữ liệu!");
         }
-    };
+    }
 
-    // CHUYỂN ĐỔI TAB ADMIN (GRID VIEW / LIVE CHART)
-    window.switchAdminTab = function(paneId, tabBtn) {
+    function switchAdminTab(paneId, tabBtn) {
         document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.admin-content-pane').forEach(p => p.classList.remove('active'));
-
         tabBtn.classList.add('active');
         document.getElementById(paneId).classList.add('active');
-    };
+    }
 
-    // LỌC KẾT QUẢ THEO ĐỢT THI CHỦ ĐỘNG
-    let selectedBatchFilter = "CURRENT";
-    window.filterAdminByBatch = function() {
+    function filterAdminByBatch() {
         selectedBatchFilter = document.getElementById('admin-batch-filter').value;
-        // Kích hoạt lại vẽ bảng sau khi đổi lọc
         if (window.refreshAdminDashboard) window.refreshAdminDashboard();
-    };
+    }
 
-    window.openAdminDashboard = function() {
-        if (!isAdminLoggedIn) {
-            showScreen('admin-login-screen');
-            return;
-        }
-
+    function openAdminDashboard() {
+        if (!isAdminLoggedIn) { showScreen('admin-login-screen'); return; }
         showScreen('admin-screen');
+        
         const gridContainer = document.getElementById('admin-grid-container');
         const chartContainer = document.getElementById('admin-chart-container');
         const batchFilterSelect = document.getElementById('admin-batch-filter');
         
-        if(globalUnsubscribe) globalUnsubscribe();
+        if(adminLeaderboardUnsub) adminLeaderboardUnsub();
         
-        globalUnsubscribe = onSnapshot(scoresCollection, (snapshot) => {
+        adminLeaderboardUnsub = onSnapshot(scoresCollection, (snapshot) => {
             const data = []; 
             const uniqueBatches = new Set();
 
@@ -1572,7 +1471,6 @@
                 if (item.batch) uniqueBatches.add(item.batch);
             });
 
-            // Đồng bộ bộ lọc đợt thi
             const currentFilterVal = batchFilterSelect.value;
             batchFilterSelect.innerHTML = `
                 <option value="ALL" ${currentFilterVal === 'ALL' ? 'selected' : ''}>-- Hiển thị tất cả --</option>
@@ -1587,20 +1485,15 @@
             window.refreshAdminDashboard = () => {
                 let filteredData = [...data];
 
-                if (selectedBatchFilter === 'CURRENT') {
-                    filteredData = filteredData.filter(item => item.batch === currentBatchName);
-                } else if (selectedBatchFilter !== 'ALL') {
-                    filteredData = filteredData.filter(item => item.batch === selectedBatchFilter);
-                }
+                if (selectedBatchFilter === 'CURRENT') filteredData = filteredData.filter(item => item.batch === currentBatchName);
+                else if (selectedBatchFilter !== 'ALL') filteredData = filteredData.filter(item => item.batch === selectedBatchFilter);
 
-                // Sắp xếp: Điểm cao nhất ➡️ Thời gian ít nhất
                 filteredData.sort((a, b) => { 
                     if (b.score !== a.score) return b.score - a.score; 
                     return (a.totalTime || 0) - (b.totalTime || 0); 
                 });
                 
-                gridContainer.innerHTML = '';
-                chartContainer.innerHTML = '';
+                gridContainer.innerHTML = ''; chartContainer.innerHTML = '';
 
                 if (filteredData.length === 0) { 
                     gridContainer.innerHTML = "<div style='text-align:center; grid-column: 1 / span 2; padding: 40px; color: #16a34a; font-weight:bold;'>Chưa có kết quả nào được ghi nhận cho bộ lọc này...</div>"; 
@@ -1609,33 +1502,20 @@
                 }
 
                 filteredData.forEach((row, index) => {
-                    let badgeClass = 'playing';
-                    let approveReplayBtn = '';
+                    let badgeClass = 'playing'; let approveReplayBtn = '';
 
-                    if (row.status === 'Hoàn thành') {
-                        badgeClass = 'done';
-                    } else if (row.status === 'Gian lận') {
-                        badgeClass = 'warn';
-                    } else if (row.status === 'Yêu cầu thi lại') {
+                    if (row.status === 'Hoàn thành') badgeClass = 'done';
+                    else if (row.status === 'Gian lận') badgeClass = 'warn';
+                    else if (row.status === 'Yêu cầu thi lại') {
                         badgeClass = 'reset-request';
-                        // Hiển thị nút Phê duyệt cho Admin kế bên
-                        approveReplayBtn = `
-                            <button class="action-btn btn-success" style="padding: 4px 8px; font-size: 11px; margin-top: 5px; width: 100%;" onclick="approveReplayRequest('${row.id}')">
-                                <i class="fa-solid fa-check"></i> Duyệt thi lại
-                            </button>
-                        `;
-                    } else if (row.status === 'Chờ bắt đầu') {
-                        badgeClass = 'playing';
-                    }
+                        approveReplayBtn = `<button class="action-btn btn-success" style="padding: 4px 8px; font-size: 11px; margin-top: 5px; width: 100%;" onclick="approveReplayRequest('${row.id}')"><i class="fa-solid fa-check"></i> Duyệt thi lại</button>`;
+                    } else if (row.status === 'Chờ bắt đầu') badgeClass = 'playing';
 
                     const avatarUrl = row.avatar || "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23a855f7'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>";
-                    
                     let medal = `#${index + 1}`;
-                    if (index === 0) medal = '🥇';
-                    else if (index === 1) medal = '🥈';
-                    else if (index === 2) medal = '🥉';
+                    if (index === 0) medal = '🥇'; else if (index === 1) medal = '🥈'; else if (index === 2) medal = '🥉';
 
-                    const cardHtml = `
+                    gridContainer.innerHTML += `
                         <div class="admin-user-card" style="min-height: 95px;">
                             <div class="admin-user-card-rank">${medal}</div>
                             <img class="admin-user-card-avatar" src="${avatarUrl}" alt="Avatar">
@@ -1654,10 +1534,9 @@
                             <button class="delete-btn" style="position: absolute; right: 10px; top: 10px; padding: 4px 8px; font-size: 11px;" onclick="deleteRecord('${row.id}')"><i class="fa-solid fa-trash"></i></button>
                         </div>
                     `;
-                    gridContainer.innerHTML += cardHtml;
 
                     const barHeight = Math.max(25, (row.score / 250) * 380); 
-                    const chartItemHtml = `
+                    chartContainer.innerHTML += `
                         <div class="chart-bar-item">
                             <span class="chart-bar-score">${row.score}đ</span>
                             <span class="chart-bar-time">${(row.totalTime || 0).toFixed(2)}s</span>
@@ -1666,14 +1545,43 @@
                             <div class="chart-bar-name" title="${row.name}">#${index+1} ${row.name}</div>
                         </div>
                     `;
-                    chartContainer.innerHTML += chartItemHtml;
                 });
             };
 
             window.refreshAdminDashboard();
+        }, (error) => {
+            console.error("Lỗi tải Leaderboard Admin:", error);
+            alert("Lỗi tải dữ liệu bảng điểm Admin!");
         });
-    };
+    }
     
+    // =========================================================================
+    // Đăng ký toàn bộ hàm tương tác với giao diện HTML ra môi trường Global (Window)
+    // =========================================================================
+    window.showScreen = showScreen;
+    window.processAvatarUpload = processAvatarUpload;
+    window.toggleFullscreen = toggleFullscreen;
+    window.validateAndConfirmInfo = validateAndConfirmInfo;
+    window.backToInfo = backToInfo;
+    window.handleAdminLogin = handleAdminLogin;
+    window.logoutAdmin = logoutAdmin;
+    window.requestReplay = requestReplay;
+    window.approveReplayRequest = approveReplayRequest;
+    window.startQuiz = startQuiz;
+    window.startCountdownAndEnterQuiz = startCountdownAndEnterQuiz;
+    window.selectAnswer = selectAnswer;
+    window.nextQuestion = nextQuestion;
+    window.loadLeaderboard = loadLeaderboard;
+    window.showPresentation = showPresentation;
+    window.setExamStatus = setExamStatus;
+    window.saveBatchSettings = saveBatchSettings;
+    window.updateQuizPassword = updateQuizPassword;
+    window.updateAdminCredentials = updateAdminCredentials;
+    window.deleteRecord = deleteRecord;
+    window.deleteAllData = deleteAllData;
+    window.switchAdminTab = switchAdminTab;
+    window.filterAdminByBatch = filterAdminByBatch;
+    window.openAdminDashboard = openAdminDashboard;
 </script>
 </body>
 </html>
