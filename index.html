@@ -23,14 +23,12 @@
             min-height: 100vh;
             font-family: 'Nunito', sans-serif;
             color: #166534;
-            /* Đã sửa: Cho phép cuộn dọc tự nhiên trên mobile nếu nội dung dài */
             overflow-x: hidden; 
             overflow-y: auto;
             user-select: none;
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
-            /* Đã thêm: Padding để không dính sát viền trên thiết bị nhỏ */
             padding: 20px; 
         }
 
@@ -45,7 +43,6 @@
             border-radius: 24px;
             box-shadow: 0 15px 50px rgba(34, 197, 94, 0.15);
             position: relative;
-            /* Đã sửa: Cho phép cuộn nội dung bên trong container thay vì ẩn đi */
             overflow: hidden; 
             display: flex;
             flex-direction: column;
@@ -222,6 +219,10 @@
         #lock-overlay h2 { font-family: 'Montserrat'; font-size: 36px; margin-bottom: 15px; color: #f8fafc;}
         #lock-overlay p { font-size: 20px; color: #94a3b8; max-width: 600px;}
 
+        /* CSS Màn Hình Đếm Ngược */
+        #countdown-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(22, 163, 74, 0.95); backdrop-filter: blur(10px); z-index: 2000; display: none; flex-direction: column; justify-content: center; align-items: center; color: white; }
+        #countdown-number { font-size: 180px; font-weight: 900; font-family: 'Montserrat'; animation: pulse 1s infinite; text-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+
         .presentation-grid { display: grid; grid-template-columns: 1fr; gap: 20px; width: 100%; max-width: 1000px; margin: 0 auto; text-align: left;}
         .p-card { background: white; border: 2px solid #bbf7d0; border-radius: 16px; padding: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);}
         .p-q { font-family: 'Montserrat'; font-size: 20px; color: #14532d; font-weight: 800; margin-bottom: 15px;}
@@ -231,33 +232,33 @@
         .shape-1 { top: -20px; left: -20px; font-size: 400px; transform: rotate(-15deg); }
         .shape-2 { bottom: -50px; right: -50px; font-size: 500px; transform: rotate(15deg); }
 
+        @keyframes spin { 100% { transform: rotate(-360deg); } }
+
         @media (max-width: 900px) { .end-layout { grid-template-columns: 1fr; } }
         @media (max-width: 768px) {
             body { 
-                /* Đã sửa: Bỏ align-items: flex-start để tránh bị cắt top khi cuộn */
-                padding: 0; /* Xóa padding body trên mobile để container full màn */
-                display: block; /* Đổi thành block thay vì flex để cuộn mượt hơn trên mobile */
+                padding: 0; 
+                display: block; 
             }
             .quiz-container { 
                 width: 100%; 
-                min-height: 100vh; /* Sửa thành min-height thay vì height cứng */
+                min-height: 100vh; 
                 height: auto; 
                 max-height: none; 
                 border-radius: 0; 
                 border: none; 
                 box-shadow: none; 
-                /* Đã thêm: Cho phép cuộn dọc */
                 overflow-y: auto;
-                -webkit-overflow-scrolling: touch; /* Hỗ trợ cuộn mượt iOS */
+                -webkit-overflow-scrolling: touch; 
             }
             .header { padding: 12px 20px; }
             .logo-box img { height: 40px; }
             .score-display { font-size: 14px; padding: 6px 12px; }
             .screen { 
-                padding: 20px 15px 40px 15px; /* Thêm padding dưới để dễ cuộn */
+                padding: 20px 15px 40px 15px; 
                 justify-content: flex-start; 
-                height: auto; /* Chiều cao tự động */
-                min-height: calc(100vh - 80px); /* Bù trừ header */
+                height: auto; 
+                min-height: calc(100vh - 80px); 
             }
             h1 { font-size: 34px; line-height: 1.2; margin-bottom: 15px; }
             p.subtitle { font-size: 16px; margin-bottom: 30px; }
@@ -281,6 +282,7 @@
             .shape-1 { font-size: 200px; }
             .shape-2 { font-size: 250px; bottom: 0; right: -20px; }
             .p-options-grid { grid-template-columns: 1fr; }
+            #countdown-number { font-size: 120px; }
         }
     </style>
 </head>
@@ -290,7 +292,13 @@
 <div id="lock-overlay">
     <i class="fa-solid fa-lock"></i>
     <h2>BÀI THI ĐANG BỊ KHÓA</h2>
-    <p>Admin đã tạm dừng hệ thống. Vui lòng chờ tín hiệu mở khóa từ Ban tổ chức để tiếp tục làm bài!</p>
+    <p>Admin đã tạm dừng hệ thống. Bạn không thể thao tác chọn đáp án lúc này!</p>
+</div>
+
+<!-- OVERLAY ĐẾM NGƯỢC -->
+<div id="countdown-overlay">
+    <h1 style="font-size: 40px; margin-bottom: 20px; font-family: 'Montserrat'; text-align: center;">BÀI THI SẼ BẮT ĐẦU SAU</h1>
+    <div id="countdown-number">5</div>
 </div>
 
 <div class="quiz-container" id="quiz-root">
@@ -317,7 +325,7 @@
         
         <!-- THÔNG BÁO TRẠNG THÁI KỲ THI -->
         <div id="exam-status-alert" style="display: none; background: #fef2f2; border: 1px solid #fca5a5; padding: 15px; border-radius: 12px; color: #991b1b; font-weight: bold; margin-bottom: 25px; width: 100%; max-width: 500px; text-align: center;">
-            Kỳ thi chưa bắt đầu. Vui lòng chờ tín hiệu của giám thị!
+            Đề thi đã đóng!
         </div>
 
         <div class="input-group" id="info-input-group">
@@ -342,11 +350,20 @@
             <input type="password" id="quiz-password" class="name-input" placeholder="Nhập mật khẩu vào bài thi..." autocomplete="off">
             <div style="display: flex; gap: 10px; width: 100%;">
                 <button class="btn btn-outline" style="flex: 1; padding: 15px;" onclick="backToInfo()"><i class="fa-solid fa-arrow-left"></i> Quay lại</button>
-                <button class="btn" style="flex: 2; padding: 15px;" id="start-btn" onclick="startQuiz()"><i class="fa-solid fa-bolt"></i> BẮT ĐẦU THI</button>
+                <button class="btn" style="flex: 2; padding: 15px;" id="start-btn" onclick="startQuiz()"><i class="fa-solid fa-bolt"></i> VÀO PHÒNG CHỜ</button>
             </div>
         </div>
         
         <p style="margin-top: 15px; font-size: 14px; color: #64748b;">*Hệ thống sẽ tự động khôi phục nếu bạn bị văng ra ngoài.</p>
+    </div>
+
+    <!-- MÀN HÌNH PHÒNG CHỜ -->
+    <div class="screen" id="waiting-screen">
+        <div class="question-box" style="text-align: center; max-width: 600px; display: flex; flex-direction: column; align-items: center;">
+            <i class="fa-solid fa-clock-rotate-left" style="font-size: 60px; color: #3b82f6; margin-bottom: 20px; animation: spin 3s linear infinite;"></i>
+            <h2 style="font-family: 'Montserrat'; color: #1e3a8a; font-size: 32px; margin-bottom: 15px; font-weight: 900;">ĐANG CHỜ MỞ ĐỀ</h2>
+            <p style="font-size: 18px; color: #64748b; line-height: 1.5; font-weight: bold;">Bạn đã ghi danh thành công. Vui lòng giữ nguyên màn hình và chờ Giám thị mở khóa bài thi để bắt đầu!</p>
+        </div>
     </div>
 
     <!-- ADMIN LOGIN SCREEN -->
@@ -551,8 +568,8 @@
     let currentQuestion = 0, score = 0, hasAnswered = false;
     let playerName = "", playerDept = "", playerRole = "", currentDocId = "", playerAvatarBase64 = "";
     let gameQuestions = []; 
-    let tabFocusWarnings = 0; // Đếm số lần chuyển tab gian lận
-    let cheatFlag = false; // Đánh dấu đã gian lận
+    let tabFocusWarnings = 0; 
+    let cheatFlag = false; 
     const shapesArr = ["A", "B", "C", "D"];
     
     // ĐƯỜNG DẪN SESSION & TIMER MỚI (LƯU TRỮ TRONG 1 ĐỢT)
@@ -564,15 +581,14 @@
     let examDuration = 9; // 9 phút mặc định
     let timeLeft = examDuration * 60;
     let timerInterval = null;
-    let startTime = 0;
     let totalTimeTaken = 0;
+    let isCountingDown = false; // Tránh chạy đếm ngược nhiều lần
 
     // Quản lý Khóa bài thi, Trạng thái đợt thi & Mật khẩu từ Firebase
-    let isQuizLocked = false;
     let globalUnsubscribe = null;
     let currentCorrectPassword = "220902"; 
     let currentBatchName = "Đợt 1 ngày 17/05/2026";
-    let examStatus = "running"; // idle (Khóa), running (Mở), ended (Đóng)
+    let examStatus = "idle"; // Mặc định AUTO KHÓA (idle: Khóa, running: Mở, ended: Đóng)
 
     // THÔNG TIN ĐĂNG NHẬP ADMIN TỪ FIREBASE
     let currentAdminUser = "admin";
@@ -627,7 +643,6 @@
         onSnapshot(globalSettingsRef, (docSnap) => {
             if(docSnap.exists()) {
                 const data = docSnap.data();
-                isQuizLocked = data.isLocked === true;
                 
                 if (data.quizPassword) currentCorrectPassword = data.quizPassword;
                 if (data.batchName) currentBatchName = data.batchName;
@@ -639,14 +654,18 @@
                 handleLockStateChange();
                 updateWelcomeScreenUI();
                 syncAdminControlPanelValues();
+
+                // Lắng nghe lệnh MỞ ĐỀ: Kích hoạt đếm ngược nếu đang ở phòng chờ
+                if (examStatus === 'running' && document.getElementById('waiting-screen').classList.contains('active')) {
+                    startCountdownAndEnterQuiz();
+                }
             } else {
-                // Khởi tạo trạng thái mặc định nếu trống
+                // AUTO KHÓA mặc định khi mới khởi tạo DB (examStatus: idle)
                 setDoc(globalSettingsRef, { 
-                    isLocked: false, 
                     quizPassword: "220902", 
                     batchName: "Đợt 1 ngày 17/05/2026", 
                     examDuration: 9, 
-                    examStatus: "running",
+                    examStatus: "idle", 
                     adminUsername: "admin",
                     adminPassword: "admin"
                 });
@@ -656,10 +675,10 @@
         checkResumeSession();
     }).catch(e => console.log("Lỗi xác thực hệ thống Firebase", e));
 
-    // Xử lý màn hình khóa
+    // Xử lý màn hình khóa (Chỉ khóa khi đã vào bài thi nhưng bị Admin tạm dừng)
     function handleLockStateChange() {
         const overlay = document.getElementById('lock-overlay');
-        if (isQuizLocked && document.getElementById('question-screen').classList.contains('active')) {
+        if (examStatus === 'idle' && document.getElementById('question-screen').classList.contains('active')) {
             overlay.style.display = 'flex';
         } else {
             overlay.style.display = 'none';
@@ -677,14 +696,7 @@
         if(durationSpan) durationSpan.innerText = examDuration;
 
         if (alertBox && confirmBtn) {
-            if (examStatus === 'idle') {
-                alertBox.style.display = 'block';
-                alertBox.innerText = "Kỳ thi tạm thời bị KHÓA. Vui lòng chờ giám thị mở đề!";
-                alertBox.style.background = '#fef3c7';
-                alertBox.style.color = '#92400e';
-                alertBox.style.borderColor = '#fde68a';
-                confirmBtn.style.display = 'none';
-            } else if (examStatus === 'ended') {
+            if (examStatus === 'ended') {
                 alertBox.style.display = 'block';
                 alertBox.innerText = "Kỳ thi này đã ĐÓNG/KẾT THÚC. Bạn không thể làm bài lúc này!";
                 alertBox.style.background = '#fef2f2';
@@ -692,6 +704,7 @@
                 alertBox.style.borderColor = '#fca5a5';
                 confirmBtn.style.display = 'none';
             } else {
+                // Cho phép đăng nhập bất kể là đang Mở (running) hay đang Khóa (idle) để vào phòng chờ
                 alertBox.style.display = 'none';
                 confirmBtn.style.display = 'block';
             }
@@ -804,8 +817,8 @@
         const deptInput = document.getElementById('player-dept').value.trim();
         const roleInput = document.getElementById('player-role').value.trim();
 
-        if (examStatus !== 'running') {
-            alert("Lỗi: Đề thi đang bị đóng hoặc khóa. Không thể thực hiện xác nhận thông tin lúc này!");
+        if (examStatus === 'ended') {
+            alert("Lỗi: Đề thi đã kết thúc. Không thể thực hiện xác nhận thông tin lúc này!");
             return;
         }
 
@@ -815,7 +828,7 @@
         }
 
         if (!playerAvatarBase64) {
-            alert("Vui lòng tải lên một ảnh đại diện chân dung để bắt đầu bài thi!");
+            alert("Vui lòng tải lên một ảnh đại diện chân dung để định danh!");
             return;
         }
 
@@ -880,11 +893,14 @@
                         if (data.status === 'Yêu cầu thi lại') {
                             updateReplayButtonUI(true);
                         }
+                    } else if (data.status === 'Chờ bắt đầu') {
+                        showScreen('waiting-screen');
+                        if (examStatus === 'running') startCountdownAndEnterQuiz();
                     } else {
                         showScreen('question-screen');
                         loadQuestion();
-                        // Chạy đồng hồ tổng dựa trên timestamp đã lưu
                         startTimer();
+                        handleLockStateChange();
                     }
                 } else {
                     localStorage.removeItem(SESSION_KEY);
@@ -937,7 +953,7 @@
         }
     };
 
-    // ===== START QUIZ & RANDOMIZER =====
+    // ===== LUỒNG BẮT ĐẦU VÀO PHÒNG CHỜ =====
     window.startQuiz = async function() {
         const nameInputEl = document.getElementById('player-name');
         const nameInput = nameInputEl ? nameInputEl.value.trim() : "";
@@ -945,7 +961,7 @@
         const roleInput = document.getElementById('player-role').value.trim();
         const enteredPassword = document.getElementById('quiz-password').value.trim();
         
-        if (examStatus !== 'running') { alert("Kỳ thi hiện đang đóng hoặc khóa bởi giám thị!"); return; }
+        if (examStatus === 'ended') { alert("Kỳ thi hiện đang đóng bởi giám thị!"); return; }
 
         if (!nameInput || !deptInput || !roleInput) { 
             alert("Thông tin cá nhân bị thiếu. Vui lòng quay lại điền đầy đủ!"); 
@@ -979,26 +995,22 @@
             [gameQuestions[i], gameQuestions[j]] = [gameQuestions[j], gameQuestions[i]];
         }
 
-        // Tạo mốc thời gian bắt đầu làm bài lưu vào LocalStorage
-        const startTimeStamp = Date.now();
-        localStorage.setItem(TIMER_START_KEY, startTimeStamp.toString());
-
-        // Lưu Database và Local Storage chống gian lận
+        // Lưu Database và Local Storage, thiết lập trạng thái Chờ Bắt Đầu
         if (db) {
             currentDocId = Date.now().toString() + '_' + Math.floor(Math.random() * 1000);
             try {
                 await setDoc(doc(scoresCollection, currentDocId), {
                     name: playerName, dept: playerDept, role: playerRole, 
                     score: 0, question: 0, totalTime: 0, totalQuestions: gameQuestions.length, 
-                    status: 'Đang làm bài', timestamp: startTimeStamp,
+                    status: 'Chờ bắt đầu', timestamp: Date.now(),
                     avatar: playerAvatarBase64,
-                    batch: currentBatchName, // Lưu nhãn đợt thi tương ứng
+                    batch: currentBatchName, 
                     allowedReplay: false
                 });
                 localStorage.setItem(SESSION_KEY, currentDocId);
                 localStorage.setItem(QUESTIONS_KEY, JSON.stringify(gameQuestions));
 
-                // Lắng nghe tài khoản realtime để sẵn sàng nhận lệnh Reset từ Admin
+                // Lắng nghe lệnh duyệt Reset từ Admin
                 onSnapshot(doc(scoresCollection, currentDocId), (userDoc) => {
                     if (userDoc.exists() && userDoc.data().allowedReplay === true) {
                         localStorage.removeItem(SESSION_KEY);
@@ -1011,11 +1023,52 @@
             } catch (e) { console.log(e); alert("Lỗi kết nối đến máy chủ."); return;}
         }
 
-        loadQuestion();
-        showScreen('question-screen');
+        if (examStatus === 'running') {
+            startCountdownAndEnterQuiz();
+        } else {
+            showScreen('waiting-screen');
+        }
     };
 
-    // ===== TIMER LOGIC (ĐẾM NGƯỢC 9 PHÚT TOÀN BÀI THI) =====
+    // ===== ĐẾM NGƯỢC 5S ĐỒNG LOẠT VÀO BÀI THI =====
+    window.startCountdownAndEnterQuiz = function() {
+        if (isCountingDown) return;
+        isCountingDown = true;
+        
+        const overlay = document.getElementById('countdown-overlay');
+        const numberEl = document.getElementById('countdown-number');
+        overlay.style.display = 'flex';
+        
+        let count = 5;
+        numberEl.innerText = count;
+        
+        const countInterval = setInterval(async () => {
+            count--;
+            if (count > 0) {
+                numberEl.innerText = count;
+            } else {
+                clearInterval(countInterval);
+                overlay.style.display = 'none';
+                isCountingDown = false;
+                
+                // Lưu vết thời gian thực tế bắt đầu làm bài
+                const startTimeStamp = Date.now();
+                localStorage.setItem(TIMER_START_KEY, startTimeStamp.toString());
+                
+                if (currentDocId && db) {
+                    updateDoc(doc(scoresCollection, currentDocId), { 
+                        status: 'Đang làm bài', 
+                        timestamp: startTimeStamp 
+                    }).catch(e=>console.log(e));
+                }
+
+                showScreen('question-screen');
+                loadQuestion();
+            }
+        }, 1000);
+    };
+
+    // ===== TIMER LOGIC (ĐẾM NGƯỢC TỔNG BÀI THI) =====
     function startTimer() {
         clearInterval(timerInterval);
         timerInterval = setInterval(timerTick, 100);
@@ -1028,7 +1081,6 @@
         const elapsedSeconds = (Date.now() - parseInt(savedStartTime)) / 1000;
         totalTimeTaken = elapsedSeconds;
         
-        // Thời gian còn lại bằng thời gian tối đa trừ đi thời gian đã trôi qua
         const totalDurationSeconds = examDuration * 60;
         timeLeft = Math.max(0, totalDurationSeconds - elapsedSeconds);
 
@@ -1053,7 +1105,7 @@
         const percentage = (timeLeft / (examDuration * 60)) * 100;
         barEl.style.width = `${percentage}%`;
 
-        if (timeLeft <= 60) { // Dưới 1 phút báo đỏ nhấp nháy
+        if (timeLeft <= 60) { 
             textEl.classList.add('danger');
             barEl.style.background = '#ef4444';
         } else {
@@ -1101,10 +1153,12 @@
         });
 
         startTimer();
+        handleLockStateChange(); // Chặn an toàn trường hợp màn load câu tiếp theo đúng lúc bị khóa
     }
 
     window.selectAnswer = function(index, btnElement) {
-        if (hasAnswered || isQuizLocked) return;
+        // CHỐT CHẶN: Nếu đang khóa đề thì không cho phép click đáp án
+        if (hasAnswered || examStatus === 'idle') return;
         hasAnswered = true;
         
         const q = gameQuestions[currentQuestion];
@@ -1209,6 +1263,8 @@
                     displayStatus = '⚠️ Vi phạm';
                 } else if (row.status === 'Yêu cầu thi lại') {
                     displayStatus = 'Xin thi lại';
+                } else if (row.status === 'Chờ bắt đầu') {
+                    displayStatus = 'Đang đợi';
                 }
 
                 lbList.innerHTML += `
@@ -1275,12 +1331,6 @@
             await setDoc(globalSettingsRef, { examStatus: status }, { merge: true });
             alert(`Đã cập nhật trạng thái kỳ thi thành công: ${status === 'running' ? 'ĐANG MỞ ĐỀ' : status === 'idle' ? 'ĐANG KHÓA ĐỀ' : 'ĐÃ ĐÓNG ĐỀ'}`);
         } catch(e) { console.error(e); alert("Lỗi khi thay đổi trạng thái kỳ thi!"); }
-    };
-
-    window.toggleQuizLock = async function() {
-        try {
-            await setDoc(globalSettingsRef, { isLocked: !isQuizLocked }, { merge: true });
-        } catch(e) { console.error(e); alert("Lỗi khi thay đổi trạng thái!"); }
     };
 
     window.saveBatchSettings = async function() {
