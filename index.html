@@ -86,16 +86,17 @@
         /* SỬA LỖI LAYOUT BỊ CẮT TRÊN/DƯỚI: THAY ĐỔI align-items và justify-content */
         .screen { 
             display: none; flex-direction: column; flex-grow: 1; 
-            padding: 20px 40px; text-align: center; z-index: 10; overflow-y: auto; overflow-x: hidden; width: 100%;
-            justify-content: flex-start; align-items: center;
+            padding: 0; text-align: center; z-index: 10; overflow-y: auto; overflow-x: hidden; width: 100%;
+            justify-content: flex-start; align-items: stretch;
         }
         .screen.active { display: flex; animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
         /* Wrapper linh hoạt cho nội dung các screen chống cắt mép */
         .content-wrapper {
-            width: 100%; max-width: 1000px; margin: auto; padding: 20px 0;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            width: 100%; max-width: 1000px; margin: 0 auto; padding: 40px 20px 80px 20px;
+            display: flex; flex-direction: column; justify-content: flex-start; align-items: center;
+            min-height: min-content;
         }
 
         /* Typography & Buttons */
@@ -189,7 +190,7 @@
         .timer-bar-bg { flex-grow: 1; height: 10px; background: var(--container-border); border-radius: 10px; margin-right: 20px; overflow: hidden; }
         .timer-bar-fill { height: 100%; background: #22c55e; width: 100%; transition: width 0.1s linear, background 0.3s; }
 
-        .question-box { background: var(--box-bg); border: 2px solid var(--box-border); padding: 40px; border-radius: 24px; width: 100%; box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1); text-align: left; margin: 0 auto; transition: all 0.3s;}
+        .question-box { background: var(--box-bg); border: 2px solid var(--box-border); padding: 40px; border-radius: 24px; width: 100%; box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1); text-align: left; transition: all 0.3s;}
         .q-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px dashed var(--box-border); padding-bottom: 15px;}
         .q-counter { font-weight: 800; color: #10b981; font-size: 20px; font-family: 'Montserrat'; text-transform: uppercase; letter-spacing: 2px;}
         .question-text { font-family: 'Montserrat', sans-serif; font-size: 32px; color: var(--text-heading); margin-bottom: 35px; line-height: 1.5; font-weight: 800; transition: color 0.3s;}
@@ -287,12 +288,13 @@
         @media (max-width: 768px) {
             body { padding: 0; display: block; }
             .quiz-container { width: 100%; min-height: 100vh; height: auto; max-height: none; border-radius: 0; border: none; box-shadow: none; overflow-y: visible; }
-            .screen { padding: 20px 15px 40px 15px; justify-content: flex-start; height: auto; min-height: calc(100vh - 80px); overflow-y: visible;}
+            .screen { padding: 0px 15px; justify-content: flex-start; height: auto; min-height: calc(100vh - 80px); overflow-y: visible;}
+            .content-wrapper { padding: 20px 0 80px 0; }
             h1 { font-size: 34px; line-height: 1.2;} .name-input { font-size: 16px; } .btn { font-size: 18px; width: 100%; }
             .question-box { width: 100%; padding: 20px 15px; }
             .options-grid { grid-template-columns: 1fr; }
             .end-card, .leaderboard-box { height: auto; max-height: none; }
-            .admin-grid-layout { grid-template-columns: 1fr; }
+            .admin-grid-layout { grid-template-columns: 1fr; } .p-options-grid { grid-template-columns: 1fr; }
             .avatar-maker-box { flex-direction: column; }
             .joystick-panel { padding: 0 15px; justify-content: center; gap: 20px;}
             .keyboard-hint { display: none; } 
@@ -301,18 +303,18 @@
 </head>
 <body>
 
-<!-- AUDIO ELEMENTS CHO HIỆU ỨNG ÂM THANH -->
+<!-- AUDIO ELEMENTS CHO HIỆU ỨNG ÂM THANH (Sử dụng nguồn CDN siêu ổn định) -->
 <audio id="bgm-audio" loop preload="auto">
     <!-- Nhạc nền hồi hộp (Suspense loop) -->
-    <source src="https://actions.google.com/sounds/v1/science_fiction/suspense_strings.ogg" type="audio/ogg">
+    <source src="https://assets.mixkit.co/active_storage/sfx/135/135-preview.mp3" type="audio/mpeg">
 </audio>
 <audio id="click-audio" preload="auto">
     <!-- Âm thanh click nhẹ -->
-    <source src="https://actions.google.com/sounds/v1/ui/click.ogg" type="audio/ogg">
+    <source src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" type="audio/mpeg">
 </audio>
 <audio id="success-audio" preload="auto">
     <!-- Âm thanh hoàn thành/lưu đáp án -->
-    <source src="https://actions.google.com/sounds/v1/ui/done_pop.ogg" type="audio/ogg">
+    <source src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3" type="audio/mpeg">
 </audio>
 
 <div id="lock-overlay"></div>
@@ -509,7 +511,7 @@
                 
                 <!-- HƯỚNG DẪN BẤM PHÍM TẮT -->
                 <div style="text-align: center; margin-top: 20px; font-size: 13px; color: var(--text-sub); display: none;" id="keyboard-shortcuts-hint">
-                    <i class="fa-regular fa-keyboard"></i> Dùng phím <b>1, 2, 3, 4</b> để chọn và phím <b>Enter</b> để qua câu.
+                    <i class="fa-regular fa-keyboard"></i> Dùng phím <b>1, 2, 3, 4</b> hoặc <b>A, B, C, D</b> để chọn và phím <b>Enter</b> để qua câu.
                 </div>
             </div>
             <div class="controls">
@@ -722,7 +724,6 @@
         "🌱 Nông nghiệp: Chăn nuôi công nghệ cao và an toàn sinh học là chìa khóa phát triển bền vững."
     ];
 
-    // Global Interval cho Fun Fact
     setInterval(() => {
         const randomFact = funFacts[Math.floor(Math.random() * funFacts.length)];
         const factEls = document.querySelectorAll('.fun-fact-text');
@@ -742,10 +743,12 @@
     };
     document.getElementById('theme-toggle-btn').innerHTML = isDarkMode ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
 
-    let isBgmEnabled = true; // Mặc định bật nhạc
+    let isBgmEnabled = true; 
     const bgmAudio = document.getElementById('bgm-audio');
     const clickAudio = document.getElementById('click-audio');
     const successAudio = document.getElementById('success-audio');
+
+    if (bgmAudio) bgmAudio.volume = 0.4;
 
     window.toggleBGM = function() {
         isBgmEnabled = !isBgmEnabled;
@@ -759,10 +762,21 @@
             btn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>';
             bgmAudio.pause();
         }
+        playClick();
     };
 
-    function playClick() { if(isBgmEnabled) clickAudio.play().catch(e=>{}); }
-    function playSuccess() { if(isBgmEnabled) successAudio.play().catch(e=>{}); }
+    function playClick() { 
+        if(isBgmEnabled && clickAudio) { 
+            clickAudio.currentTime = 0; 
+            clickAudio.play().catch(e=>{}); 
+        } 
+    }
+    function playSuccess() { 
+        if(isBgmEnabled && successAudio) { 
+            successAudio.currentTime = 0; 
+            successAudio.play().catch(e=>{}); 
+        } 
+    }
 
     // Hiệu ứng pháo giấy (Confetti)
     function shootConfetti() {
@@ -809,7 +823,6 @@
         draw();
     }
 
-
     const finalFirebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : firebaseConfig;
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'quiz-megatech';
     
@@ -824,7 +837,6 @@
 
     let isFirebaseListening = false;
 
-    // === TẠO HEO MEGATECH ===
     function generatePigSVG(colorStr, hatType, accType) {
         let bodyColor = '#fbcfe8'; 
         if (colorStr === 'yellow') bodyColor = '#fde047';
@@ -863,19 +875,14 @@
 
         const svgContent = `
             <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <!-- Tai heo -->
                 <path d="M 30 45 Q 15 20 10 45 Q 20 60 30 45 Z" fill="${bodyColor}" stroke="rgba(0,0,0,0.1)" stroke-width="1"/>
                 <path d="M 70 45 Q 85 20 90 45 Q 80 60 70 45 Z" fill="${bodyColor}" stroke="rgba(0,0,0,0.1)" stroke-width="1"/>
-                <!-- Chân heo -->
                 <rect x="35" y="85" width="8" height="10" rx="4" fill="#1e293b"/>
                 <rect x="57" y="85" width="8" height="10" rx="4" fill="#1e293b"/>
-                <!-- Thân heo mập mạp -->
                 <ellipse cx="50" cy="60" rx="35" ry="32" fill="${bodyColor}"/>
-                <!-- Đuôi xoắn -->
                 <path d="M 80 70 Q 95 65 85 75 Q 80 80 85 85" fill="none" stroke="${bodyColor}" stroke-width="4" stroke-linecap="round"/>
                 ${hatSvg}
                 ${eyesSvg}
-                <!-- Mũi heo (Snout) -->
                 <ellipse cx="50" cy="62" rx="14" ry="10" fill="#fca5a5" stroke="#f43f5e" stroke-width="1"/>
                 <circle cx="45" cy="62" r="2.5" fill="#9f1239"/>
                 <circle cx="55" cy="62" r="2.5" fill="#9f1239"/>
@@ -895,10 +902,9 @@
 
     setTimeout(updatePigSVG, 100);
 
-    // === HỆ THỐNG KÉO THẢ VÀ BÀN PHÍM CHO VỊT ===
     let gameLoop;
     let myPigX = 50, myPigY = 50; 
-    const speed = 0.8; 
+    const speed = 1.0; 
     const keys = { w: false, a: false, s: false, d: false, ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false };
     let joyVx = 0, joyVy = 0; 
     let lastSyncTime = 0;
@@ -1018,6 +1024,7 @@
     }
 
     window.toggleSidebar = function() {
+        playClick();
         document.getElementById('player-sidebar').classList.toggle('open');
     };
 
@@ -1138,8 +1145,6 @@
                     }).catch(e => console.log("Lỗi khởi tạo Setting", e));
                 }
             } catch (err) { console.error("Lỗi:", err); }
-        }, (error) => {
-            console.error("Lỗi lắng nghe cấu hình Server:", error);
         });
 
         checkResumeSession();
@@ -1157,7 +1162,6 @@
                 await signInAnonymously(auth);
             }
         } catch (error) { 
-            console.warn("Lỗi Auth: Dự án chưa bật Đăng nhập ẩn danh. Tự động chuyển sang chế độ Khách.", error);
             currentUser = { uid: "guest_user_megatech" };
             startFirebaseListeners();
         }
@@ -1198,7 +1202,6 @@
         if (document.getElementById('question-screen').classList.contains('active')) {
             if (examStatus === 'paused') {
                 overlay.style.display = 'flex';
-                // Render tĩnh một lần để tránh chớp giật
                 if (!overlay.querySelector('#pause-fact-container')) {
                     overlay.innerHTML = `
                         <i class="fa-solid fa-circle-pause" style="color: #3b82f6;"></i>
