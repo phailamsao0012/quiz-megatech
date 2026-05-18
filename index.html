@@ -53,7 +53,7 @@
         body {
             background-color: var(--bg-body);
             display: flex; justify-content: center; align-items: center;
-            width: 100vw; height: 100vh; /* Cố định 100% màn hình */
+            width: 100vw; height: 100vh; height: 100dvh; /* Sử dụng dvh để sửa lỗi thanh địa chỉ trên mobile Safari */
             overflow: hidden; /* Tuyệt đối không cho cuộn bên ngoài */
             font-family: 'Nunito', sans-serif; color: var(--text-main);
             user-select: none; -webkit-user-select: none; 
@@ -63,7 +63,7 @@
 
         /* KHUNG APP CHÍNH */
         .quiz-container {
-            width: 100%; height: 100%; /* Trên mobile chiếm 100% full viền */
+            width: 100%; height: 100%; 
             max-width: 1280px; 
             background: var(--container-bg); backdrop-filter: blur(20px);
             position: relative; overflow: hidden; display: flex; flex-direction: column;
@@ -98,12 +98,12 @@
         .progress-bar { width: 100%; height: 6px; background: var(--container-border); flex-shrink: 0;}
         .progress-fill { height: 100%; background: #22c55e; width: 0%; transition: width 0.4s ease; box-shadow: 0 0 10px rgba(34, 197, 94, 0.5); }
 
-        /* MÀN HÌNH NỘI DUNG (CÓ THỂ CUỘN ĐỘC LẬP) */
+        /* MÀN HÌNH NỘI DUNG CHÍNH (CÓ THỂ CUỘN ĐỘC LẬP) */
         .screen { 
             display: none; 
             flex-direction: column; 
             flex-grow: 1; 
-            width: 100%; height: 0; /* Chiều cao = 0 + flex-grow: 1 giúp nó chiếm phần còn lại và tự tạo thanh cuộn */
+            width: 100%; height: 0; /* Chiều cao = 0 + flex-grow: 1 giúp nó chiếm phần còn lại và tự tạo thanh cuộn chuẩn xác */
             overflow-y: auto; 
             overflow-x: hidden;
             background-image: radial-gradient(circle at top right, var(--bg-gradient-1) 0%, transparent 50%), radial-gradient(circle at bottom left, var(--bg-gradient-2) 0%, transparent 50%);
@@ -285,7 +285,6 @@
         .admin-title { font-size: 22px; color: var(--text-heading); font-family: 'Montserrat', sans-serif; margin-bottom: 15px; border-bottom: 2px solid var(--box-border); padding-bottom: 15px; display: flex; flex-direction: column; align-items: flex-start; font-weight: 900; flex-shrink: 0; gap: 15px;}
         @media (min-width: 768px) { .admin-title { font-size: 28px; flex-direction: row; align-items: center; justify-content: space-between;} }
         
-        /* Grid Settings Panel */
         .admin-settings-panel { display: grid; grid-template-columns: 1fr; gap: 10px; width: 100%; }
         @media (min-width: 1024px) { .admin-settings-panel { grid-template-columns: repeat(2, 1fr); gap: 15px; } }
 
@@ -341,7 +340,6 @@
         
         #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; display: none;}
         
-        /* Hiệu ứng trang trí góc */
         .shape { position: absolute; opacity: 0.15; z-index: 1; pointer-events: none; color: #86efac;}
         .shape-1 { top: -20px; left: -20px; font-size: 200px; transform: rotate(-15deg); }
         .shape-2 { bottom: -50px; right: -50px; font-size: 250px; transform: rotate(15deg); }
@@ -355,7 +353,7 @@
 </head>
 <body>
 
-<!-- AUDIO ELEMENTS (Bảo vệ bằng try-catch trong JS) -->
+<!-- AUDIO ELEMENTS (Bảo vệ bằng try-catch) -->
 <audio id="bgm-audio" loop preload="auto">
     <source src="https://cdn.pixabay.com/download/audio/2022/10/25/audio_4f54eb13c3.mp3" type="audio/mpeg">
 </audio>
@@ -396,7 +394,7 @@
     </div>
     <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
 
-    <!-- START SCREEN (TRANG CHỦ ĐIỀN THÔNG TIN + TẠO AVATAR HEO) -->
+    <!-- START SCREEN -->
     <div class="screen active" id="start-screen">
         <div class="content-wrapper">
             <h1>CHINH PHỤC <span class="highlight-text">MEGATECH</span></h1>
@@ -468,13 +466,13 @@
 
     <!-- MÀN HÌNH NÔNG TRẠI CHỜ THI -->
     <div class="screen" id="waiting-screen">
-        <div class="content-wrapper" style="padding:0; justify-content: flex-start;">
+        <div class="content-wrapper" style="padding:0; justify-content: flex-start; max-width: 100%;">
             <div class="waiting-header">
                 <div>
                     <h2><i class="fa-solid fa-clock-rotate-left fa-spin" style="color: #3b82f6;"></i> ĐANG CHỜ MỞ ĐỀ</h2>
                     <p class="fun-fact-text" style="color: #10b981; max-width: 600px; margin: 0 auto;">Đang tải Fun fact...</p>
                 </div>
-                <button class="toggle-sidebar-btn" onclick="toggleSidebar(); playClick();">
+                <button class="toggle-sidebar-btn" onclick="toggleSidebar();">
                     <i class="fa-solid fa-users"></i> Menu
                 </button>
             </div>
@@ -507,7 +505,7 @@
                 <div class="player-sidebar" id="player-sidebar">
                     <div class="sidebar-header">
                         <span><i class="fa-solid fa-list-ul"></i> Hội Heo Megatech</span>
-                        <button class="close-sidebar-btn" onclick="toggleSidebar(); playClick();"><i class="fa-solid fa-xmark"></i></button>
+                        <button class="close-sidebar-btn" onclick="toggleSidebar();"><i class="fa-solid fa-xmark"></i></button>
                     </div>
                     <div class="sidebar-list" id="sidebar-player-list"></div>
                 </div>
@@ -515,7 +513,7 @@
         </div>
     </div>
 
-    <!-- ADMIN LOGIN SCREEN (Sửa nút Hủy để trở về state trước đó) -->
+    <!-- ADMIN LOGIN SCREEN -->
     <div class="screen" id="admin-login-screen">
         <div class="content-wrapper">
             <div class="question-box" style="max-width: 500px; text-align: center;">
@@ -534,7 +532,7 @@
 
     <!-- QUESTION SCREEN -->
     <div class="screen" id="question-screen">
-        <div class="content-wrapper">
+        <div class="content-wrapper" style="max-width: 1000px;">
             <div class="question-box" id="question-box-main">
                 <div class="q-header">
                     <div class="q-counter" id="q-counter">CÂU HỎI 1 / 25</div>
@@ -561,7 +559,7 @@
 
     <!-- END SCREEN -->
     <div class="screen" id="end-screen">
-        <div class="content-wrapper">
+        <div class="content-wrapper" style="max-width: 1100px;">
             <div class="end-layout">
                 <div class="end-card">
                     <p style="font-size: 24px; color: #10b981; font-weight: 800; margin-bottom: 10px; font-family: 'Montserrat';">ĐIỂM SỐ CỦA BẠN</p>
@@ -585,67 +583,60 @@
         </div>
     </div>
 
-    <!-- ADMIN SCREEN (DÙNG CSS GRID HIỆN ĐẠI) -->
+    <!-- ADMIN SCREEN -->
     <div class="screen" id="admin-screen">
         <div class="content-wrapper admin-wrapper">
             <div class="admin-box">
                 <div class="admin-title">
                     <div><i class="fa-solid fa-satellite-dish" style="color: #ef4444;"></i> TRUNG TÂM ADMIN</div>
-                    <div style="display: flex; gap: 10px;">
-                        <button class="action-btn btn-success" onclick="exportExcel()"><i class="fa-solid fa-file-csv"></i> EXCEL</button>
-                        <button class="action-btn btn-primary" onclick="showPresentation()"><i class="fa-solid fa-person-chalkboard"></i> TRÌNH CHIẾU</button>
+                    <div class="admin-controls">
                         <button class="action-btn btn-fullscreen" onclick="toggleFullscreen()"><i class="fa-solid fa-expand"></i> TOÀN MÀN HÌNH</button>
+                        <div style="display: flex; align-items: center; gap: 8px; background: var(--input-bg); padding: 6px 12px; border-radius: 10px; border: 1px solid var(--box-border);">
+                            <span style="font-size: 13px; font-weight: bold; color: var(--text-heading);"><i class="fa-solid fa-calendar-day"></i> Tên đợt:</span>
+                            <input type="text" id="admin-batch-name-input" class="name-input" style="width: 140px; padding: 5px; border-radius: 6px; font-size: 13px; margin:0;" value="Đợt 1 ngày 17/05/2026">
+                            <span style="font-size: 13px; font-weight: bold; color: var(--text-heading); margin-left: 5px;"><i class="fa-regular fa-clock"></i> Phút thi:</span>
+                            <input type="number" id="admin-duration-input" class="name-input" style="width: 50px; padding: 5px; border-radius: 6px; font-size: 13px; margin:0;" value="9" min="1">
+                            <button class="action-btn btn-success" style="padding: 6px 12px; font-size: 12px;" onclick="saveBatchSettings()"><i class="fa-solid fa-floppy-disk"></i> Lưu</button>
+                        </div>
+
+                        <div style="display: flex; gap: 4px; background: var(--input-bg); padding: 4px; border-radius: 10px; border: 1px solid var(--box-border);">
+                            <button class="action-btn btn-success" id="admin-start-exam-btn" style="padding: 6px 12px; font-size: 12px;" onclick="setExamStatus('running')"><i class="fa-solid fa-play"></i> MỞ ĐỀ</button>
+                            <button class="action-btn btn-pause" id="admin-pause-exam-btn" style="padding: 6px 12px; font-size: 12px;" onclick="setExamStatus('paused')"><i class="fa-solid fa-circle-pause"></i> TẠM DỪNG</button>
+                            <button class="action-btn btn-warning" id="admin-lock-exam-btn" style="padding: 6px 12px; font-size: 12px;" onclick="setExamStatus('idle')"><i class="fa-solid fa-lock"></i> KHÓA ĐỀ</button>
+                            <button class="action-btn btn-danger" id="admin-end-exam-btn" style="padding: 6px 12px; font-size: 12px;" onclick="setExamStatus('ended')"><i class="fa-solid fa-stop"></i> ĐÓNG ĐỀ</button>
+                        </div>
+
+                        <div style="display: flex; align-items: center; gap: 8px; background: var(--input-bg); padding: 6px 12px; border-radius: 10px; border: 1px solid var(--box-border);">
+                            <span style="font-size: 13px; font-weight: bold; color: var(--text-heading);"><i class="fa-solid fa-key"></i> Pass đề:</span>
+                            <input type="text" id="admin-change-pass-input" class="name-input" style="width: 70px; padding: 5px; border-radius: 6px; font-size: 13px; margin:0;" value="220902">
+                            <button class="action-btn btn-primary" style="padding: 6px 12px; font-size: 12px;" onclick="updateQuizPassword()"><i class="fa-solid fa-floppy-disk"></i> Lưu</button>
+                        </div>
+
+                        <div style="display: flex; align-items: center; gap: 8px; background: var(--input-bg); padding: 6px 12px; border-radius: 10px; border: 1px solid var(--box-border);">
+                            <span style="font-size: 13px; font-weight: bold; color: var(--text-heading);"><i class="fa-solid fa-user-lock"></i> Đổi TK:</span>
+                            <input type="text" id="admin-setting-user" class="name-input" style="width: 80px; padding: 5px; border-radius: 6px; font-size: 13px; margin:0;" placeholder="User">
+                            <input type="password" id="admin-setting-pass" class="name-input" style="width: 80px; padding: 5px; border-radius: 6px; font-size: 13px; margin:0;" placeholder="Pass">
+                            <button class="action-btn btn-primary" style="padding: 6px 12px; font-size: 12px;" onclick="updateAdminCredentials()"><i class="fa-solid fa-floppy-disk"></i> Lưu</button>
+                        </div>
+                        
+                        <button class="action-btn btn-success" onclick="exportExcel()"><i class="fa-solid fa-file-csv"></i> XUẤT EXCEL</button>
+                        <button class="action-btn btn-primary" onclick="showPresentation()"><i class="fa-solid fa-person-chalkboard"></i> TRÌNH CHIẾU</button>
+                        <button class="action-btn btn-danger" onclick="deleteAllData()"><i class="fa-solid fa-trash-can"></i> XÓA TẤT CẢ</button>
                         <button class="action-btn btn-outline" onclick="logoutAdmin()"><i class="fa-solid fa-right-from-bracket"></i> THOÁT</button>
                     </div>
                 </div>
 
-                <div class="admin-settings-panel">
-                    <div class="admin-setting-item">
-                        <span><i class="fa-solid fa-calendar-day"></i> Cấu hình Đợt:</span>
-                        <input type="text" id="admin-batch-name-input" class="name-input" style="flex-grow:1; min-width:120px; padding: 5px 10px; border-radius: 6px; font-size: 13px; margin:0;" value="Đợt 1 ngày 17/05/2026">
-                        <span><i class="fa-regular fa-clock"></i> Phút:</span>
-                        <input type="number" id="admin-duration-input" class="name-input" style="width: 50px; padding: 5px; border-radius: 6px; font-size: 13px; margin:0;" value="9" min="1">
-                        <button class="action-btn btn-success" style="padding: 5px 10px; font-size: 12px;" onclick="saveBatchSettings()">Lưu</button>
-                    </div>
-
-                    <div class="admin-setting-item" style="justify-content: space-between;">
-                        <span><i class="fa-solid fa-toggle-on"></i> Trạng thái Đề thi:</span>
-                        <div style="display: flex; gap: 4px;">
-                            <button class="action-btn btn-success" id="admin-start-exam-btn" style="padding: 5px 10px; font-size: 11px;" onclick="setExamStatus('running')"><i class="fa-solid fa-play"></i> MỞ</button>
-                            <button class="action-btn btn-pause" id="admin-pause-exam-btn" style="padding: 5px 10px; font-size: 11px;" onclick="setExamStatus('paused')"><i class="fa-solid fa-pause"></i> DỪNG</button>
-                            <button class="action-btn btn-warning" id="admin-lock-exam-btn" style="padding: 5px 10px; font-size: 11px;" onclick="setExamStatus('idle')"><i class="fa-solid fa-lock"></i> KHÓA</button>
-                            <button class="action-btn btn-danger" id="admin-end-exam-btn" style="padding: 5px 10px; font-size: 11px;" onclick="setExamStatus('ended')"><i class="fa-solid fa-stop"></i> ĐÓNG</button>
-                        </div>
-                    </div>
-
-                    <div class="admin-setting-item">
-                        <span><i class="fa-solid fa-key"></i> Pass đề thi:</span>
-                        <input type="text" id="admin-change-pass-input" class="name-input" style="width: 80px; padding: 5px; border-radius: 6px; font-size: 13px; margin:0;" value="220902">
-                        <button class="action-btn btn-primary" style="padding: 5px 10px; font-size: 12px;" onclick="updateQuizPassword()">Lưu</button>
-                    </div>
-
-                    <div class="admin-setting-item">
-                        <span><i class="fa-solid fa-user-lock"></i> Tài khoản Admin:</span>
-                        <input type="text" id="admin-setting-user" class="name-input" style="width: 70px; padding: 5px; border-radius: 6px; font-size: 13px; margin:0;" placeholder="User">
-                        <input type="password" id="admin-setting-pass" class="name-input" style="width: 70px; padding: 5px; border-radius: 6px; font-size: 13px; margin:0;" placeholder="Pass">
-                        <button class="action-btn btn-primary" style="padding: 5px 10px; font-size: 12px;" onclick="updateAdminCredentials()">Lưu</button>
-                    </div>
-                </div>
-
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 10px;">
-                    <div style="display: flex; align-items: center; gap: 10px; background: var(--btn-outline-bg); padding: 8px 15px; border-radius: 12px; border: 1px solid var(--box-border);">
-                        <span style="font-weight: bold; color: var(--text-heading); font-size: 14px;"><i class="fa-solid fa-filter"></i> Lọc đợt thi:</span>
-                        <select id="admin-batch-filter" onchange="filterAdminByBatch()" class="name-input" style="padding: 4px 10px; border-radius: 8px; font-size: 14px; width: auto; margin:0;">
-                            <option value="ALL">Tất cả đợt</option>
-                            <option value="CURRENT" selected>Đợt hiện tại</option>
-                        </select>
-                    </div>
-                    <button class="action-btn btn-danger" onclick="deleteAllData()"><i class="fa-solid fa-trash-can"></i> Xóa toàn bộ DB</button>
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; background: var(--btn-outline-bg); padding: 10px 15px; border-radius: 12px; border: 1px solid var(--box-border);">
+                    <span style="font-weight: bold; color: var(--text-heading);"><i class="fa-solid fa-filter"></i> Lọc theo đợt thi:</span>
+                    <select id="admin-batch-filter" onchange="filterAdminByBatch()" class="name-input" style="padding: 6px 12px; border-radius: 8px; font-size: 14px; width: auto; margin:0;">
+                        <option value="ALL">-- Hiển thị tất cả --</option>
+                        <option value="CURRENT" selected>Đợt thi hiện tại</option>
+                    </select>
                 </div>
 
                 <div class="admin-nav-tabs">
-                    <button class="admin-tab active" onclick="switchAdminTab('grid-pane', this); playClick();"><i class="fa-solid fa-grip"></i> Bản đồ Grid</button>
-                    <button class="admin-tab" onclick="switchAdminTab('chart-pane', this); playClick();"><i class="fa-solid fa-chart-bar"></i> Biểu đồ cột</button>
+                    <button class="admin-tab active" onclick="switchAdminTab('grid-pane', this); playClick();"><i class="fa-solid fa-grip"></i> Bản đồ Grid (Live Grid)</button>
+                    <button class="admin-tab" onclick="switchAdminTab('chart-pane', this); playClick();"><i class="fa-solid fa-chart-bar"></i> Biểu đồ trực quan (Live Chart)</button>
                 </div>
 
                 <div class="admin-content-pane active" id="grid-pane">
@@ -682,15 +673,17 @@
     import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
     let previousScreenId = 'start-screen';
+    let audioUnlocked = false;
+    let isDarkMode = localStorage.getItem('megatech_darkmode') === 'true';
+    let isBgmEnabled = true; 
 
     // MỞ KHÓA AUDIO TỰ ĐỘNG BẰNG TƯƠNG TÁC ĐẦU TIÊN
-    let audioUnlocked = false;
     document.body.addEventListener('click', function() {
         if (!audioUnlocked) {
-            const bgm = document.getElementById('bgm-audio');
-            const click = document.getElementById('click-audio');
-            const success = document.getElementById('success-audio');
             try { 
+                const bgm = document.getElementById('bgm-audio');
+                const click = document.getElementById('click-audio');
+                const success = document.getElementById('success-audio');
                 if(bgm) { bgm.load(); bgm.volume = 0.4; } 
                 if(click) click.load(); 
                 if(success) success.load(); 
@@ -699,23 +692,22 @@
         }
     }, { once: true });
 
-    let isDarkMode = localStorage.getItem('megatech_darkmode') === 'true';
     if (isDarkMode) document.body.classList.add('dark-theme');
-    
+    document.getElementById('theme-toggle-btn').innerHTML = isDarkMode ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+
     function toggleTheme() {
         try {
+            playClick();
             isDarkMode = !isDarkMode;
             document.body.classList.toggle('dark-theme', isDarkMode);
             localStorage.setItem('megatech_darkmode', isDarkMode);
             document.getElementById('theme-toggle-btn').innerHTML = isDarkMode ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
-            playClick();
         } catch(e){}
     }
-    document.getElementById('theme-toggle-btn').innerHTML = isDarkMode ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
 
-    let isBgmEnabled = true; 
     function toggleBGM() {
         try {
+            playClick();
             isBgmEnabled = !isBgmEnabled;
             const btn = document.getElementById('bgm-toggle-btn');
             const bgmAudio = document.getElementById('bgm-audio');
@@ -728,7 +720,6 @@
                 btn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>';
                 if (bgmAudio) bgmAudio.pause();
             }
-            playClick();
         } catch(e){}
     }
 
@@ -830,6 +821,7 @@
     let currentQuestion = 0, score = 0, hasAnswered = false;
     let playerName = "", playerDept = "", playerRole = "", currentDocId = "", playerAvatarBase64 = "";
     let gameQuestions = []; 
+    let tabFocusWarnings = 0; 
     let cheatFlag = false; 
     const shapesArr = ["A", "B", "C", "D"];
     
@@ -892,7 +884,6 @@
 
     let isFirebaseListening = false;
 
-    // === HÀM VẼ HEO ĐÃ ĐƯỢC CHUẨN HÓA GLOBAL ===
     function generatePigSVG(colorStr, hatType, accType) {
         let bodyColor = '#fbcfe8'; 
         if (colorStr === 'yellow') bodyColor = '#fde047';
@@ -1222,7 +1213,7 @@
                 await signInAnonymously(auth);
             }
         } catch (error) { 
-            console.warn("Lỗi Auth: Dự án chưa bật Đăng nhập ẩn danh. Tự động chuyển sang chế độ Khách.", error);
+            console.warn("Lỗi Auth: Tự động chuyển sang chế độ Khách.", error);
             currentUser = { uid: "guest_user_megatech" };
             startFirebaseListeners();
         }
@@ -1237,7 +1228,6 @@
         }
     });
 
-    // Hàm chuyển màn hình có gán biến nhớ lịch sử
     function showScreen(screenId) {
         document.querySelectorAll('.screen').forEach(s => {
             s.classList.remove('active');
@@ -1787,7 +1777,7 @@
         }, 300);
     }
 
-    window.selectAnswer = function(index, btnElement) {
+    function selectAnswer(index, btnElement) {
         if (hasAnswered || examStatus !== 'running') return;
         hasAnswered = true;
         
@@ -1810,7 +1800,7 @@
         statusMsg.className = 'status-message success';
 
         showControlsAfterAnswer();
-    };
+    }
 
     function showControlsAfterAnswer() {
         if (!currentUser) return;
@@ -1822,12 +1812,12 @@
         document.getElementById('next-btn').style.display = 'block';
     }
 
-    window.nextQuestion = function() {
+    function nextQuestion() {
         playClick();
         currentQuestion++;
         if (currentQuestion < gameQuestions.length) loadQuestion();
         else showEndScreen();
-    };
+    }
 
     function showEndScreen() {
         clearInterval(timerInterval);
@@ -1870,7 +1860,7 @@
         loadLeaderboard();
     }
 
-    window.loadLeaderboard = async function() {
+    async function loadLeaderboard() {
         if (!currentUser) return;
         const lbList = document.getElementById('lb-list');
         lbList.innerHTML = '<div style="text-align: center; color: var(--text-sub); padding: 20px;"><i class="fa-solid fa-circle-notch fa-spin"></i> Đang tải dữ liệu...</div>';
@@ -1919,9 +1909,9 @@
         } catch (e) {
             lbList.innerHTML = '<div style="color: red; text-align: center;">Lỗi tải dữ liệu</div>';
         }
-    };
+    }
 
-    window.showPresentation = function() {
+    function showPresentation() {
         playClick();
         showScreen('presentation-screen');
         const container = document.getElementById('presentation-container');
@@ -1959,9 +1949,9 @@
                 </div>
             `;
         });
-    };
+    }
 
-    window.setExamStatus = async function(status) {
+    async function setExamStatus(status) {
         playClick();
         if (!currentUser) return alert("Lỗi: Chưa kết nối hệ thống! Đang tự động kết nối lại, vui lòng chờ...");
         try {
@@ -1972,9 +1962,9 @@
             console.error(e); 
             alert(`Lỗi khi thay đổi trạng thái kỳ thi! Chi tiết: ${e.message}`); 
         }
-    };
+    }
 
-    window.saveBatchSettings = async function() {
+    async function saveBatchSettings() {
         playClick();
         if (!currentUser) return alert("Lỗi: Chưa kết nối hệ thống!");
         const batchVal = document.getElementById('admin-batch-name-input').value.trim();
@@ -1990,9 +1980,9 @@
             }, { merge: true });
             alert("Đã lưu Đợt thi mới! Đề thi đã tự động trở về trạng thái KHÓA ĐỀ (Chờ mở).");
         } catch (e) { console.error(e); alert("Lỗi khi cập nhật đợt thi!"); }
-    };
+    }
 
-    window.updateQuizPassword = async function() {
+    async function updateQuizPassword() {
         playClick();
         if (!currentUser) return alert("Lỗi: Chưa kết nối hệ thống!");
         const newPass = document.getElementById('admin-change-pass-input').value.trim();
@@ -2002,9 +1992,9 @@
             await setDoc(globalSettingsRef, { quizPassword: newPass }, { merge: true });
             alert("Đã cập nhật mật khẩu thi mới thành công!");
         } catch(e) { console.error(e); alert("Lỗi khi thay đổi mật khẩu!"); }
-    };
+    }
 
-    window.updateAdminCredentials = async function() {
+    async function updateAdminCredentials() {
         playClick();
         if (!currentUser) return alert("Lỗi: Chưa kết nối hệ thống!");
         const newUser = document.getElementById('admin-setting-user').value.trim();
@@ -2017,15 +2007,15 @@
             currentAdminPass = newPass;
             alert("Cập nhật thông tin đăng nhập Admin thành công!");
         } catch(e) { console.error(e); alert("Lỗi kết nối khi đổi mật khẩu Admin."); }
-    };
+    }
 
-    window.deleteRecord = async function(docId) {
+    async function deleteRecord(docId) {
         playClick();
         if (!currentUser) return;
         if (confirm("Xóa kết quả này?")) await deleteDoc(doc(scoresCollection, docId));
-    };
+    }
 
-    window.deleteAllData = async function() {
+    async function deleteAllData() {
         playClick();
         if (!currentUser) return alert("Lỗi: Chưa kết nối hệ thống!");
         if (confirm("CẢNH BÁO: Hành động này sẽ xóa sạch TOÀN BỘ dữ liệu người chơi trong tất cả các đợt thi. Bạn có chắc chắn?")) {
@@ -2040,22 +2030,22 @@
 
             alert("Đã xóa sạch toàn bộ cơ sở dữ liệu và đặt lại trạng thái chờ mở đề!");
         }
-    };
+    }
 
-    window.switchAdminTab = function(paneId, tabBtn) {
+    function switchAdminTab(paneId, tabBtn) {
         playClick();
         document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.admin-content-pane').forEach(p => p.classList.remove('active'));
         tabBtn.classList.add('active');
         document.getElementById(paneId).classList.add('active');
-    };
+    }
 
-    window.filterAdminByBatch = function() {
+    function filterAdminByBatch() {
         selectedBatchFilter = document.getElementById('admin-batch-filter').value;
         if (window.refreshAdminDashboard) window.refreshAdminDashboard();
-    };
+    }
 
-    window.openAdminDashboard = function() {
+    function openAdminDashboard() {
         if (!isAdminLoggedIn) { gotoAdminLogin(); return; }
         showScreen('admin-screen');
         
@@ -2159,7 +2149,7 @@
         });
     }
     
-    window.exportExcel = async function() {
+    async function exportExcel() {
         playClick();
         if (!currentUser) return alert("Lỗi: Chưa kết nối hệ thống!");
         try {
@@ -2201,7 +2191,42 @@
             console.error(e);
             alert("Lỗi khi xuất dữ liệu!");
         }
-    };
+    }
+
+    // =========================================================================
+    // XUẤT CÁC HÀM RA WINDOW ĐỂ TRÁNH LỖI REFERENCE
+    // =========================================================================
+    window.showScreen = showScreen;
+    window.gotoAdminLogin = gotoAdminLogin;
+    window.cancelAdminLogin = cancelAdminLogin;
+    window.goHome = goHome;
+    window.toggleBGM = toggleBGM;
+    window.toggleTheme = toggleTheme;
+    window.playClick = playClick;
+    window.updatePigSVG = updatePigSVG;
+    window.toggleSidebar = toggleSidebar;
+    window.validateAndConfirmInfo = validateAndConfirmInfo;
+    window.backToInfo = backToInfo;
+    window.handleAdminLogin = handleAdminLogin;
+    window.logoutAdmin = logoutAdmin;
+    window.requestReplay = requestReplay;
+    window.approveReplayRequest = approveReplayRequest;
+    window.startQuiz = startQuiz;
+    window.startCountdownAndEnterQuiz = startCountdownAndEnterQuiz;
+    window.selectAnswer = selectAnswer;
+    window.nextQuestion = nextQuestion;
+    window.loadLeaderboard = loadLeaderboard;
+    window.showPresentation = showPresentation;
+    window.setExamStatus = setExamStatus;
+    window.saveBatchSettings = saveBatchSettings;
+    window.updateQuizPassword = updateQuizPassword;
+    window.updateAdminCredentials = updateAdminCredentials;
+    window.deleteRecord = deleteRecord;
+    window.deleteAllData = deleteAllData;
+    window.switchAdminTab = switchAdminTab;
+    window.filterAdminByBatch = filterAdminByBatch;
+    window.openAdminDashboard = openAdminDashboard;
+    window.exportExcel = exportExcel;
 </script>
 </body>
 </html>
