@@ -12,7 +12,7 @@
     <style>
         /* THIẾT LẬP CƠ BẢN VÀ BIẾN CSS CHO DARK MODE */
         :root {
-            --bg-body: #064e3b; /* Nền ngoài cùng đậm màu hơn để làm nổi bật khung App */
+            --bg-body: #064e3b; 
             --bg-gradient-1: #dcfce7;
             --bg-gradient-2: #bbf7d0;
             --container-bg: rgba(255, 255, 255, 0.95);
@@ -53,92 +53,121 @@
         body {
             background-color: var(--bg-body);
             display: flex; justify-content: center; align-items: center;
-            height: 100vh; /* Cố định 100% chiều cao màn hình */
-            overflow: hidden; /* Tuyệt đối không cho body cuộn */
+            width: 100vw; height: 100vh; /* Cố định 100% kích thước màn hình */
+            overflow: hidden; /* TUYỆT ĐỐI KHÔNG CHO TRANG NGOÀI CUỘN */
             font-family: 'Nunito', sans-serif; color: var(--text-main);
-            user-select: none; -webkit-user-select: none; padding: 15px; 
+            user-select: none; -webkit-user-select: none; 
             transition: background 0.3s ease, color 0.3s ease;
+            margin: 0; padding: 0;
         }
 
-        /* KHUNG APP CỐ ĐỊNH */
+        /* KHUNG APP CỐ ĐỊNH, ĐÓNG VAI TRÒ NHƯ MỘT APP NATIVE */
         .quiz-container {
-            width: 100%; max-width: 1280px; 
-            height: 100%; max-height: 800px; /* Khung app cao tối đa 800px trên PC */
+            width: 100%; height: 100%; /* Mặc định trên Mobile chiếm 100% không viền */
+            max-width: 1280px; 
             background: var(--container-bg); backdrop-filter: blur(20px);
-            border: 2px solid var(--container-border); border-radius: 24px;
-            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4);
             position: relative; overflow: hidden; display: flex; flex-direction: column;
             transition: all 0.3s ease;
         }
 
+        /* Thêm bo góc và khoảng cách nếu mở trên PC màn hình lớn */
+        @media (min-width: 1280px) and (min-height: 800px) {
+            .quiz-container {
+                height: 95vh;
+                border-radius: 24px;
+                border: 2px solid var(--container-border);
+                box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4);
+            }
+        }
+
         .header {
-            padding: 15px 40px; display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;
             background: var(--box-bg); border-bottom: 2px solid var(--container-border); z-index: 10; flex-shrink: 0;
             transition: background 0.3s ease;
         }
+        @media (min-width: 768px) { .header { padding: 15px 40px; } }
+
         .logo-box { display: flex; align-items: center; gap: 15px; }
-        .logo-box img { height: 60px; object-fit: contain; }
-        .score-display { font-size: 20px; font-weight: 800; background: transparent; border: 2px solid #22c55e; color: #10b981; padding: 8px 20px; border-radius: 30px; letter-spacing: 1px; text-transform: uppercase; }
+        .logo-box img { height: 40px; object-fit: contain; }
+        @media (min-width: 768px) { .logo-box img { height: 60px; } }
+
+        .score-display { font-size: 14px; font-weight: 800; background: transparent; border: 2px solid #22c55e; color: #10b981; padding: 6px 12px; border-radius: 30px; letter-spacing: 1px; text-transform: uppercase; }
+        @media (min-width: 768px) { .score-display { font-size: 20px; padding: 8px 20px; } }
         
         .progress-bar { width: 100%; height: 6px; background: var(--container-border); flex-shrink: 0;}
         .progress-fill { height: 100%; background: #22c55e; width: 0%; transition: width 0.4s ease; box-shadow: 0 0 10px rgba(34, 197, 94, 0.5); }
 
-        /* FIX 2: CHỈ CHO PHÉP '.screen' ĐƯỢC CUỘN */
+        /* FIX 2: CHỈ CHO PHÉP '.screen' ĐƯỢC CUỘN NỘI BỘ MỘT CÁCH ĐỘC LẬP */
         .screen { 
             display: none; 
             flex-direction: column; 
             flex-grow: 1; 
-            width: 100%;
-            height: 100%;
-            overflow-y: auto; /* Đây là thanh cuộn duy nhất của hệ thống */
+            width: 100%; height: 100%;
+            overflow-y: auto; /* THANH CUỘN DUY NHẤT LÀ NẰM Ở ĐÂY */
             overflow-x: hidden;
             background-image: radial-gradient(circle at top right, var(--bg-gradient-1) 0%, transparent 50%), radial-gradient(circle at bottom left, var(--bg-gradient-2) 0%, transparent 50%);
+            /* QUAN TRỌNG: justify-content: flex-start giúp chống cắt xén (clip) phần trên khi nội dung quá dài */
+            justify-content: flex-start; align-items: center;
         }
         .screen.active { display: flex; animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* FIX 3: CONTENT WRAPPER TỰ ĐỘNG CĂN GIỮA VÀ ĐẨY XUỐNG MƯỢT MÀ */
+        /* FIX 3: WRAPPER THÔNG MINH, CĂN GIỮA NẾU NGẮN, TRÀN ĐẦY NẾU DÀI */
         .content-wrapper {
             width: 100%; max-width: 1000px; 
-            margin: auto; /* Tự động căn giữa theo chiều dọc nếu nội dung ngắn, cuộn bình thường nếu nội dung dài */
+            margin-top: auto; margin-bottom: auto; /* Kéo nội dung ra giữa nếu chiều cao màn hình dư dả */
             padding: 40px 20px;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            display: flex; flex-direction: column; align-items: center;
+            flex-shrink: 0; /* Chống méo layout */
         }
+        .admin-wrapper { max-width: 1240px; } /* Wrapper rộng hơn cho Admin */
 
         /* Typography & Buttons */
-        h1 { font-family: 'Montserrat', sans-serif; font-size: 52px; color: var(--text-heading); margin-bottom: 10px; font-weight: 900; letter-spacing: -1px; text-transform: uppercase; transition: color 0.3s ease; text-align: center;}
-        .highlight-text { color: #22c55e; }
-        p.subtitle { font-size: 20px; color: #10b981; margin-bottom: 25px; font-weight: 700; text-align: center;}
+        h1 { font-family: 'Montserrat', sans-serif; font-size: 34px; color: var(--text-heading); margin-bottom: 10px; font-weight: 900; letter-spacing: -1px; text-transform: uppercase; transition: color 0.3s ease; text-align: center;}
+        @media (min-width: 768px) { h1 { font-size: 52px; } }
         
-        .btn { padding: 16px 40px; font-size: 20px; font-weight: 800; font-family: 'Montserrat', sans-serif; color: #ffffff; background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); border: none; border-radius: 50px; cursor: pointer; transition: all 0.2s; box-shadow: 0 8px 20px rgba(21, 128, 61, 0.25); }
+        .highlight-text { color: #22c55e; }
+        p.subtitle { font-size: 16px; color: #10b981; margin-bottom: 25px; font-weight: 700; text-align: center;}
+        @media (min-width: 768px) { p.subtitle { font-size: 20px; } }
+        
+        .btn { padding: 15px 30px; font-size: 18px; font-weight: 800; font-family: 'Montserrat', sans-serif; color: #ffffff; background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); border: none; border-radius: 50px; cursor: pointer; transition: all 0.2s; box-shadow: 0 8px 20px rgba(21, 128, 61, 0.25); width: 100%;}
+        @media (min-width: 768px) { .btn { padding: 16px 40px; font-size: 20px; width: auto;} }
+        
         .btn:hover:not(:disabled) { transform: translateY(-3px) scale(1.02); box-shadow: 0 12px 30px rgba(21, 128, 61, 0.35); }
         .btn:disabled { opacity: 0.7; cursor: not-allowed; }
         .btn.btn-outline { background: var(--btn-outline-bg); border: 2px solid #22c55e; color: #10b981; box-shadow: none; }
         .btn.btn-outline:hover:not(:disabled) { background: var(--card-hover); }
-        .btn-small { padding: 8px 20px; font-size: 14px; }
+        .btn-small { padding: 8px 15px; font-size: 14px; width: auto;}
+        @media (min-width: 768px) { .btn-small { padding: 8px 20px; } }
 
         .input-group { margin-bottom: 15px; width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 12px; margin-left: auto; margin-right: auto;}
-        .name-input { width: 100%; padding: 15px 25px; font-size: 18px; font-family: 'Nunito', sans-serif; font-weight: 700; background: var(--input-bg); color: var(--text-heading); border: 2px solid var(--box-border); border-radius: 16px; outline: none; transition: all 0.3s; }
+        .name-input { width: 100%; padding: 15px 20px; font-size: 16px; font-family: 'Nunito', sans-serif; font-weight: 700; background: var(--input-bg); color: var(--text-heading); border: 2px solid var(--box-border); border-radius: 16px; outline: none; transition: all 0.3s; }
+        @media (min-width: 768px) { .name-input { padding: 15px 25px; font-size: 18px;} }
         .name-input:focus { border-color: #22c55e; box-shadow: 0 0 15px rgba(34, 197, 94, 0.15); }
 
         /* HEO MAKER CSS */
         .avatar-maker-box {
             background: var(--box-bg); border: 2px solid var(--box-border); border-radius: 20px; padding: 20px; width: 100%; max-width: 500px;
-            display: flex; gap: 20px; align-items: center; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); transition: background 0.3s, border 0.3s;
+            display: flex; flex-direction: column; gap: 20px; align-items: center; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); transition: background 0.3s, border 0.3s;
         }
+        @media (min-width: 768px) { .avatar-maker-box { flex-direction: row; } }
+        
         .avatar-preview-wrapper {
             width: 100px; height: 100px; border-radius: 50%; background: #fdf4ff; flex-shrink: 0;
             border: 4px solid #f472b6; overflow: hidden; display: flex; justify-content: center; align-items: center; box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
         }
         .avatar-preview-wrapper img { width: 90%; height: 90%; object-fit: contain; }
-        .maker-controls { flex-grow: 1; display: flex; flex-direction: column; gap: 8px; }
+        .maker-controls { flex-grow: 1; display: flex; flex-direction: column; gap: 8px; width: 100%; }
         .maker-select { width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--box-border); font-family: 'Nunito'; font-weight: bold; background: var(--input-bg); color: var(--text-heading); outline: none; transition: all 0.3s;}
         .maker-select:focus { border-color: #3b82f6; }
 
         /* NÔNG TRẠI HEO MULTIPLAYER CSS */
-        #waiting-screen .content-wrapper { padding: 0; max-width: 100%; height: 100%; margin: 0;}
+        #waiting-screen { padding: 0; overflow: hidden; } /* Nông trại không cần cuộn */
+        #waiting-screen .content-wrapper { padding: 0; max-width: 100%; height: 100%; margin: 0; justify-content: flex-start;}
+        
         .waiting-header { padding: 15px 20px; background: var(--box-bg); width: 100%; z-index: 10; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--container-border); transition: background 0.3s; flex-shrink: 0;}
-        .waiting-header h2 { font-size: 24px; color: #3b82f6; font-family: 'Montserrat'; font-weight: 900;}
+        .waiting-header h2 { font-size: 20px; color: #3b82f6; font-family: 'Montserrat'; font-weight: 900;}
+        @media (min-width: 768px) { .waiting-header h2 { font-size: 24px; } }
         
         .playground-wrapper { flex-grow: 1; width: 100%; position: relative; display: flex; flex-direction: column; background: #86efac; overflow: hidden;}
         .playground-container {
@@ -154,12 +183,23 @@
         .barn::before { content: ''; position: absolute; width: 0; height: 0; border-left: 65px solid transparent; border-right: 65px solid transparent; border-bottom: 50px solid #991b1b; top: -50px; left: -9px;}
         .tree { width: 40px; height: 40px; background: #14532d; border-radius: 50%; position: absolute; box-shadow: 20px 10px 0 #166534, -15px 15px 0 #15803d;}
         .tree-trunk { width: 10px; height: 20px; background: #78350f; position: absolute; top: 35px; left: 15px;}
-        
+        .cloud { position: absolute; background: white; border-radius: 50px; opacity: 0.8; }
+        .cloud::before, .cloud::after { content: ''; position: absolute; background: white; border-radius: 50%; }
+        .c1 { width: 100px; height: 30px; top: 10%; left: 10%; animation: floatCloud 20s linear infinite; }
+        .c1::before { width: 50px; height: 50px; top: -20px; left: 15px; } .c1::after { width: 40px; height: 40px; top: -10px; right: 15px; }
+        .c2 { width: 80px; height: 25px; top: 20%; right: 20%; animation: floatCloud 15s linear infinite reverse; }
+        .c2::before { width: 40px; height: 40px; top: -15px; left: 10px; } .c2::after { width: 30px; height: 30px; top: -8px; right: 10px; }
+        @keyframes floatCloud { 0% { transform: translateX(-50px); } 50% { transform: translateX(50px); } 100% { transform: translateX(-50px); } }
+
         /* Joystick Panel */
-        .joystick-panel { height: 120px; width: 100%; background: var(--box-bg); border-top: 3px solid var(--box-border); display: flex; align-items: center; justify-content: space-between; padding: 0 40px; flex-shrink: 0; z-index: 50; transition: background 0.3s;}
+        .joystick-panel { height: 120px; width: 100%; background: var(--box-bg); border-top: 3px solid var(--box-border); display: flex; align-items: center; justify-content: center; gap: 20px; padding: 0 15px; flex-shrink: 0; z-index: 50; transition: background 0.3s;}
+        @media (min-width: 768px) { .joystick-panel { justify-content: space-between; padding: 0 40px; } }
+        
         .joystick-zone { width: 100px; height: 100px; position: relative; border-radius: 50%; background: var(--btn-outline-bg); border: 4px solid var(--box-border); display: flex; align-items: center; justify-content: center; touch-action: none; }
         .joystick-stick { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #2563eb); position: absolute; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.4); pointer-events: none; transition: transform 0.1s; }
-        .keyboard-hint { display: flex; flex-direction: column; align-items: center; color: var(--text-sub); font-weight: bold; }
+        
+        .keyboard-hint { display: none; flex-direction: column; align-items: center; color: var(--text-sub); font-weight: bold; }
+        @media (min-width: 768px) { .keyboard-hint { display: flex; } }
         .key-row { display: flex; gap: 5px; margin-bottom: 5px;}
         .key { width: 35px; height: 35px; background: var(--input-bg); border: 2px solid var(--box-border); border-radius: 8px; display: flex; justify-content: center; align-items: center; font-family: monospace; font-size: 16px; color: var(--text-heading); box-shadow: 0 3px 0 var(--box-border);}
 
@@ -179,23 +219,35 @@
         .sidebar-item img { width: 40px; height: 40px; border-radius: 50%; background: #fdf4ff; border: 2px solid #f472b6; }
         .sidebar-item .name { font-weight: 700; color: var(--text-heading); font-size: 14px; text-align: left; }
         
-        .toggle-sidebar-btn { background: var(--box-bg); border: 2px solid #10b981; color: #10b981; padding: 10px 20px; border-radius: 30px; font-weight: bold; font-family: 'Montserrat'; cursor: pointer; box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3); transition: all 0.2s; display: flex; gap: 10px; align-items: center; }
+        .toggle-sidebar-btn { background: var(--box-bg); border: 2px solid #10b981; color: #10b981; padding: 8px 15px; border-radius: 30px; font-weight: bold; font-family: 'Montserrat'; cursor: pointer; box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3); transition: all 0.2s; display: flex; gap: 10px; align-items: center; font-size: 14px;}
+        @media (min-width: 768px) { .toggle-sidebar-btn { padding: 10px 20px; font-size: 16px; } }
         .toggle-sidebar-btn:hover { transform: scale(1.05); background: #10b981; color: white; }
 
         /* Quiz Layouts */
         .timer-container { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 20px; }
-        .timer-text { font-size: 28px; font-weight: 900; font-family: 'Montserrat'; display: flex; align-items: center; gap: 10px; color: #22c55e; transition: color 0.3s;}
+        .timer-text { font-size: 20px; font-weight: 900; font-family: 'Montserrat'; display: flex; align-items: center; gap: 10px; color: #22c55e; transition: color 0.3s;}
+        @media (min-width: 768px) { .timer-text { font-size: 28px; } }
+        
         .timer-text.danger { color: #ef4444; animation: pulse 1s infinite; }
         .timer-bar-bg { flex-grow: 1; height: 10px; background: var(--container-border); border-radius: 10px; margin-right: 20px; overflow: hidden; }
         .timer-bar-fill { height: 100%; background: #22c55e; width: 100%; transition: width 0.1s linear, background 0.3s; }
 
-        .question-box { background: var(--box-bg); border: 2px solid var(--box-border); padding: 40px; border-radius: 24px; width: 100%; box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1); text-align: left; margin: 0 auto; transition: all 0.3s;}
-        .q-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px dashed var(--box-border); padding-bottom: 15px;}
-        .q-counter { font-weight: 800; color: #10b981; font-size: 20px; font-family: 'Montserrat'; text-transform: uppercase; letter-spacing: 2px;}
-        .question-text { font-family: 'Montserrat', sans-serif; font-size: 32px; color: var(--text-heading); margin-bottom: 35px; line-height: 1.5; font-weight: 800; transition: color 0.3s;}
+        .question-box { background: var(--box-bg); border: 2px solid var(--box-border); padding: 20px 15px; border-radius: 16px; width: 100%; box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1); text-align: left; transition: all 0.3s;}
+        @media (min-width: 768px) { .question-box { padding: 40px; border-radius: 24px; } }
+        
+        .q-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px dashed var(--box-border); padding-bottom: 10px;}
+        .q-counter { font-weight: 800; color: #10b981; font-size: 16px; font-family: 'Montserrat'; text-transform: uppercase; letter-spacing: 2px;}
+        @media (min-width: 768px) { .q-counter { font-size: 20px; margin-bottom: 20px; padding-bottom: 15px;} }
+        
+        .question-text { font-family: 'Montserrat', sans-serif; font-size: 20px; color: var(--text-heading); margin-bottom: 20px; line-height: 1.5; font-weight: 800; transition: color 0.3s;}
+        @media (min-width: 768px) { .question-text { font-size: 32px; margin-bottom: 35px; } }
 
-        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .option-btn { background: var(--input-bg); border: 2px solid var(--box-border); border-radius: 16px; padding: 20px 25px; font-size: 20px; font-weight: 700; color: var(--text-heading); cursor: pointer; transition: all 0.2s; text-align: left; display: flex; align-items: center; font-family: 'Nunito'; }
+        .options-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+        @media (min-width: 768px) { .options-grid { grid-template-columns: 1fr 1fr; gap: 20px;} }
+        
+        .option-btn { background: var(--input-bg); border: 2px solid var(--box-border); border-radius: 12px; padding: 12px 15px; font-size: 16px; font-weight: 700; color: var(--text-heading); cursor: pointer; transition: all 0.2s; text-align: left; display: flex; align-items: center; font-family: 'Nunito'; }
+        @media (min-width: 768px) { .option-btn { padding: 20px 25px; font-size: 20px; border-radius: 16px;} }
+        
         .option-btn:hover:not(.disabled) { background: var(--card-hover); border-color: #4ade80; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(34, 197, 94, 0.1); }
         .option-btn.disabled { cursor: not-allowed; opacity: 0.6; }
         .option-btn.selected { background: #eff6ff !important; border-color: #3b82f6 !important; color: #1e3a8a !important; box-shadow: 0 5px 15px rgba(59, 130, 246, 0.2) !important; transform: scale(1.02); }
@@ -204,19 +256,32 @@
         @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(0.95); } 100% { transform: scale(1.02); } }
         .option-btn.pop-anim { animation: pop 0.2s ease-out; }
 
-        .option-icon { width: 45px; height: 45px; border-radius: 12px; display: flex; justify-content: center; align-items: center; margin-right: 20px; font-weight: 900; color: #14532d; font-size: 20px; flex-shrink: 0; background: #bbf7d0; transition: all 0.2s;}
+        .option-icon { width: 35px; height: 35px; border-radius: 12px; display: flex; justify-content: center; align-items: center; margin-right: 15px; font-weight: 900; color: #14532d; font-size: 16px; flex-shrink: 0; background: #bbf7d0; transition: all 0.2s;}
+        @media (min-width: 768px) { .option-icon { width: 45px; height: 45px; font-size: 20px;} }
 
-        .controls { margin-top: 30px; display: flex; justify-content: space-between; align-items: center; width: 100%; margin-left: auto; margin-right: auto;}
-        .status-message { font-size: 24px; font-weight: 900; font-family: 'Montserrat'; display: none; }
+        .controls { margin-top: 20px; display: flex; flex-direction: column; gap: 15px; align-items: stretch; width: 100%; margin-left: auto; margin-right: auto;}
+        @media (min-width: 768px) { .controls { margin-top: 30px; flex-direction: row; justify-content: space-between; align-items: center;} }
+        
+        .status-message { font-size: 18px; font-weight: 900; font-family: 'Montserrat'; display: none; text-align: center; }
+        @media (min-width: 768px) { .status-message { font-size: 24px; text-align: left;} }
+        
         .status-message.success { color: #3b82f6; } .status-message.error { color: #ef4444; }
-        .next-btn { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: #ffffff; border: none; padding: 18px 40px; border-radius: 50px; font-size: 20px; font-weight: 800; cursor: pointer; display: none; font-family: 'Montserrat'; }
+        .next-btn { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: #ffffff; border: none; padding: 15px; border-radius: 50px; font-size: 16px; font-weight: 800; cursor: pointer; display: none; font-family: 'Montserrat'; width: 100%;}
+        @media (min-width: 768px) { .next-btn { padding: 18px 40px; font-size: 20px; width: auto;} }
 
         /* End Screen & Admin */
-        .end-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; width: 100%; }
-        .end-card, .leaderboard-box { background: var(--box-bg); border: 2px solid var(--box-border); padding: 40px; border-radius: 24px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.1); height: 480px; display: flex; flex-direction: column; justify-content: center; transition: all 0.3s;}
-        .leaderboard-box { padding: 30px; text-align: left; }
-        .lb-title { font-family: 'Montserrat'; font-size: 24px; color: var(--text-heading); font-weight: 800; margin-bottom: 20px; border-bottom: 2px dashed var(--box-border); padding-bottom: 15px; display: flex; justify-content: space-between; align-items: center;}
+        .end-layout { display: grid; grid-template-columns: 1fr; gap: 20px; width: 100%; }
+        @media (min-width: 900px) { .end-layout { grid-template-columns: 1fr 1fr; gap: 40px;} }
         
+        .end-card, .leaderboard-box { background: var(--box-bg); border: 2px solid var(--box-border); padding: 25px 15px; border-radius: 16px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.1); display: flex; flex-direction: column; justify-content: center; transition: all 0.3s;}
+        @media (min-width: 768px) { .end-card, .leaderboard-box { padding: 40px; border-radius: 24px; height: 480px;} }
+        
+        .leaderboard-box { text-align: left; }
+        
+        .lb-title { font-family: 'Montserrat'; font-size: 20px; color: var(--text-heading); font-weight: 800; margin-bottom: 20px; border-bottom: 2px dashed var(--box-border); padding-bottom: 15px; display: flex; justify-content: space-between; align-items: center;}
+        @media (min-width: 768px) { .lb-title { font-size: 24px; } }
+        
+        /* Hiệu ứng mượt cho Bảng xếp hạng */
         .lb-list { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; position: relative;}
         .lb-item { display: grid; grid-template-columns: 40px 50px 1fr 80px 80px; align-items: center; background: var(--input-bg); padding: 12px 15px; border-radius: 12px; font-weight: 700; color: var(--text-main); font-size: 16px; border: 1px solid var(--box-border); transition: transform 0.4s ease, top 0.4s ease;}
         .lb-item.current-user { background: rgba(16, 185, 129, 0.1); border-color: #22c55e; box-shadow: 0 4px 10px rgba(34,197,94,0.1); }
@@ -225,14 +290,20 @@
         .lb-score { color: #10b981; font-weight: 900; text-align: right; }
         .lb-time { color: #f59e0b; font-size: 14px; text-align: right;}
 
-        .admin-box { background: var(--box-bg); padding: 30px; border-radius: 24px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.15); text-align: left; border: 2px solid var(--box-border); display: flex; flex-direction: column;}
-        .admin-title { font-size: 28px; color: var(--text-heading); font-family: 'Montserrat', sans-serif; margin-bottom: 15px; border-bottom: 2px solid var(--box-border); padding-bottom: 15px; display: flex; justify-content: space-between; align-items: center; font-weight: 900; flex-shrink: 0; flex-wrap: wrap; gap: 15px;}
+        .admin-box { background: var(--box-bg); padding: 20px 15px; border-radius: 16px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.15); text-align: left; border: 2px solid var(--box-border); display: flex; flex-direction: column;}
+        @media (min-width: 768px) { .admin-box { padding: 30px; border-radius: 24px;} }
+        
+        .admin-title { font-size: 22px; color: var(--text-heading); font-family: 'Montserrat', sans-serif; margin-bottom: 15px; border-bottom: 2px solid var(--box-border); padding-bottom: 15px; display: flex; flex-direction: column; align-items: flex-start; font-weight: 900; flex-shrink: 0; gap: 15px;}
+        @media (min-width: 768px) { .admin-title { font-size: 28px; flex-direction: row; align-items: center; justify-content: space-between;} }
+        
         .admin-nav-tabs { display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 2px solid var(--box-border); padding-bottom: 5px; flex-shrink: 0; }
         .admin-tab { padding: 10px 20px; font-size: 16px; font-weight: 800; font-family: 'Montserrat'; color: var(--text-sub); border: none; background: transparent; cursor: pointer; transition: all 0.2s; border-bottom: 3px solid transparent; }
         .admin-tab.active { color: #10b981; border-color: #22c55e; }
         .admin-content-pane { display: none; flex-grow: 1; overflow-y: auto; }
         .admin-content-pane.active { display: block; }
-        .admin-grid-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .admin-grid-layout { display: grid; grid-template-columns: 1fr; gap: 12px; }
+        @media (min-width: 768px) { .admin-grid-layout { grid-template-columns: 1fr 1fr; } }
+        
         .admin-user-card { background: var(--input-bg); border: 1px solid var(--box-border); border-radius: 12px; padding: 10px 15px; display: flex; align-items: center; gap: 12px; position: relative;}
         .admin-user-card-rank { font-family: 'Montserrat'; font-weight: 900; font-size: 20px; color: #10b981; width: 35px;}
         .admin-user-card-avatar { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid #22c55e; background-color: #fdf4ff;}
@@ -252,6 +323,7 @@
         .status-badge.reset-request { background: rgba(59, 130, 246, 0.2); color: #3b82f6; border: 1px solid #93c5fd;}
         
         .delete-btn { background: #fee2e2; color: #ef4444; border: none; padding: 6px 10px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 14px;}
+        .delete-btn:hover { background: #fecaca; transform: scale(1.1); }
         .admin-controls { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
         .action-btn { padding: 8px 15px; font-size: 14px; border-radius: 8px; cursor: pointer; font-weight: 800; transition: all 0.2s; border: none; display: flex; align-items: center; gap: 6px;}
         .btn-danger { background: #fee2e2; color: #ef4444; border: 1px solid #fca5a5; }
@@ -261,35 +333,33 @@
         .btn-pause { background: #fef08a; color: #854d0e; border: 1px solid #fde047; }
         .btn-fullscreen { background: var(--btn-outline-bg); color: #10b981; border: 1px solid #86efac; }
 
-        #lock-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); z-index: 1000; display: none; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center;}
+        #lock-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); z-index: 1000; display: none; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center; padding: 20px;}
         #countdown-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(22, 163, 74, 0.95); backdrop-filter: blur(10px); z-index: 2000; display: none; flex-direction: column; justify-content: center; align-items: center; color: white; }
-        #countdown-number { font-size: 180px; font-weight: 900; font-family: 'Montserrat'; animation: pulse 1s infinite; text-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        #countdown-number { font-size: 120px; font-weight: 900; font-family: 'Montserrat'; animation: pulse 1s infinite; text-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        @media (min-width: 768px) { #countdown-number { font-size: 180px; } }
 
         .presentation-grid { display: grid; grid-template-columns: 1fr; gap: 20px; width: 100%; text-align: left;}
         .p-card { background: var(--box-bg); border: 2px solid var(--box-border); border-radius: 16px; padding: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);}
-        .p-options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .p-options-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+        @media (min-width: 768px) { .p-options-grid { grid-template-columns: 1fr 1fr; } }
         
         #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; display: none;}
-
-        @media (max-width: 900px) { .end-layout, .p-options-grid { grid-template-columns: 1fr; } }
-        @media (max-width: 768px) {
-            body { padding: 0; }
-            .quiz-container { max-height: 100vh; border-radius: 0; border: none; box-shadow: none; }
-            .content-wrapper { padding: 20px 15px 40px 15px; justify-content: flex-start;}
-            h1 { font-size: 34px; line-height: 1.2;} .name-input { font-size: 16px; } .btn { font-size: 18px; width: 100%; }
-            .question-box { width: 100%; padding: 20px 15px; }
-            .options-grid { grid-template-columns: 1fr; }
-            .end-card, .leaderboard-box { height: auto; max-height: none; }
-            .admin-grid-layout { grid-template-columns: 1fr; } .p-options-grid { grid-template-columns: 1fr; }
-            .avatar-maker-box { flex-direction: column; }
-            .joystick-panel { padding: 0 15px; justify-content: center; gap: 20px;}
-            .keyboard-hint { display: none; } 
+        
+        /* Hiệu ứng trang trí góc */
+        .shape { position: absolute; opacity: 0.15; z-index: 1; pointer-events: none; color: #86efac;}
+        .shape-1 { top: -20px; left: -20px; font-size: 200px; transform: rotate(-15deg); }
+        .shape-2 { bottom: -50px; right: -50px; font-size: 250px; transform: rotate(15deg); }
+        @media (min-width: 768px) { 
+            .shape-1 { font-size: 400px; } 
+            .shape-2 { font-size: 500px; } 
         }
+
+        @keyframes spin { 100% { transform: rotate(-360deg); } }
     </style>
 </head>
 <body>
 
-<!-- AUDIO ELEMENTS CHO HIỆU ỨNG ÂM THANH (Sử dụng nguồn CDN siêu ổn định) -->
+<!-- AUDIO ELEMENTS CHO HIỆU ỨNG ÂM THANH (Dùng chuẩn MP3 để tăng tính tương thích mọi trình duyệt) -->
 <audio id="bgm-audio" loop preload="auto">
     <source src="https://cdn.pixabay.com/download/audio/2022/10/25/audio_4f54eb13c3.mp3" type="audio/mpeg">
 </audio>
@@ -308,21 +378,25 @@
 
 <canvas id="confetti-canvas"></canvas>
 
+<!-- KHUNG APP DUY NHẤT -->
 <div class="quiz-container" id="quiz-root">
+    <i class="fa-solid fa-wheat-awn shape shape-1"></i>
+    <i class="fa-solid fa-tractor shape shape-2"></i>
+
     <div class="header">
         <div class="logo-box">
             <img id="main-header-logo" src="logo_new.jpg" alt="Megatech Logo" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'150\' height=\'50\'><text x=\'0\' y=\'35\' font-family=\'Arial\' font-size=\'30\' fill=\'#10b981\' font-weight=\'bold\'>MEGATECH</text></svg>'">
         </div>
-        <div style="display: flex; gap: 15px; align-items: center;">
-            <button id="bgm-toggle-btn" onclick="toggleBGM()" class="btn btn-outline btn-small" style="padding: 8px 15px; border-radius: 50%;" title="Bật/Tắt nhạc nền"><i class="fa-solid fa-music"></i></button>
-            <button id="theme-toggle-btn" onclick="toggleTheme()" class="btn btn-outline btn-small" style="padding: 8px 15px; border-radius: 50%;" title="Bật/Tắt Giao diện tối"><i class="fa-solid fa-moon"></i></button>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <button id="bgm-toggle-btn" onclick="toggleBGM()" class="btn btn-outline btn-small" style="padding: 8px 12px; border-radius: 50%;" title="Bật/Tắt nhạc nền"><i class="fa-solid fa-music"></i></button>
+            <button id="theme-toggle-btn" onclick="toggleTheme()" class="btn btn-outline btn-small" style="padding: 8px 12px; border-radius: 50%;" title="Bật/Tắt Giao diện tối"><i class="fa-solid fa-moon"></i></button>
             <button id="admin-header-btn" onclick="showScreen('admin-login-screen'); playClick();" class="btn btn-outline btn-small"><i class="fa-solid fa-user-shield"></i> Admin</button>
-            <div class="score-display">CHUYÊN MÔN VÀ ATSH</div>
+            <div class="score-display">CHUYÊN MÔN</div>
         </div>
     </div>
     <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
 
-    <!-- START SCREEN (TRANG CHỦ ĐIỀN THÔNG TIN + TẠO AVATAR HEO) -->
+    <!-- START SCREEN -->
     <div class="screen active" id="start-screen">
         <div class="content-wrapper">
             <h1>CHINH PHỤC <span class="highlight-text">MEGATECH</span></h1>
@@ -460,7 +534,7 @@
 
     <!-- QUESTION SCREEN -->
     <div class="screen" id="question-screen">
-        <div class="content-wrapper" style="max-width: 1000px;">
+        <div class="content-wrapper">
             <div class="question-box" id="question-box-main">
                 <div class="q-header">
                     <div class="q-counter" id="q-counter">CÂU HỎI 1 / 25</div>
@@ -517,7 +591,7 @@
 
     <!-- ADMIN SCREEN -->
     <div class="screen" id="admin-screen">
-        <div class="content-wrapper" style="max-width: 1240px;">
+        <div class="content-wrapper admin-wrapper">
             <div class="admin-box">
                 <div class="admin-title">
                     <div><i class="fa-solid fa-satellite-dish" style="color: #ef4444;"></i> TRUNG TÂM ADMIN</div>
@@ -611,9 +685,7 @@
             const bgm = document.getElementById('bgm-audio');
             const click = document.getElementById('click-audio');
             const success = document.getElementById('success-audio');
-            if(bgm) bgm.load();
-            if(click) click.load();
-            if(success) success.load();
+            try { if(bgm) bgm.load(); if(click) click.load(); if(success) success.load(); } catch(e){}
             audioUnlocked = true;
         }
     }, { once: true });
@@ -689,6 +761,127 @@
     let currentAdminPass = "admin";
     let isAdminLoggedIn = false;
     let selectedBatchFilter = "CURRENT";
+
+    // MẢNG FUN FACT CHO PHÒNG CHỜ VÀ PAUSE SCREEN
+    const funFacts = [
+        "🐷 Bạn có biết: Tốc độ chạy của heo có thể lên tới 17km/h!",
+        "🌡️ Mẹo hay: Heo không có tuyến mồ hôi nên chúng rất thích đầm bùn để giải nhiệt.",
+        "🧠 Trí thông minh: Heo lọt top 4 động vật thông minh nhất thế giới, học lệnh rất nhanh.",
+        "🐽 Khứu giác tuyệt đỉnh: Mũi heo nhạy bén hơn cả chó, có thể đánh hơi thức ăn dưới lòng đất sâu.",
+        "💬 Giao tiếp: Heo có thể tạo ra hơn 20 tiếng kêu khác nhau để trò chuyện với bầy đàn.",
+        "💧 Góc chăn nuôi: Điện giải Gluco K-C là 'thần dược' chống stress cho vật nuôi vào mùa nóng.",
+        "🛡️ An toàn sinh học: Vệ sinh kết hợp sát trùng định kỳ giúp giảm 80% nguy cơ bùng phát dịch bệnh.",
+        "🌱 Nông nghiệp: Chăn nuôi công nghệ cao và an toàn sinh học là chìa khóa phát triển bền vững."
+    ];
+
+    setInterval(() => {
+        const randomFact = funFacts[Math.floor(Math.random() * funFacts.length)];
+        const factEls = document.querySelectorAll('.fun-fact-text');
+        factEls.forEach(el => el.innerText = randomFact);
+    }, 5000);
+
+    // === HỆ THỐNG ÂM THANH & DARK MODE BẢO MẬT BẰNG TRY CATCH ===
+    let isDarkMode = localStorage.getItem('megatech_darkmode') === 'true';
+    if (isDarkMode) document.body.classList.add('dark-theme');
+    
+    window.toggleTheme = function() {
+        try {
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle('dark-theme', isDarkMode);
+            localStorage.setItem('megatech_darkmode', isDarkMode);
+            document.getElementById('theme-toggle-btn').innerHTML = isDarkMode ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+            playClick();
+        } catch(e){}
+    };
+    document.getElementById('theme-toggle-btn').innerHTML = isDarkMode ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+
+    let isBgmEnabled = true; 
+    const bgmAudio = document.getElementById('bgm-audio');
+    const clickAudio = document.getElementById('click-audio');
+    const successAudio = document.getElementById('success-audio');
+
+    if (bgmAudio) bgmAudio.volume = 0.4;
+
+    window.toggleBGM = function() {
+        try {
+            isBgmEnabled = !isBgmEnabled;
+            const btn = document.getElementById('bgm-toggle-btn');
+            if (isBgmEnabled) {
+                btn.innerHTML = '<i class="fa-solid fa-music"></i>';
+                if (examStatus === 'running' && document.getElementById('question-screen').classList.contains('active')) {
+                    bgmAudio.play().catch(e=>{});
+                }
+            } else {
+                btn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>';
+                bgmAudio.pause();
+            }
+            playClick();
+        } catch(e){}
+    };
+
+    function playClick() { 
+        try {
+            if(isBgmEnabled && clickAudio && clickAudio.readyState >= 2) { 
+                clickAudio.currentTime = 0; 
+                clickAudio.play().catch(e=>{}); 
+            } 
+        } catch(e){}
+    }
+    
+    function playSuccess() { 
+        try {
+            if(isBgmEnabled && successAudio && successAudio.readyState >= 2) { 
+                successAudio.currentTime = 0; 
+                successAudio.play().catch(e=>{}); 
+            } 
+        } catch(e){}
+    }
+
+    // Hiệu ứng pháo giấy (Confetti)
+    function shootConfetti() {
+        const canvas = document.getElementById('confetti-canvas');
+        canvas.style.display = 'block';
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const ctx = canvas.getContext('2d');
+        const pieces = [];
+        const colors = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#a855f7'];
+
+        for(let i=0; i<150; i++) {
+            pieces.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height - canvas.height,
+                vx: Math.random() * 4 - 2,
+                vy: Math.random() * 5 + 2,
+                size: Math.random() * 10 + 5,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                rotation: Math.random() * 360,
+                rs: Math.random() * 10 - 5
+            });
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            let active = false;
+            pieces.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.rotation += p.rs;
+                if(p.y < canvas.height) active = true;
+
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate(p.rotation * Math.PI / 180);
+                ctx.fillStyle = p.color;
+                ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+                ctx.restore();
+            });
+            if(active) requestAnimationFrame(draw);
+            else canvas.style.display = 'none';
+        }
+        draw();
+    }
+
 
     const finalFirebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : firebaseConfig;
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'quiz-megatech';
@@ -973,7 +1166,7 @@
                         if (newStatus !== 'running' && previousExamStatus === 'running') {
                             localStorage.setItem(PAUSE_FREEZE_KEY, Date.now().toString());
                             clearInterval(timerInterval);
-                            bgmAudio.pause();
+                            if(bgmAudio) bgmAudio.pause();
                         } 
                         else if (newStatus === 'running' && previousExamStatus !== 'running') {
                             const freezeStart = localStorage.getItem(PAUSE_FREEZE_KEY);
@@ -986,7 +1179,7 @@
                             }
                             if (document.getElementById('question-screen').classList.contains('active')) {
                                 startTimer();
-                                if(isBgmEnabled) bgmAudio.play().catch(e=>{});
+                                if(isBgmEnabled && bgmAudio) bgmAudio.play().catch(e=>{});
                             }
                         }
 
@@ -1185,7 +1378,7 @@
     };
 
     window.validateAndConfirmInfo = function() {
-        playClick();
+        try { playClick(); } catch(e){}
         const nameInputEl = document.getElementById('player-name');
         const deptInputEl = document.getElementById('player-dept');
         const roleInputEl = document.getElementById('player-role');
@@ -1205,13 +1398,13 @@
     };
 
     window.backToInfo = function() {
-        playClick();
+        try { playClick(); } catch(e){}
         document.getElementById('pass-input-group').style.display = 'none';
         document.getElementById('info-input-group').style.display = 'flex';
     };
 
     window.handleAdminLogin = function() {
-        playClick();
+        try { playClick(); } catch(e){}
         const userInp = document.getElementById('admin-login-user').value.trim();
         const passInp = document.getElementById('admin-login-pass').value.trim();
 
@@ -1224,7 +1417,7 @@
     };
 
     window.logoutAdmin = function() {
-        playClick();
+        try { playClick(); } catch(e){}
         isAdminLoggedIn = false;
         showScreen('start-screen');
     };
@@ -1270,7 +1463,7 @@
                         loadQuestion();
                         if (examStatus === 'running') {
                             startTimer();
-                            if(isBgmEnabled) bgmAudio.play().catch(e=>{});
+                            if(isBgmEnabled && bgmAudio) bgmAudio.play().catch(e=>{});
                         }
                         else timerTick(); 
                         handleLockStateChange();
@@ -1286,7 +1479,7 @@
     }
 
     window.requestReplay = async function() {
-        playClick();
+        try { playClick(); } catch(e){}
         if (!currentUser) return alert("Kết nối bị gián đoạn. Vui lòng tải lại trang!");
         if (!currentDocId) return;
         try {
@@ -1312,7 +1505,7 @@
     }
 
     window.approveReplayRequest = async function(docId) {
-        playClick();
+        try { playClick(); } catch(e){}
         if (!currentUser) return alert("Kết nối bị gián đoạn. Vui lòng đăng nhập lại Admin!");
         if (confirm("Bạn có chắc chắn muốn duyệt cho học viên này thi lại không?")) {
             try {
@@ -1323,7 +1516,7 @@
     };
 
     window.startQuiz = async function() {
-        playClick();
+        try { playClick(); } catch(e){}
         if (!currentUser) return alert("Chưa kết nối được máy chủ, vui lòng đợi thêm 1 giây và thử lại!");
 
         const nameInputEl = document.getElementById('player-name');
@@ -1391,7 +1584,7 @@
                         alert("Yêu cầu thi lại của bạn đã được Admin phê duyệt! Đang làm mới...");
                         location.reload();
                     }
-                });
+                }, (error) => console.error(error));
 
             } catch (e) { 
                 console.log(e); alert("Lỗi kết nối đến máy chủ."); 
@@ -1570,12 +1763,11 @@
             qBox.style.opacity = '1';
             qBox.style.transform = 'translateX(0)';
 
-            // Hiển thị hint phím tắt nếu đang làm bài
             document.getElementById('keyboard-shortcuts-hint').style.display = 'block';
 
             if (examStatus === 'running') {
                 startTimer();
-                if (isBgmEnabled && bgmAudio.paused) bgmAudio.play().catch(e=>{});
+                try { if (isBgmEnabled && bgmAudio && bgmAudio.paused) bgmAudio.play().catch(e=>{}); } catch(e){}
             }
             handleLockStateChange(); 
         }, 300);
@@ -1625,7 +1817,7 @@
 
     function showEndScreen() {
         clearInterval(timerInterval);
-        bgmAudio.pause(); // Tắt nhạc khi thi xong
+        try { if(bgmAudio) bgmAudio.pause(); } catch(e){}
         
         document.getElementById('final-score').innerText = score;
         document.getElementById('final-time').innerText = totalTimeTaken.toFixed(2) + 's';
