@@ -83,12 +83,20 @@
         .progress-bar { width: 100%; height: 6px; background: var(--container-border); flex-shrink: 0;}
         .progress-fill { height: 100%; background: #22c55e; width: 0%; transition: width 0.4s ease; box-shadow: 0 0 10px rgba(34, 197, 94, 0.5); }
 
+        /* SỬA LỖI LAYOUT BỊ CẮT TRÊN/DƯỚI: THAY ĐỔI align-items và justify-content */
         .screen { 
-            display: none; flex-direction: column; align-items: center; flex-grow: 1; 
-            padding: 30px 40px; text-align: center; z-index: 10; overflow-y: auto; width: 100%;
+            display: none; flex-direction: column; flex-grow: 1; 
+            padding: 20px 40px; text-align: center; z-index: 10; overflow-y: auto; overflow-x: hidden; width: 100%;
+            justify-content: flex-start; align-items: center;
         }
         .screen.active { display: flex; animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Wrapper linh hoạt cho nội dung các screen chống cắt mép */
+        .content-wrapper {
+            width: 100%; max-width: 1000px; margin: auto; padding: 20px 0;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
 
         /* Typography & Buttons */
         h1 { font-family: 'Montserrat', sans-serif; font-size: 52px; color: var(--text-heading); margin-bottom: 10px; font-weight: 900; letter-spacing: -1px; text-transform: uppercase; transition: color 0.3s ease; }
@@ -124,7 +132,6 @@
         #waiting-screen { padding: 0; display: flex; flex-direction: column; height: 100%; overflow: hidden;}
         .waiting-header { padding: 15px 20px; background: var(--box-bg); width: 100%; z-index: 10; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--container-border); transition: background 0.3s;}
         .waiting-header h2 { font-size: 24px; color: #3b82f6; font-family: 'Montserrat'; font-weight: 900;}
-        .waiting-header p { font-size: 14px; color: var(--text-sub); font-weight: bold;}
         
         .playground-wrapper { flex-grow: 1; width: 100%; position: relative; display: flex; flex-direction: column; background: #86efac; }
         .playground-container {
@@ -182,7 +189,7 @@
         .timer-bar-bg { flex-grow: 1; height: 10px; background: var(--container-border); border-radius: 10px; margin-right: 20px; overflow: hidden; }
         .timer-bar-fill { height: 100%; background: #22c55e; width: 100%; transition: width 0.1s linear, background 0.3s; }
 
-        .question-box { background: var(--box-bg); border: 2px solid var(--box-border); padding: 40px; border-radius: 24px; width: 90%; max-width: 1000px; box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1); text-align: left; margin: 0 auto; transition: all 0.3s;}
+        .question-box { background: var(--box-bg); border: 2px solid var(--box-border); padding: 40px; border-radius: 24px; width: 100%; box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1); text-align: left; margin: 0 auto; transition: all 0.3s;}
         .q-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px dashed var(--box-border); padding-bottom: 15px;}
         .q-counter { font-weight: 800; color: #10b981; font-size: 20px; font-family: 'Montserrat'; text-transform: uppercase; letter-spacing: 2px;}
         .question-text { font-family: 'Montserrat', sans-serif; font-size: 32px; color: var(--text-heading); margin-bottom: 35px; line-height: 1.5; font-weight: 800; transition: color 0.3s;}
@@ -200,13 +207,13 @@
 
         .option-icon { width: 45px; height: 45px; border-radius: 12px; display: flex; justify-content: center; align-items: center; margin-right: 20px; font-weight: 900; color: #14532d; font-size: 20px; flex-shrink: 0; background: #bbf7d0; transition: all 0.2s;}
 
-        .controls { margin-top: 30px; display: flex; justify-content: space-between; align-items: center; width: 90%; max-width: 1000px; margin-left: auto; margin-right: auto;}
+        .controls { margin-top: 30px; display: flex; justify-content: space-between; align-items: center; width: 100%; margin-left: auto; margin-right: auto;}
         .status-message { font-size: 24px; font-weight: 900; font-family: 'Montserrat'; display: none; }
         .status-message.success { color: #3b82f6; } .status-message.error { color: #ef4444; }
         .next-btn { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: #ffffff; border: none; padding: 18px 40px; border-radius: 50px; font-size: 20px; font-weight: 800; cursor: pointer; display: none; font-family: 'Montserrat'; }
 
         /* End Screen & Admin */
-        .end-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; width: 95%; max-width: 1100px; margin: 0 auto; padding-bottom: 40px;}
+        .end-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; width: 100%; }
         .end-card, .leaderboard-box { background: var(--box-bg); border: 2px solid var(--box-border); padding: 40px; border-radius: 24px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.1); height: 480px; display: flex; flex-direction: column; justify-content: center; transition: all 0.3s;}
         .leaderboard-box { padding: 30px; text-align: left; }
         .lb-title { font-family: 'Montserrat'; font-size: 24px; color: var(--text-heading); font-weight: 800; margin-bottom: 20px; border-bottom: 2px dashed var(--box-border); padding-bottom: 15px; display: flex; justify-content: space-between; align-items: center;}
@@ -220,7 +227,7 @@
         .lb-score { color: #10b981; font-weight: 900; text-align: right; }
         .lb-time { color: #f59e0b; font-size: 14px; text-align: right;}
 
-        .admin-box { background: var(--box-bg); padding: 30px; border-radius: 24px; width: 95%; max-width: 1240px; box-shadow: 0 20px 50px rgba(0,0,0,0.15); text-align: left; max-height: 90vh; border: 2px solid var(--box-border); display: flex; flex-direction: column; margin: 0 auto;}
+        .admin-box { background: var(--box-bg); padding: 30px; border-radius: 24px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.15); text-align: left; border: 2px solid var(--box-border); display: flex; flex-direction: column;}
         .quiz-container:fullscreen .admin-box { width: 100vw; height: 100vh; max-height: none; max-width: none; border-radius: 0; border: none; padding: 40px; margin: 0;}
         .admin-title { font-size: 28px; color: var(--text-heading); font-family: 'Montserrat', sans-serif; margin-bottom: 15px; border-bottom: 2px solid var(--box-border); padding-bottom: 15px; display: flex; justify-content: space-between; align-items: center; font-weight: 900; flex-shrink: 0; flex-wrap: wrap; gap: 15px;}
         .admin-nav-tabs { display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 2px solid var(--box-border); padding-bottom: 5px; flex-shrink: 0; }
@@ -263,7 +270,7 @@
         #countdown-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(22, 163, 74, 0.95); backdrop-filter: blur(10px); z-index: 2000; display: none; flex-direction: column; justify-content: center; align-items: center; color: white; }
         #countdown-number { font-size: 180px; font-weight: 900; font-family: 'Montserrat'; animation: pulse 1s infinite; text-shadow: 0 10px 30px rgba(0,0,0,0.2); }
 
-        .presentation-grid { display: grid; grid-template-columns: 1fr; gap: 20px; width: 100%; max-width: 1000px; margin: 0 auto; text-align: left;}
+        .presentation-grid { display: grid; grid-template-columns: 1fr; gap: 20px; width: 100%; text-align: left;}
         .p-card { background: var(--box-bg); border: 2px solid var(--box-border); border-radius: 16px; padding: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);}
         .p-options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         
@@ -276,7 +283,7 @@
         /* Confetti Canvas */
         #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; display: none;}
 
-        @media (max-width: 900px) { .end-layout { grid-template-columns: 1fr; } }
+        @media (max-width: 900px) { .end-layout, .p-options-grid { grid-template-columns: 1fr; } }
         @media (max-width: 768px) {
             body { padding: 0; display: block; }
             .quiz-container { width: 100%; min-height: 100vh; height: auto; max-height: none; border-radius: 0; border: none; box-shadow: none; overflow-y: visible; }
@@ -285,7 +292,7 @@
             .question-box { width: 100%; padding: 20px 15px; }
             .options-grid { grid-template-columns: 1fr; }
             .end-card, .leaderboard-box { height: auto; max-height: none; }
-            .admin-grid-layout { grid-template-columns: 1fr; } .p-options-grid { grid-template-columns: 1fr; }
+            .admin-grid-layout { grid-template-columns: 1fr; }
             .avatar-maker-box { flex-direction: column; }
             .joystick-panel { padding: 0 15px; justify-content: center; gap: 20px;}
             .keyboard-hint { display: none; } 
@@ -337,7 +344,7 @@
 
     <!-- START SCREEN (TRANG CHỦ ĐIỀN THÔNG TIN + TẠO AVATAR HEO) -->
     <div class="screen active" id="start-screen">
-        <div style="width: 100%; max-width: 600px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        <div class="content-wrapper">
             <h1>CHINH PHỤC <span class="highlight-text">MEGATECH</span></h1>
             <p class="subtitle">Đợt thi: <span id="welcome-batch-name" style="color: #22c55e;">Đang tải...</span></p>
             <p class="subtitle" style="font-size: 16px; margin-top: -15px; margin-bottom: 20px;">Thời gian làm bài: <span id="welcome-duration" style="color: #22c55e;">--</span> phút | Lưu điểm tự động</p>
@@ -411,11 +418,11 @@
     </div>
 
     <!-- MÀN HÌNH NÔNG TRẠI CHỜ THI (PLAYGROUND MULTIPLAYER VỚI JOYSTICK) -->
-    <div class="screen" id="waiting-screen">
+    <div class="screen" id="waiting-screen" style="padding: 0;">
         <div class="waiting-header">
             <div>
                 <h2><i class="fa-solid fa-clock-rotate-left fa-spin" style="color: #3b82f6;"></i> ĐANG CHỜ MỞ ĐỀ</h2>
-                <p id="fun-fact-text" style="color: #10b981;">Bạn có biết: Tốc độ chạy của heo có thể lên tới 17km/h!</p>
+                <p class="fun-fact-text" style="color: #10b981; max-width: 600px; margin: 0 auto;">Đang tải Fun fact...</p>
             </div>
             <button class="toggle-sidebar-btn" onclick="toggleSidebar(); playClick();">
                 <i class="fa-solid fa-users"></i> Menu
@@ -466,14 +473,16 @@
 
     <!-- ADMIN LOGIN SCREEN -->
     <div class="screen" id="admin-login-screen">
-        <div class="question-box" style="max-width: 500px; text-align: center;">
-            <h2 style="font-family: 'Montserrat'; color: var(--text-heading); font-weight: 900; margin-bottom: 20px;"><i class="fa-solid fa-user-shield"></i> ĐĂNG NHẬP ADMIN</h2>
-            <div class="input-group" style="margin-top: 20px;">
-                <input type="text" id="admin-login-user" class="name-input" placeholder="Tên đăng nhập" autocomplete="off">
-                <input type="password" id="admin-login-pass" class="name-input" placeholder="Mật khẩu" style="margin-top: 10px;" autocomplete="off">
-                <div style="display: flex; gap: 10px; margin-top: 25px;">
-                    <button class="btn btn-outline" style="flex: 1;" onclick="location.reload(); playClick();"><i class="fa-solid fa-arrow-left"></i> Hủy</button>
-                    <button class="btn" style="flex: 1;" onclick="handleAdminLogin()"><i class="fa-solid fa-right-to-bracket"></i> Đăng nhập</button>
+        <div class="content-wrapper">
+            <div class="question-box" style="max-width: 500px; text-align: center;">
+                <h2 style="font-family: 'Montserrat'; color: var(--text-heading); font-weight: 900; margin-bottom: 20px;"><i class="fa-solid fa-user-shield"></i> ĐĂNG NHẬP ADMIN</h2>
+                <div class="input-group" style="margin-top: 20px;">
+                    <input type="text" id="admin-login-user" class="name-input" placeholder="Tên đăng nhập" autocomplete="off">
+                    <input type="password" id="admin-login-pass" class="name-input" placeholder="Mật khẩu" style="margin-top: 10px;" autocomplete="off">
+                    <div style="display: flex; gap: 10px; margin-top: 25px;">
+                        <button class="btn btn-outline" style="flex: 1;" onclick="location.reload(); playClick();"><i class="fa-solid fa-arrow-left"></i> Hủy</button>
+                        <button class="btn" style="flex: 1;" onclick="handleAdminLogin()"><i class="fa-solid fa-right-to-bracket"></i> Đăng nhập</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -481,56 +490,60 @@
 
     <!-- QUESTION SCREEN -->
     <div class="screen" id="question-screen">
-        <div class="question-box" id="question-box-main">
-            <div class="q-header">
-                <div class="q-counter" id="q-counter">CÂU HỎI 1 / 25</div>
-                <div class="timer-container" style="width: auto; margin-bottom: 0;">
-                    <div class="timer-text" id="timer-text"><i class="fa-regular fa-clock"></i> --:--</div>
+        <div class="content-wrapper" style="max-width: 1000px;">
+            <div class="question-box" id="question-box-main">
+                <div class="q-header">
+                    <div class="q-counter" id="q-counter">CÂU HỎI 1 / 25</div>
+                    <div class="timer-container" style="width: auto; margin-bottom: 0;">
+                        <div class="timer-text" id="timer-text"><i class="fa-regular fa-clock"></i> --:--</div>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; margin-bottom: 25px;">
+                    <!-- CHIA VẠCH THANH TIẾN TRÌNH THÀNH 25 Ô -->
+                    <div class="timer-bar-bg" id="question-progress-bg" style="display: flex; gap: 2px; padding: 2px;">
+                        <!-- Sẽ render bằng JS -->
+                    </div>
+                </div>
+                <div class="question-text" id="question-text">Đang tải câu hỏi...</div>
+                <div class="options-grid" id="options-grid"></div>
+                
+                <!-- HƯỚNG DẪN BẤM PHÍM TẮT -->
+                <div style="text-align: center; margin-top: 20px; font-size: 13px; color: var(--text-sub); display: none;" id="keyboard-shortcuts-hint">
+                    <i class="fa-regular fa-keyboard"></i> Dùng phím <b>1, 2, 3, 4</b> để chọn và phím <b>Enter</b> để qua câu.
                 </div>
             </div>
-            <div style="display: flex; align-items: center; margin-bottom: 25px;">
-                <!-- CHIA VẠCH THANH TIẾN TRÌNH THÀNH 25 Ô -->
-                <div class="timer-bar-bg" id="question-progress-bg" style="display: flex; gap: 2px; padding: 2px;">
-                    <!-- Sẽ render bằng JS -->
-                </div>
+            <div class="controls">
+                <div class="status-message" id="status-message"></div>
+                <button class="next-btn" id="next-btn" onclick="nextQuestion()">CÂU TIẾP THEO <i class="fa-solid fa-arrow-right"></i></button>
             </div>
-            <div class="question-text" id="question-text">Đang tải câu hỏi...</div>
-            <div class="options-grid" id="options-grid"></div>
-            
-            <!-- HƯỚNG DẪN BẤM PHÍM TẮT -->
-            <div style="text-align: center; margin-top: 20px; font-size: 13px; color: var(--text-sub); display: none;" id="keyboard-shortcuts-hint">
-                <i class="fa-regular fa-keyboard"></i> Dùng phím <b>1, 2, 3, 4</b> để chọn và phím <b>Enter</b> để qua câu.
-            </div>
-        </div>
-        <div class="controls">
-            <div class="status-message" id="status-message"></div>
-            <button class="next-btn" id="next-btn" onclick="nextQuestion()">CÂU TIẾP THEO <i class="fa-solid fa-arrow-right"></i></button>
         </div>
     </div>
 
     <!-- END SCREEN -->
     <div class="screen" id="end-screen">
-        <div class="end-layout">
-            <div class="end-card">
-                <p style="font-size: 24px; color: #10b981; font-weight: 800; margin-bottom: 10px; font-family: 'Montserrat';">ĐIỂM SỐ CỦA BẠN</p>
-                <div style="font-size: 90px; font-weight: 900; color: #22c55e; font-family: 'Montserrat'; line-height: 1;" id="final-score">0</div>
-                <p style="font-size: 18px; color: var(--text-sub); margin-top: 10px; font-weight: 700;">Thời gian đã làm: <span id="final-time" style="color: #f59e0b;">0s</span></p>
-                <p style="font-size: 20px; color: var(--text-heading); margin-top: 20px; font-weight: 800; line-height: 1.4;" id="feedback-msg">Đang đồng bộ kết quả...</p>
-                
-                <button class="btn btn-outline" id="request-replay-btn" style="margin-top: 25px; display: none; font-size: 16px; padding: 12px 25px;" onclick="requestReplay()"><i class="fa-solid fa-rotate-left"></i> Gửi yêu cầu thi lại lên Admin</button>
-                
-                <div id="admin-access-end" style="margin-top: 25px; padding-top: 20px; border-top: 1px dashed var(--box-border);">
-                    <button onclick="showScreen('admin-login-screen'); playClick();" style="background: transparent; border: none; color: var(--text-sub); font-weight: bold; cursor: pointer; font-size: 15px; text-decoration: underline;"><i class="fa-solid fa-user-shield"></i> Truy cập Quản trị viên (Admin)</button>
+        <div class="content-wrapper" style="max-width: 1100px;">
+            <div class="end-layout">
+                <div class="end-card">
+                    <p style="font-size: 24px; color: #10b981; font-weight: 800; margin-bottom: 10px; font-family: 'Montserrat';">ĐIỂM SỐ CỦA BẠN</p>
+                    <div style="font-size: 90px; font-weight: 900; color: #22c55e; font-family: 'Montserrat'; line-height: 1;" id="final-score">0</div>
+                    <p style="font-size: 18px; color: var(--text-sub); margin-top: 10px; font-weight: 700;">Thời gian đã làm: <span id="final-time" style="color: #f59e0b;">0s</span></p>
+                    <p style="font-size: 20px; color: var(--text-heading); margin-top: 20px; font-weight: 800; line-height: 1.4;" id="feedback-msg">Đang đồng bộ kết quả...</p>
+                    
+                    <button class="btn btn-outline" id="request-replay-btn" style="margin-top: 25px; display: none; font-size: 16px; padding: 12px 25px;" onclick="requestReplay()"><i class="fa-solid fa-rotate-left"></i> Gửi yêu cầu thi lại lên Admin</button>
+                    
+                    <div id="admin-access-end" style="margin-top: 25px; padding-top: 20px; border-top: 1px dashed var(--box-border);">
+                        <button onclick="showScreen('admin-login-screen'); playClick();" style="background: transparent; border: none; color: var(--text-sub); font-weight: bold; cursor: pointer; font-size: 15px; text-decoration: underline;"><i class="fa-solid fa-user-shield"></i> Truy cập Quản trị viên (Admin)</button>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="leaderboard-box">
-                <div class="lb-title">
-                    <span style="color: var(--text-heading)"><i class="fa-solid fa-ranking-star"></i> BẢNG XẾP HẠNG</span>
-                    <i class="fa-solid fa-rotate" style="cursor: pointer; color: #22c55e;" onclick="loadLeaderboard(); playClick();" title="Làm mới"></i>
-                </div>
-                <div class="lb-list" id="lb-list">
-                    <div style="text-align: center; color: var(--text-sub); padding: 20px;">Hoàn thành bài thi để xem xếp hạng...</div>
+                
+                <div class="leaderboard-box">
+                    <div class="lb-title">
+                        <span style="color: var(--text-heading)"><i class="fa-solid fa-ranking-star"></i> BẢNG XẾP HẠNG</span>
+                        <i class="fa-solid fa-rotate" style="cursor: pointer; color: #22c55e;" onclick="loadLeaderboard(); playClick();" title="Làm mới"></i>
+                    </div>
+                    <div class="lb-list" id="lb-list">
+                        <div style="text-align: center; color: var(--text-sub); padding: 20px;">Hoàn thành bài thi để xem xếp hạng...</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -538,73 +551,84 @@
 
     <!-- ADMIN SCREEN -->
     <div class="screen" id="admin-screen">
-        <div class="admin-box">
-            <div class="admin-title">
-                <div><i class="fa-solid fa-satellite-dish" style="color: #ef4444;"></i> TRUNG TÂM ADMIN</div>
-                <div class="admin-controls">
-                    <button class="action-btn btn-fullscreen" onclick="toggleFullscreen()"><i class="fa-solid fa-expand"></i> TOÀN MÀN HÌNH</button>
-                    <div style="display: flex; align-items: center; gap: 8px; background: var(--input-bg); padding: 6px 12px; border-radius: 10px; border: 1px solid var(--box-border);">
-                        <span style="font-size: 13px; font-weight: bold; color: var(--text-heading);"><i class="fa-solid fa-calendar-day"></i> Tên đợt:</span>
-                        <input type="text" id="admin-batch-name-input" class="name-input" style="width: 140px; padding: 5px; border-radius: 6px; font-size: 13px; margin:0;" value="Đợt 1 ngày 17/05/2026">
-                        <span style="font-size: 13px; font-weight: bold; color: var(--text-heading); margin-left: 5px;"><i class="fa-regular fa-clock"></i> Phút thi:</span>
-                        <input type="number" id="admin-duration-input" class="name-input" style="width: 50px; padding: 5px; border-radius: 6px; font-size: 13px; margin:0;" value="9" min="1">
-                        <button class="action-btn btn-success" style="padding: 6px 12px; font-size: 12px;" onclick="saveBatchSettings()"><i class="fa-solid fa-floppy-disk"></i> Lưu</button>
-                    </div>
+        <div class="content-wrapper" style="max-width: 1240px;">
+            <div class="admin-box">
+                <div class="admin-title">
+                    <div><i class="fa-solid fa-satellite-dish" style="color: #ef4444;"></i> TRUNG TÂM ADMIN</div>
+                    <div class="admin-controls">
+                        <button class="action-btn btn-fullscreen" onclick="toggleFullscreen()"><i class="fa-solid fa-expand"></i> TOÀN MÀN HÌNH</button>
+                        <div style="display: flex; align-items: center; gap: 8px; background: var(--input-bg); padding: 6px 12px; border-radius: 10px; border: 1px solid var(--box-border);">
+                            <span style="font-size: 13px; font-weight: bold; color: var(--text-heading);"><i class="fa-solid fa-calendar-day"></i> Tên đợt:</span>
+                            <input type="text" id="admin-batch-name-input" class="name-input" style="width: 140px; padding: 5px; border-radius: 6px; font-size: 13px; margin:0;" value="Đợt 1 ngày 17/05/2026">
+                            <span style="font-size: 13px; font-weight: bold; color: var(--text-heading); margin-left: 5px;"><i class="fa-regular fa-clock"></i> Phút thi:</span>
+                            <input type="number" id="admin-duration-input" class="name-input" style="width: 50px; padding: 5px; border-radius: 6px; font-size: 13px; margin:0;" value="9" min="1">
+                            <button class="action-btn btn-success" style="padding: 6px 12px; font-size: 12px;" onclick="saveBatchSettings()"><i class="fa-solid fa-floppy-disk"></i> Lưu</button>
+                        </div>
 
-                    <div style="display: flex; gap: 4px; background: var(--input-bg); padding: 4px; border-radius: 10px; border: 1px solid var(--box-border);">
-                        <button class="action-btn btn-success" id="admin-start-exam-btn" style="padding: 6px 12px; font-size: 12px;" onclick="setExamStatus('running')"><i class="fa-solid fa-play"></i> MỞ ĐỀ</button>
-                        <button class="action-btn btn-pause" id="admin-pause-exam-btn" style="padding: 6px 12px; font-size: 12px;" onclick="setExamStatus('paused')"><i class="fa-solid fa-circle-pause"></i> TẠM DỪNG</button>
-                        <button class="action-btn btn-warning" id="admin-lock-exam-btn" style="padding: 6px 12px; font-size: 12px;" onclick="setExamStatus('idle')"><i class="fa-solid fa-lock"></i> KHÓA ĐỀ</button>
-                        <button class="action-btn btn-danger" id="admin-end-exam-btn" style="padding: 6px 12px; font-size: 12px;" onclick="setExamStatus('ended')"><i class="fa-solid fa-stop"></i> ĐÓNG ĐỀ</button>
-                    </div>
+                        <div style="display: flex; gap: 4px; background: var(--input-bg); padding: 4px; border-radius: 10px; border: 1px solid var(--box-border);">
+                            <button class="action-btn btn-success" id="admin-start-exam-btn" style="padding: 6px 12px; font-size: 12px;" onclick="setExamStatus('running')"><i class="fa-solid fa-play"></i> MỞ ĐỀ</button>
+                            <button class="action-btn btn-pause" id="admin-pause-exam-btn" style="padding: 6px 12px; font-size: 12px;" onclick="setExamStatus('paused')"><i class="fa-solid fa-circle-pause"></i> TẠM DỪNG</button>
+                            <button class="action-btn btn-warning" id="admin-lock-exam-btn" style="padding: 6px 12px; font-size: 12px;" onclick="setExamStatus('idle')"><i class="fa-solid fa-lock"></i> KHÓA ĐỀ</button>
+                            <button class="action-btn btn-danger" id="admin-end-exam-btn" style="padding: 6px 12px; font-size: 12px;" onclick="setExamStatus('ended')"><i class="fa-solid fa-stop"></i> ĐÓNG ĐỀ</button>
+                        </div>
 
-                    <div style="display: flex; align-items: center; gap: 8px; background: var(--input-bg); padding: 6px 12px; border-radius: 10px; border: 1px solid var(--box-border);">
-                        <span style="font-size: 13px; font-weight: bold; color: var(--text-heading);"><i class="fa-solid fa-key"></i> Pass đề:</span>
-                        <input type="text" id="admin-change-pass-input" class="name-input" style="width: 70px; padding: 5px; border-radius: 6px; font-size: 13px; margin:0;" value="220902">
-                        <button class="action-btn btn-primary" style="padding: 6px 12px; font-size: 12px;" onclick="updateQuizPassword()"><i class="fa-solid fa-floppy-disk"></i> Lưu</button>
+                        <div style="display: flex; align-items: center; gap: 8px; background: var(--input-bg); padding: 6px 12px; border-radius: 10px; border: 1px solid var(--box-border);">
+                            <span style="font-size: 13px; font-weight: bold; color: var(--text-heading);"><i class="fa-solid fa-key"></i> Pass đề:</span>
+                            <input type="text" id="admin-change-pass-input" class="name-input" style="width: 70px; padding: 5px; border-radius: 6px; font-size: 13px; margin:0;" value="220902">
+                            <button class="action-btn btn-primary" style="padding: 6px 12px; font-size: 12px;" onclick="updateQuizPassword()"><i class="fa-solid fa-floppy-disk"></i> Lưu</button>
+                        </div>
+
+                        <div style="display: flex; align-items: center; gap: 8px; background: var(--input-bg); padding: 6px 12px; border-radius: 10px; border: 1px solid var(--box-border);">
+                            <span style="font-size: 13px; font-weight: bold; color: var(--text-heading);"><i class="fa-solid fa-user-lock"></i> Đổi TK Admin:</span>
+                            <input type="text" id="admin-setting-user" class="name-input" style="width: 80px; padding: 5px; border-radius: 6px; font-size: 13px; margin:0;" placeholder="Username">
+                            <input type="password" id="admin-setting-pass" class="name-input" style="width: 80px; padding: 5px; border-radius: 6px; font-size: 13px; margin:0;" placeholder="Password">
+                            <button class="action-btn btn-primary" style="padding: 6px 12px; font-size: 12px;" onclick="updateAdminCredentials()"><i class="fa-solid fa-floppy-disk"></i> Lưu</button>
+                        </div>
+                        
+                        <button class="action-btn btn-success" onclick="exportExcel()"><i class="fa-solid fa-file-csv"></i> XUẤT EXCEL</button>
+                        <button class="action-btn btn-primary" onclick="showPresentation()"><i class="fa-solid fa-person-chalkboard"></i> TRÌNH CHIẾU</button>
+                        <button class="action-btn btn-danger" onclick="deleteAllData()"><i class="fa-solid fa-trash-can"></i> XÓA TẤT CẢ</button>
+                        <button class="action-btn btn-outline" onclick="logoutAdmin()"><i class="fa-solid fa-right-from-bracket"></i> THOÁT</button>
                     </div>
-                    
-                    <button class="action-btn btn-success" onclick="exportExcel()"><i class="fa-solid fa-file-csv"></i> XUẤT EXCEL</button>
-                    <button class="action-btn btn-primary" onclick="showPresentation()"><i class="fa-solid fa-person-chalkboard"></i> TRÌNH CHIẾU</button>
-                    <button class="action-btn btn-danger" onclick="deleteAllData()"><i class="fa-solid fa-trash-can"></i> XÓA TẤT CẢ</button>
-                    <button class="action-btn btn-outline" onclick="logoutAdmin()"><i class="fa-solid fa-right-from-bracket"></i> THOÁT</button>
                 </div>
-            </div>
 
-            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; background: var(--btn-outline-bg); padding: 10px 15px; border-radius: 12px; border: 1px solid var(--box-border);">
-                <span style="font-weight: bold; color: var(--text-heading);"><i class="fa-solid fa-filter"></i> Lọc theo đợt thi:</span>
-                <select id="admin-batch-filter" onchange="filterAdminByBatch()" class="name-input" style="padding: 6px 12px; border-radius: 8px; font-size: 14px; width: auto; margin:0;">
-                    <option value="ALL">-- Hiển thị tất cả --</option>
-                    <option value="CURRENT" selected>Đợt thi hiện tại</option>
-                </select>
-            </div>
-
-            <div class="admin-nav-tabs">
-                <button class="admin-tab active" onclick="switchAdminTab('grid-pane', this); playClick();"><i class="fa-solid fa-grip"></i> Bản đồ Grid (Live Grid)</button>
-                <button class="admin-tab" onclick="switchAdminTab('chart-pane', this); playClick();"><i class="fa-solid fa-chart-bar"></i> Biểu đồ trực quan (Live Chart)</button>
-            </div>
-
-            <div class="admin-content-pane active" id="grid-pane">
-                <div class="table-responsive" style="border: none;">
-                    <div class="admin-grid-layout" id="admin-grid-container"></div>
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; background: var(--btn-outline-bg); padding: 10px 15px; border-radius: 12px; border: 1px solid var(--box-border);">
+                    <span style="font-weight: bold; color: var(--text-heading);"><i class="fa-solid fa-filter"></i> Lọc theo đợt thi:</span>
+                    <select id="admin-batch-filter" onchange="filterAdminByBatch()" class="name-input" style="padding: 6px 12px; border-radius: 8px; font-size: 14px; width: auto; margin:0;">
+                        <option value="ALL">-- Hiển thị tất cả --</option>
+                        <option value="CURRENT" selected>Đợt thi hiện tại</option>
+                    </select>
                 </div>
-            </div>
 
-            <div class="admin-content-pane" id="chart-pane">
-                <div class="chart-view-container" id="admin-chart-container"></div>
+                <div class="admin-nav-tabs">
+                    <button class="admin-tab active" onclick="switchAdminTab('grid-pane', this); playClick();"><i class="fa-solid fa-grip"></i> Bản đồ Grid (Live Grid)</button>
+                    <button class="admin-tab" onclick="switchAdminTab('chart-pane', this); playClick();"><i class="fa-solid fa-chart-bar"></i> Biểu đồ trực quan (Live Chart)</button>
+                </div>
+
+                <div class="admin-content-pane active" id="grid-pane">
+                    <div class="table-responsive" style="border: none;">
+                        <div class="admin-grid-layout" id="admin-grid-container"></div>
+                    </div>
+                </div>
+
+                <div class="admin-content-pane" id="chart-pane">
+                    <div class="chart-view-container" id="admin-chart-container"></div>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- PRESENTATION SCREEN -->
     <div class="screen" id="presentation-screen">
-        <div class="admin-box" style="background: transparent; border: none; box-shadow: none; align-items: center; padding-bottom: 80px;">
-            <h1 style="font-size: 40px; margin-bottom: 30px; text-align: center;"><i class="fa-solid fa-book-open-reader"></i> ĐÁP ÁN CHÍNH THỨC</h1>
-            <div class="presentation-grid" id="presentation-container" style="padding-bottom: 100px;"></div>
-            
-            <button class="btn" style="position: fixed; bottom: 30px; right: 30px; z-index: 1000; background: #ffffff; color: #10b981; border: 2px solid #10b981; box-shadow: 0 10px 25px rgba(0,0,0,0.2);" onclick="openAdminDashboard(); playClick();">
-                <i class="fa-solid fa-arrow-left"></i> QUAY LẠI ADMIN
-            </button>
+        <div class="content-wrapper">
+            <div class="admin-box" style="background: transparent; border: none; box-shadow: none; align-items: center; padding-bottom: 80px;">
+                <h1 style="font-size: 40px; margin-bottom: 30px; text-align: center;"><i class="fa-solid fa-book-open-reader"></i> ĐÁP ÁN CHÍNH THỨC</h1>
+                <div class="presentation-grid" id="presentation-container" style="padding-bottom: 100px;"></div>
+                
+                <button class="btn" style="position: fixed; bottom: 30px; right: 30px; z-index: 1000; background: #ffffff; color: #10b981; border: 2px solid #10b981; box-shadow: 0 10px 25px rgba(0,0,0,0.2);" onclick="openAdminDashboard(); playClick();">
+                    <i class="fa-solid fa-arrow-left"></i> QUAY LẠI ADMIN
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -686,16 +710,24 @@
     let isAdminLoggedIn = false;
     let selectedBatchFilter = "CURRENT";
 
-    // MẢNG FUN FACT CHO PHÒNG CHỜ
+    // MẢNG FUN FACT CHO PHÒNG CHỜ VÀ PAUSE SCREEN
     const funFacts = [
-        "Bạn có biết: Tốc độ chạy của heo có thể lên tới 17km/h!",
-        "Mẹo hay: Heo không có tuyến mồ hôi nên chúng rất thích đầm bùn để giải nhiệt.",
-        "Thông tin: Đấu trường Megatech giúp củng cố kiến thức chuyên môn hiệu quả.",
-        "Sự thật: Một con gà mái có thể nhớ khuôn mặt của hơn 100 con gà khác.",
-        "Góc chăn nuôi: Điện giải Gluco K-C là 'thần dược' cho vật nuôi vào mùa hè nắng nóng.",
-        "Bạn có biết: Megatech luôn đồng hành cùng nhà chăn nuôi Việt Nam."
+        "🐷 Bạn có biết: Tốc độ chạy của heo có thể lên tới 17km/h!",
+        "🌡️ Mẹo hay: Heo không có tuyến mồ hôi nên chúng rất thích đầm bùn để giải nhiệt.",
+        "🧠 Trí thông minh: Heo lọt top 4 động vật thông minh nhất thế giới, học lệnh rất nhanh.",
+        "🐽 Khứu giác tuyệt đỉnh: Mũi heo nhạy bén hơn cả chó, có thể đánh hơi thức ăn dưới lòng đất sâu.",
+        "💬 Giao tiếp: Heo có thể tạo ra hơn 20 tiếng kêu khác nhau để trò chuyện với bầy đàn.",
+        "💧 Góc chăn nuôi: Điện giải Gluco K-C là 'thần dược' chống stress cho vật nuôi vào mùa nóng.",
+        "🛡️ An toàn sinh học: Vệ sinh kết hợp sát trùng định kỳ giúp giảm 80% nguy cơ bùng phát dịch bệnh.",
+        "🌱 Nông nghiệp: Chăn nuôi công nghệ cao và an toàn sinh học là chìa khóa phát triển bền vững."
     ];
-    let factInterval;
+
+    // Global Interval cho Fun Fact
+    setInterval(() => {
+        const randomFact = funFacts[Math.floor(Math.random() * funFacts.length)];
+        const factEls = document.querySelectorAll('.fun-fact-text');
+        factEls.forEach(el => el.innerText = randomFact);
+    }, 5000);
 
     // === HỆ THỐNG ÂM THANH & DARK MODE ===
     let isDarkMode = localStorage.getItem('megatech_darkmode') === 'true';
@@ -866,7 +898,7 @@
     // === HỆ THỐNG KÉO THẢ VÀ BÀN PHÍM CHO VỊT ===
     let gameLoop;
     let myPigX = 50, myPigY = 50; 
-    const speed = 0.8; // TĂNG TỐC ĐỘ DI CHUYỂN
+    const speed = 0.8; 
     const keys = { w: false, a: false, s: false, d: false, ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false };
     let joyVx = 0, joyVy = 0; 
     let lastSyncTime = 0;
@@ -883,24 +915,12 @@
             gameLoop = requestAnimationFrame(updateGame);
             setupControls();
         }
-
-        // Đổi fact ngẫu nhiên
-        if(factInterval) clearInterval(factInterval);
-        factInterval = setInterval(() => {
-            const factEl = document.getElementById('fun-fact-text');
-            if(factEl) {
-                const randomFact = funFacts[Math.floor(Math.random() * funFacts.length)];
-                factEl.innerText = randomFact;
-            }
-        }, 5000);
     }
 
     function setupControls() {
-        // Hỗ trợ cả di chuyển và phím tắt chọn đáp án
         window.addEventListener('keydown', e => { 
             if (keys.hasOwnProperty(e.key)) keys[e.key] = true; 
             
-            // Phím tắt làm bài
             if (document.getElementById('question-screen').classList.contains('active') && examStatus === 'running' && !hasAnswered) {
                 const key = e.key.toLowerCase();
                 const btnMap = { '1': 0, 'a': 0, '2': 1, 'b': 1, '3': 2, 'c': 2, '4': 3, 'd': 3 };
@@ -910,7 +930,6 @@
                 }
             }
 
-            // Phím tắt qua câu
             if (e.key === 'Enter') {
                 const nextBtn = document.getElementById('next-btn');
                 if (nextBtn && nextBtn.style.display === 'block') nextQuestion();
@@ -938,7 +957,7 @@
             let cx = baseRect.left + baseRect.width / 2;
             let cy = baseRect.top + baseRect.height / 2;
             let tempDx = clientX - cx;
-            let tempDy = clientY - cy; // Y giờ tính chuẩn trên mobile
+            let tempDy = clientY - cy; 
 
             let dist = Math.sqrt(tempDx*tempDx + tempDy*tempDy);
             let maxDist = baseRect.width / 2 - 25; 
@@ -980,7 +999,6 @@
         if (dx !== 0 || dy !== 0) {
             myPigX += dx; myPigY += dy;
 
-            // Bounded box fix Y
             if (myPigX < 5) myPigX = 5; if (myPigX > 95) myPigX = 95;
             if (myPigY < 10) myPigY = 10; if (myPigY > 90) myPigY = 90;
 
@@ -1120,6 +1138,8 @@
                     }).catch(e => console.log("Lỗi khởi tạo Setting", e));
                 }
             } catch (err) { console.error("Lỗi:", err); }
+        }, (error) => {
+            console.error("Lỗi lắng nghe cấu hình Server:", error);
         });
 
         checkResumeSession();
@@ -1137,6 +1157,7 @@
                 await signInAnonymously(auth);
             }
         } catch (error) { 
+            console.warn("Lỗi Auth: Dự án chưa bật Đăng nhập ẩn danh. Tự động chuyển sang chế độ Khách.", error);
             currentUser = { uid: "guest_user_megatech" };
             startFirebaseListeners();
         }
@@ -1155,7 +1176,7 @@
     window.showScreen = function(screenId) {
         document.querySelectorAll('.screen').forEach(s => {
             s.classList.remove('active');
-            s.style.opacity = '0'; // Giúp animation mượt hơn
+            s.style.opacity = '0'; 
         });
         const targetScreen = document.getElementById(screenId);
         targetScreen.classList.add('active');
@@ -1177,7 +1198,18 @@
         if (document.getElementById('question-screen').classList.contains('active')) {
             if (examStatus === 'paused') {
                 overlay.style.display = 'flex';
-                overlay.innerHTML = `<i class="fa-solid fa-circle-pause" style="color: #3b82f6;"></i><h2>ĐỀ ĐANG TẠM DỪNG</h2><p>Thời gian làm bài đã được đóng băng. Vui lòng chờ giám thị mở lại đề để tiếp tục!</p>`;
+                // Render tĩnh một lần để tránh chớp giật
+                if (!overlay.querySelector('#pause-fact-container')) {
+                    overlay.innerHTML = `
+                        <i class="fa-solid fa-circle-pause" style="color: #3b82f6;"></i>
+                        <h2>ĐỀ ĐANG TẠM DỪNG</h2>
+                        <p style="margin-bottom: 20px;">Thời gian làm bài đã được đóng băng. Vui lòng chờ giám thị mở lại đề để tiếp tục!</p>
+                        <div id="pause-fact-container" style="background: rgba(0,0,0,0.3); padding: 15px 25px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); max-width: 600px;">
+                            <span style="color: #60a5fa; font-weight: bold; font-size: 14px; text-transform: uppercase;"><i class="fa-solid fa-lightbulb"></i> Có thể bạn chưa biết</span>
+                            <p class="fun-fact-text" style="color: #e2e8f0; font-size: 16px; margin-top: 5px; line-height: 1.5;">${funFacts[Math.floor(Math.random() * funFacts.length)]}</p>
+                        </div>
+                    `;
+                }
             } else if (examStatus === 'idle') {
                 overlay.style.display = 'flex';
                 overlay.innerHTML = `<i class="fa-solid fa-lock"></i><h2>BÀI THI ĐANG BỊ KHÓA</h2><p>Admin đã tạm dừng hệ thống. Thời gian của bạn vẫn được bảo toàn. Vui lòng chờ!</p>`;
