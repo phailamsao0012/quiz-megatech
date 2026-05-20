@@ -313,7 +313,7 @@
     <div class="screen" id="admin-login-screen"><div class="content-wrapper"><div class="question-box" style="max-width: 500px; text-align: center;"><h2 style="font-family: 'Montserrat'; color: var(--text-heading); font-weight: 900; margin-bottom: 20px;"><i class="fa-solid fa-user-shield"></i> ĐĂNG NHẬP ADMIN</h2><div class="input-group" style="margin-top: 20px;"><input type="text" id="admin-login-user" class="name-input" placeholder="Tên đăng nhập" autocomplete="off"><input type="password" id="admin-login-pass" class="name-input" placeholder="Mật khẩu" style="margin-top: 10px;" autocomplete="off"><div style="display: flex; gap: 10px; margin-top: 25px;"><button class="btn btn-outline" style="flex: 1;" onclick="cancelAdminLogin()"><i class="fa-solid fa-arrow-left"></i> Quay lại</button><button class="btn" style="flex: 1;" onclick="handleAdminLogin()"><i class="fa-solid fa-right-to-bracket"></i> Đăng nhập</button></div></div></div></div></div>
     <div class="screen" id="question-screen"><div class="content-wrapper" style="max-width: 1000px;"><div class="question-box" id="question-box-main"><div class="q-header"><div class="q-counter" id="q-counter">CÂU HỎI 1 / 25</div><div class="timer-container" style="width: auto; margin-bottom: 0;"><div class="timer-text" id="timer-text"><i class="fa-regular fa-clock"></i> --:--</div></div></div><div style="display: flex; align-items: center; margin-bottom: 25px;"><div class="timer-bar-bg" id="question-progress-bg" style="display: flex; gap: 2px; padding: 2px;"></div></div><div class="question-text" id="question-text">Đang tải câu hỏi...</div><div class="options-grid" id="options-grid"></div><div style="text-align: center; margin-top: 20px; font-size: 13px; color: var(--text-sub); display: none;" id="keyboard-shortcuts-hint"><i class="fa-regular fa-keyboard"></i> Dùng phím <b>1, 2, 3, 4</b> hoặc <b>A, B, C, D</b> để chọn và phím <b>Enter</b> để qua câu.</div></div><div class="controls"><div class="status-message" id="status-message"></div><button class="next-btn" id="next-btn" onclick="nextQuestion()">CÂU TIẾP THEO <i class="fa-solid fa-arrow-right"></i></button></div></div></div>
     <div class="screen" id="end-screen"><div class="content-wrapper" style="max-width: 1100px;"><div class="end-layout"><div class="end-card"><p style="font-size: 24px; color: var(--primary-btn-1); font-weight: 800; margin-bottom: 10px; font-family: 'Montserrat';">ĐIỂM SỐ CỦA BẠN</p><div style="font-size: 90px; font-weight: 900; color: var(--primary-btn-2); font-family: 'Montserrat'; line-height: 1;" id="final-score">0</div><p style="font-size: 18px; color: var(--text-sub); margin-top: 10px; font-weight: 700;">Thời gian đã làm: <span id="final-time" style="color: #f59e0b;">0s</span></p><p style="font-size: 20px; color: var(--text-heading); margin-top: 20px; font-weight: 800; line-height: 1.4;" id="feedback-msg">Đang đồng bộ kết quả...</p><button class="btn btn-outline" id="request-replay-btn" style="margin-top: 25px; display: none; font-size: 16px; padding: 12px 25px;" onclick="requestReplay()"><i class="fa-solid fa-rotate-left"></i> Gửi yêu cầu thi lại lên Admin</button></div><div class="leaderboard-box"><div class="lb-title"><span style="color: var(--text-heading)"><i class="fa-solid fa-ranking-star"></i> BẢNG XẾP HẠNG</span><i class="fa-solid fa-rotate" style="cursor: pointer; color: var(--primary-btn-1);" onclick="loadLeaderboard(); playClick();" title="Làm mới"></i></div><div class="lb-list" id="lb-list"><div style="text-align: center; color: var(--text-sub); padding: 20px;">Hoàn thành bài thi để xem xếp hạng...</div></div></div></div></div></div>
-    <div class="screen" id="admin-screen"><div class="content-wrapper admin-wrapper"><div class="admin-box"><div class="admin-title"><div><i class="fa-solid fa-satellite-dish" style="color: #ef4444;"></i> TRUNG TÂM ADMIN</div><div class="admin-controls"><button class="action-btn btn-fullscreen" onclick="toggleFullscreen()"><i class="fa-solid fa-expand"></i> TOÀN MÀN HÌNH</button><div style="display: flex; align-items: center; gap: 8px; background: var(--input-bg); padding: 6px 12px; border-radius: 10px; border: 1px solid var(--box-border);"><span style="font-size: 13px; font-weight: bold; color: var(--text-heading);"><i class="fa-solid fa-calendar-day"></i> Tên đợt:</span><input type="text" id="admin-batch-name-input" class="name-input" style="width: 140px; padding: 5px; border-radius: 6px; font-size: 13px; margin:0;" value="Đợt 1 ngày 17/05/2026"><span style="font-size: 13px; font-weight: bold; color: var(--text-heading); margin-left: 5px;"><i class="fa-regular fa-clock"></i> Phút thi:</span><input type="number" id="admin-duration-input" class="name-input" style="width: 50px; padding: 5px; border-radius: 6px; font-size: 13px; margin:0;" value="9" min="1"><button class="action-btn btn-success" style="padding: 6px 12px; font-size: 12px;" onclick="saveBatchSettings()"><i class="fa-solid fa-floppy-disk"></i> Lưu</button></div><div style="display: flex; gap: 4px; background: var(--input-bg); padding: 4px; border-radius: 10px; border: 1px solid var(--box-border);"><button class="action-btn btn-success" id="admin-start-exam-btn" style="padding: 6px 12px; font-size: 12px;" onclick="setExamStatus('running')"><i class="fa-solid fa-play"></i> Mở đề</button><button class="action-btn btn-pause" id="admin-pause-exam-btn" style="padding: 6px 12px; font-size: 12px;" onclick="setExamStatus('paused')"><i class="fa-solid fa-circle-pause"></i> Tạm dừng</button><button class="action-btn btn-warning" id="admin-lock-exam-btn" style="padding: 6px 12px; font-size: 12px;" onclick="setExamStatus('idle')"><i class="fa-solid fa-lock"></i> Khóa đề</button><button class="action-btn btn-danger" id="admin-end-exam-btn" style="padding: 6px 12px; font-size: 12px;" onclick="setExamStatus('ended')"><i class="fa-solid fa-stop"></i> Đóng đề</button></div><button class="action-btn btn-outline" onclick="logoutAdmin()"><i class="fa-solid fa-right-from-bracket"></i> THOÁT</button></div></div><div class="admin-nav-tabs"><button class="admin-tab active" onclick="switchAdminTab('grid-pane', this);"><i class="fa-solid fa-grip"></i> Bản đồ Grid</button><button class="admin-tab" onclick="switchAdminTab('chart-pane', this);"><i class="fa-solid fa-chart-bar"></i> Biểu đồ trực quan</button></div><div class="admin-content-pane active" id="grid-pane"><div class="table-responsive" style="border: none;"><div class="admin-grid-layout" id="admin-grid-container"></div></div></div><div class="admin-content-pane" id="chart-pane"><div class="chart-view-container" id="admin-chart-container"></div></div></div></div></div>
+    <div class="screen" id="admin-screen"><div class="content-wrapper admin-wrapper"><div class="admin-box"><div class="admin-title"><div><i class="fa-solid fa-satellite-dish" style="color: #ef4444;"></i> TRUNG TÂM ADMIN</div><div class="admin-controls"><button class="action-btn btn-fullscreen" onclick="toggleFullscreen()"><i class="fa-solid fa-expand"></i> TOÀN MÀN HÌNH</button><div style="display: flex; align-items: center; gap: 8px; background: var(--input-bg); padding: 6px 12px; border-radius: 10px; border: 1px solid var(--box-border);"><span style="font-size: 13px; font-weight: bold; color: var(--text-heading);"><i class="fa-solid fa-calendar-day"></i> Tên đợt:</span><input type="text" id="admin-batch-name-input" class="name-input" style="width: 140px; padding: 5px; border-radius: 6px; font-size: 13px; margin:0;" value="Đợt 1 ngày 17/05/2026"><span style="font-size: 13px; font-weight: bold; color: var(--text-heading); margin-left: 5px;"><i class="fa-regular fa-clock"></i> Phút thi:</span><input type="number" id="admin-duration-input" class="name-input" style="width: 50px; padding: 5px; border-radius: 6px; font-size: 13px; margin:0;" value="9" min="1"><button class="action-btn btn-success" style="padding: 6px 12px; font-size: 12px;" onclick="saveBatchSettings()"><i class="fa-solid fa-floppy-disk"></i> Lưu</button></div><div style="display: flex; gap: 4px; background: var(--input-bg); padding: 4px; border-radius: 10px; border: 1px solid var(--box-border);"><button class="action-btn btn-success" id="admin-start-exam-btn" style="padding: 6px 12px; font-size: 12px;" onclick="setExamStatus('running')"><i class="fa-solid fa-play"></i> Mở đề</button><button class="action-btn btn-pause" id="admin-pause-exam-btn" style="padding: 6px 12px; font-size: 12px;" onclick="setExamStatus('paused')"><i class="fa-solid fa-circle-pause"></i> Tạm dừng</button><button class="action-btn btn-warning" id="admin-lock-exam-btn" style="padding: 6px 12px; font-size: 12px;" onclick="setExamStatus('idle')"><i class="fa-solid fa-lock"></i> Khóa đề</button><button class="action-btn btn-danger" id="admin-end-exam-btn" style="padding: 6px 12px; font-size: 12px;" onclick="setExamStatus('ended')"><i class="fa-solid fa-stop"></i> Đóng đề</button></div><button class="action-btn btn-outline" onclick="logoutAdmin()"><i class="fa-solid fa-right-from-bracket"></i> THOÁT</button></div></div><div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; background: var(--btn-outline-bg); padding: 10px 15px; border-radius: 12px; border: 1px solid var(--box-border);"><span style="font-weight: bold; color: var(--text-heading);"><i class="fa-solid fa-filter"></i> Lọc theo đợt thi:</span><select id="admin-batch-filter" onchange="filterAdminByBatch()" class="name-input" style="padding: 6px 12px; border-radius: 8px; font-size: 14px; width: auto; margin:0;"><option value="ALL">-- Hiển thị tất cả --</option><option value="CURRENT" selected>Đợt thi hiện tại</option></select></div><div class="admin-nav-tabs"><button class="admin-tab active" onclick="switchAdminTab('grid-pane', this);"><i class="fa-solid fa-grip"></i> Bản đồ Grid</button><button class="admin-tab" onclick="switchAdminTab('chart-pane', this);"><i class="fa-solid fa-chart-bar"></i> Biểu đồ trực quan</button></div><div class="admin-content-pane active" id="grid-pane"><div class="table-responsive" style="border: none;"><div class="admin-grid-layout" id="admin-grid-container"></div></div></div><div class="admin-content-pane" id="chart-pane"><div class="chart-view-container" id="admin-chart-container"></div></div></div></div></div>
     <div class="screen" id="presentation-screen"><div class="content-wrapper"><div class="admin-box" style="background: transparent; border: none; box-shadow: none; align-items: center; padding-bottom: 80px;"><h1 style="font-size: 40px; margin-bottom: 30px; text-align: center;"><i class="fa-solid fa-book-open-reader"></i> ĐÁP ÁN CHÍNH THỨC</h1><div class="presentation-grid" id="presentation-container" style="padding-bottom: 100px;"></div><button class="btn" style="position: fixed; bottom: 30px; right: 30px; z-index: 1000;" onclick="cancelAdminLogin(); playClick();"><i class="fa-solid fa-arrow-left"></i> QUAY LẠI ADMIN</button></div></div></div>
 </div>
 
@@ -374,9 +374,9 @@
     }
 
     // 2. Tương tác Bến Đò & Câu cá 
-    const swimDock = { id: 'dock_1', type: 'dock', x: 1250, y: 1780, w: 100, h: 40, text: "Nhảy xuống bơi", safeLand: {x: 1300, y: 1750}, safeWater: {x: 1300, y: 1850} };
+    const swimDock = { id: 'dock_1', type: 'dock', x: 1250, y: 1780, w: 100, h: 40, text: "Nhảy xuống bơi", safeLand: {x: 1330, y: 1800}, safeWater: {x: 1260, y: 1800} };
     interactables.push(swimDock); obstacles.push(swimDock);
-    const fishDock = { id: 'fish_1', type: 'fish', x: 1200, y: 1400, w: 40, h: 100, text: "Câu cá", safeLand: {x: 1220, y: 1450}, isFishing: false };
+    const fishDock = { id: 'fish_1', type: 'fish', x: 780, y: 1230, w: 40, h: 100, text: "Câu cá", safeLand: {x: 800, y: 1270}, isFishing: false };
     interactables.push(fishDock); obstacles.push(fishDock);
 
     // Xẻ hàng rào dọc thành nhiều mảng nhỏ để Z-sort (2.5D)
@@ -484,9 +484,6 @@
     function drawCharacter(context, x, y, size, customData, isRiding = false, isSwimming = false, walkFrame = 0, state = 'walking') {
         context.save(); context.translate(x, y);
 
-        // Mặt hướng theo tương tác (Nhìn trái nếu đang câu)
-        if (state === 'fishing') context.scale(-1, 1);
-
         let bobbing = 0; let legSwing = 0;
         if(walkFrame > 0 && !isRiding && !isSwimming && state === 'walking') { bobbing = Math.abs(Math.sin(walkFrame)) * size * 0.3; legSwing = Math.sin(walkFrame) * size * 0.6; }
         if (isSwimming) {
@@ -538,10 +535,12 @@
         }
 
         if (state === 'fishing') {
-            context.strokeStyle = '#78350f'; context.lineWidth = 4; context.beginPath(); context.moveTo(-size, -size*0.5); context.lineTo(-size*4, -size*2); context.stroke(); 
-            context.strokeStyle = 'rgba(255,255,255,0.8)'; context.lineWidth = 1; context.beginPath(); context.moveTo(-size*4, -size*2); context.lineTo(-size*4, size*2.5); context.stroke(); 
-            context.fillStyle = '#ef4444'; context.beginPath(); context.arc(-size*4, size*2.5, 4, 0, Math.PI*2); context.fill();
-            context.fillStyle = '#ffffff'; context.beginPath(); context.arc(-size*4, size*2.5 + Math.sin(Date.now()*0.005)*3, 2.5, 0, Math.PI*2); context.fill();
+            context.strokeStyle = '#78350f'; context.lineWidth = 4; 
+            context.beginPath(); context.moveTo(size*0.5, 0); context.lineTo(size*1.5, size*2.5); context.stroke(); 
+            context.strokeStyle = 'rgba(255,255,255,0.8)'; context.lineWidth = 1; 
+            context.beginPath(); context.moveTo(size*1.5, size*2.5); context.lineTo(size*1.5, size*4); context.stroke(); 
+            context.fillStyle = '#ef4444'; context.beginPath(); context.arc(size*1.5, size*4, 4, 0, Math.PI*2); context.fill();
+            context.fillStyle = '#ffffff'; context.beginPath(); context.arc(size*1.5, size*4 + Math.sin(Date.now()*0.005)*3, 2.5, 0, Math.PI*2); context.fill();
         }
         context.restore();
     }
@@ -602,7 +601,10 @@
         if (newX - radius < 0 || newX + radius > MAP_SIZE.w || newY - radius < 0 || newY + radius > MAP_SIZE.h) return true;
         for (let obs of obstacles) {
             if (obs.type === 'door' && obs.isOpen) continue;
-            if (obs.type === 'rect' || obs.type === 'door' || obs.type === 'dock' || obs.type === 'fish' || obs.type === 'fence' || obs.type === 'wall') {
+            // Bỏ qua va chạm dạng solid block với bến đò, để nhân vật bước lên đi lại thoải mái
+            if (obs.type === 'dock' || obs.type === 'fish') continue; 
+            
+            if (obs.type === 'rect' || obs.type === 'door' || obs.type === 'fence' || obs.type === 'wall') {
                 if (checkRectCollision(testCircle, obs)) return true;
             }
         }
@@ -634,7 +636,7 @@
         const mmX = canvas.width - mmW - padding, mmY = padding;
         const scale = mmW / MAP_SIZE.w;
 
-        ctx.fillStyle = 'rgba(0,0,0,0.4)'; drawRoundRectSafe(ctx, mmX, mmY, mmW, mmH, 10); ctx.fill();
+        ctx.fillStyle = 'rgba(0,0,0,0.4)'; ctx.beginPath(); drawRoundRectSafe(ctx, mmX, mmY, mmW, mmH, 10); ctx.fill();
         
         ctx.save(); ctx.beginPath(); drawRoundRectSafe(ctx, mmX, mmY, mmW, mmH, 10); ctx.clip();
         ctx.fillStyle = isDarkMode ? '#064e3b' : '#4ade80'; ctx.fillRect(mmX, mmY, mmW, mmH);
@@ -691,7 +693,7 @@
         // Vẽ đồ đạc trong kho
         ctx.save(); ctx.globalAlpha = 1 - barn.roofAlpha;
         barnProps.forEach(prop => {
-            if(prop.type === 'bag') { ctx.fillStyle = prop.color; drawRoundRectSafe(ctx, prop.x, prop.y, prop.w, prop.h, 10); ctx.fill(); ctx.fillStyle = '#fff'; ctx.font='bold 10px Arial'; ctx.fillText(prop.t, prop.x+20, prop.y+30); }
+            if(prop.type === 'bag') { ctx.fillStyle = prop.color; ctx.beginPath(); drawRoundRectSafe(ctx, prop.x, prop.y, prop.w, prop.h, 10); ctx.fill(); ctx.fillStyle = '#fff'; ctx.font='bold 10px Arial'; ctx.fillText(prop.t, prop.x+20, prop.y+30); }
             if(prop.type === 'crate') { ctx.fillStyle = '#92400e'; ctx.fillRect(prop.x, prop.y, prop.w, prop.h); ctx.strokeStyle='#78350f'; ctx.lineWidth=2; ctx.strokeRect(prop.x, prop.y, prop.w, prop.h); ctx.beginPath(); ctx.moveTo(prop.x, prop.y); ctx.lineTo(prop.x+prop.w, prop.y+prop.h); ctx.stroke(); }
             if(prop.type === 'tool') { ctx.strokeStyle = '#78350f'; ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(prop.x, prop.y); ctx.lineTo(prop.x+30, prop.y-60); ctx.stroke(); ctx.fillStyle='#94a3b8'; ctx.beginPath(); ctx.arc(prop.x+30, prop.y-60, 8, 0, Math.PI*2); ctx.fill(); }
         });
@@ -730,12 +732,12 @@
                 if (farmPlayer.state === 'riding') { ctx.font = '80px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('🐃', farmPlayer.x, farmPlayer.y + Math.sin(farmPlayer.walkFrame)*5); }
                 drawCharacter(ctx, farmPlayer.x, farmPlayer.y, farmPlayer.r, farmPlayer.custom, farmPlayer.state === 'riding', farmPlayer.state === 'swimming', farmPlayer.walkFrame, farmPlayer.state);
                 
-                // Vẽ thanh câu cá QTE
+                // Vẽ thanh câu cá QTE (Dùng fillRect tránh lỗi đệm Canvas)
                 if (farmPlayer.state === 'fishing' && fishingQTE.active) {
                     const qteY = farmPlayer.y - 110;
-                    ctx.fillStyle = 'rgba(0,0,0,0.6)'; ctx.beginPath(); drawRoundRectSafe(ctx, farmPlayer.x - 50, qteY, fishingQTE.width, 14, 7); ctx.fill();
-                    ctx.fillStyle = '#ef4444'; ctx.beginPath(); drawRoundRectSafe(ctx, farmPlayer.x - 50 + fishingQTE.targetX, qteY, fishingQTE.targetW, 14, 7); ctx.fill();
-                    ctx.fillStyle = '#ffffff'; ctx.beginPath(); drawRoundRectSafe(ctx, farmPlayer.x - 50 + fishingQTE.cursor, qteY - 2, 4, 18, 2); ctx.fill();
+                    ctx.fillStyle = 'rgba(0,0,0,0.6)'; ctx.fillRect(farmPlayer.x - 50, qteY, fishingQTE.width, 14);
+                    ctx.fillStyle = '#ef4444'; ctx.fillRect(farmPlayer.x - 50 + fishingQTE.targetX, qteY, fishingQTE.targetW, 14);
+                    ctx.fillStyle = '#ffffff'; ctx.fillRect(farmPlayer.x - 50 + fishingQTE.cursor, qteY - 2, 4, 18);
                 }
             } else if (ent.type === 'online') {
                 if (ent.obj.state === 'riding') { ctx.font = '80px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('🐃', ent.obj.x, ent.obj.y); }
@@ -810,7 +812,7 @@
 
         if (dx !== 0 && dy !== 0 && !joyState.active) { const length = Math.sqrt(dx*dx + dy*dy); dx /= length; dy /= length; }
         
-        // Thoát khỏi trạng thái câu cá bằng cách di chuyển
+        // CỬ ĐỘNG THOÁT KHỎI TRẠNG THÁI CÂU CÁ
         if (farmPlayer.state === 'fishing' && (dx !== 0 || dy !== 0)) {
             farmPlayer.state = 'walking';
             fishingQTE.active = false;
@@ -1156,7 +1158,8 @@
     async function deleteRecord(docId) { playClick(); if (!currentUser) return; showConfirm("Xóa kết quả này?", async () => { await deleteDoc(doc(scoresCollection, docId)); }); }
     async function deleteAllData() { playClick(); if (!currentUser) return showAlert("Lỗi!"); showConfirm("Xóa TOÀN BỘ dữ liệu?", async () => { const snapshot = await getDocs(scoresCollection); snapshot.forEach(async (document) => { await deleteDoc(doc(scoresCollection, document.id)); }); localStorage.removeItem(SESSION_KEY); localStorage.removeItem(QUESTIONS_KEY); localStorage.removeItem(TIMER_START_KEY); localStorage.removeItem(PAUSE_FREEZE_KEY); await setDoc(globalSettingsRef, { examStatus: 'idle' }, { merge: true }); showAlert("Đã xóa sạch!"); }); }
     function switchAdminTab(paneId, tabBtn) { playClick(); document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active')); document.querySelectorAll('.admin-content-pane').forEach(p => p.classList.remove('active')); tabBtn.classList.add('active'); document.getElementById(paneId).classList.add('active'); }
-    function filterAdminByBatch() { selectedBatchFilter = document.getElementById('admin-batch-filter').value; if (window.refreshAdminDashboard) window.refreshAdminDashboard(); }
+    function filterAdminByBatch() { const bf = document.getElementById('admin-batch-filter'); if(bf) selectedBatchFilter = bf.value; if (window.refreshAdminDashboard) window.refreshAdminDashboard(); }
+    function toggleFullscreen() { if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(e => console.log(e)); } else { document.exitFullscreen(); } }
 
     function openAdminDashboard() {
         if (!isAdminLoggedIn) { gotoAdminLogin(); return; } showScreen('admin-screen');
@@ -1165,9 +1168,11 @@
         adminLeaderboardUnsub = onSnapshot(scoresCollection, (snapshot) => {
             const data = []; const uniqueBatches = new Set();
             snapshot.forEach(doc => { const item = { id: doc.id, ...doc.data() }; data.push(item); if (item.batch) uniqueBatches.add(item.batch); });
-            const currentFilterVal = batchFilterSelect.value;
-            batchFilterSelect.innerHTML = `<option value="ALL" ${currentFilterVal === 'ALL' ? 'selected' : ''}>-- Hiển thị tất cả --</option><option value="CURRENT" ${currentFilterVal === 'CURRENT' ? 'selected' : ''}>Đợt thi hiện tại (${currentBatchName})</option>`;
-            uniqueBatches.forEach(b => { if (b !== currentBatchName) batchFilterSelect.innerHTML += `<option value="${b}" ${currentFilterVal === b ? 'selected' : ''}>${b}</option>`; });
+            if (batchFilterSelect) {
+                const currentFilterVal = batchFilterSelect.value;
+                batchFilterSelect.innerHTML = `<option value="ALL" ${currentFilterVal === 'ALL' ? 'selected' : ''}>-- Hiển thị tất cả --</option><option value="CURRENT" ${currentFilterVal === 'CURRENT' ? 'selected' : ''}>Đợt thi hiện tại (${currentBatchName})</option>`;
+                uniqueBatches.forEach(b => { if (b !== currentBatchName) batchFilterSelect.innerHTML += `<option value="${b}" ${currentFilterVal === b ? 'selected' : ''}>${b}</option>`; });
+            }
 
             window.refreshAdminDashboard = () => {
                 let filteredData = [...data];
@@ -1205,7 +1210,7 @@
         } catch (e) { showAlert("Lỗi khi xuất dữ liệu!"); }
     }
 
-    window.showScreen = showScreen; window.gotoAdminLogin = gotoAdminLogin; window.cancelAdminLogin = cancelAdminLogin; window.goHome = goHome; window.toggleBGM = toggleBGM; window.toggleTheme = toggleTheme; window.playClick = playClick; window.updatePreview = updatePreview; window.toggleSidebar = toggleSidebar; window.validateAndConfirmInfo = validateAndConfirmInfo; window.backToInfo = backToInfo; window.handleAdminLogin = handleAdminLogin; window.logoutAdmin = logoutAdmin; window.requestReplay = requestReplay; window.approveReplayRequest = approveReplayRequest; window.startQuiz = startQuiz; window.startCountdownAndEnterQuiz = startCountdownAndEnterQuiz; window.selectAnswer = selectAnswer; window.nextQuestion = nextQuestion; window.loadLeaderboard = loadLeaderboard; window.showPresentation = showPresentation; window.setExamStatus = setExamStatus; window.saveBatchSettings = saveBatchSettings; window.updateQuizPassword = updateQuizPassword; window.updateAdminCredentials = updateAdminCredentials; window.deleteRecord = deleteRecord; window.deleteAllData = deleteAllData; window.switchAdminTab = switchAdminTab; window.filterAdminByBatch = filterAdminByBatch; window.openAdminDashboard = openAdminDashboard; window.exportExcel = exportExcel;
+    window.showScreen = showScreen; window.gotoAdminLogin = gotoAdminLogin; window.cancelAdminLogin = cancelAdminLogin; window.goHome = goHome; window.toggleBGM = toggleBGM; window.toggleTheme = toggleTheme; window.playClick = playClick; window.updatePreview = updatePreview; window.toggleSidebar = toggleSidebar; window.validateAndConfirmInfo = validateAndConfirmInfo; window.backToInfo = backToInfo; window.handleAdminLogin = handleAdminLogin; window.logoutAdmin = logoutAdmin; window.requestReplay = requestReplay; window.approveReplayRequest = approveReplayRequest; window.startQuiz = startQuiz; window.startCountdownAndEnterQuiz = startCountdownAndEnterQuiz; window.selectAnswer = selectAnswer; window.nextQuestion = nextQuestion; window.loadLeaderboard = loadLeaderboard; window.showPresentation = showPresentation; window.setExamStatus = setExamStatus; window.saveBatchSettings = saveBatchSettings; window.updateQuizPassword = updateQuizPassword; window.updateAdminCredentials = updateAdminCredentials; window.deleteRecord = deleteRecord; window.deleteAllData = deleteAllData; window.switchAdminTab = switchAdminTab; window.filterAdminByBatch = filterAdminByBatch; window.openAdminDashboard = openAdminDashboard; window.exportExcel = exportExcel; window.toggleFullscreen = toggleFullscreen;
 </script>
 </body>
 </html>
