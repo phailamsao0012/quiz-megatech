@@ -1543,6 +1543,60 @@
             }
         }
 
+
+
+        /* =========================================================
+           MEGATECH LOBBY V4.7 - Admin button inside lobby toolbar
+           ========================================================= */
+        .lobby-admin-btn {
+            min-height: 42px;
+            padding: 0 13px;
+            border-radius: 15px;
+            border: 1px solid rgba(134,239,172,.42);
+            background: rgba(16,185,129,.14);
+            color: #d1fae5;
+            font-family: 'Montserrat';
+            font-weight: 900;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(0,0,0,.18);
+            transition: transform .18s ease, background .18s ease, filter .18s ease;
+            white-space: nowrap;
+        }
+        .lobby-admin-btn:hover {
+            transform: translateY(-2px);
+            background: rgba(34,197,94,.24);
+            filter: brightness(1.08);
+        }
+        .lobby-admin-btn:active { transform: translateY(0) scale(.98); }
+        body.lobby-active .lobby-admin-btn {
+            min-height: 38px !important;
+            padding: 0 11px !important;
+            border-radius: 13px !important;
+            font-size: 13px !important;
+        }
+        @media (max-width: 1280px) {
+            body.lobby-active .lobby-admin-btn {
+                width: 38px !important;
+                min-width: 38px !important;
+                height: 38px !important;
+                padding: 0 !important;
+            }
+            body.lobby-active .lobby-admin-btn span { display: none !important; }
+        }
+        @media (max-width: 640px) {
+            body.lobby-active .lobby-admin-btn {
+                width: 34px !important;
+                min-width: 34px !important;
+                height: 34px !important;
+                min-height: 34px !important;
+                border-radius: 12px !important;
+            }
+        }
+
 </style>
 </head>
 <body>
@@ -1691,6 +1745,7 @@
                     <div class="lobby-top-actions">
                         <button class="lobby-icon-btn" type="button" title="Bật/tắt nhạc" onclick="toggleBGM()"><i class="fa-solid fa-music"></i></button>
                         <button class="lobby-icon-btn" type="button" title="Đổi giao diện sáng/tối" onclick="toggleTheme()"><i class="fa-solid fa-moon"></i></button>
+                        <button class="lobby-admin-btn" type="button" title="Mở Admin" onclick="gotoAdminLogin()"><i class="fa-solid fa-user-shield"></i><span>Admin</span></button>
                         <button class="lobby-icon-btn" type="button" title="Danh sách người chơi" data-lobby-action="toggle-panel"><i class="fa-solid fa-users"></i></button>
                         <button class="lobby-main-btn" type="button" id="lobby-ready-btn" data-lobby-action="ready"><i class="fa-solid fa-circle-check"></i> Sẵn sàng</button>
                     </div>
