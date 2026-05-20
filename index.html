@@ -65,7 +65,7 @@
         .progress-bar { width: 100%; height: 6px; background: var(--container-border); flex-shrink: 0;}
         .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary-btn-1), var(--primary-btn-2)); width: 0%; transition: width 0.4s ease; box-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
 
-        .screen { display: none; flex-direction: column; flex-grow: 1; width: 100%; height: 0; overflow-y: auto; overflow-x: hidden; background-image: radial-gradient(circle at top right, var(--bg-gradient-1) 0%, transparent 50%), radial-gradient(circle at bottom left, var(--bg-gradient-2) 0%, transparent 50%); align-items: center; justify-content: flex-start; }
+        .screen { display: none; flex-direction: column; flex-grow: 1; width: 100%; height: 0; min-height: 0; overflow-y: auto; overflow-x: hidden; background-image: radial-gradient(circle at top right, var(--bg-gradient-1) 0%, transparent 50%), radial-gradient(circle at bottom left, var(--bg-gradient-2) 0%, transparent 50%); align-items: center; justify-content: flex-start; }
         .screen.active { display: flex; animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         .content-wrapper { width: 100%; max-width: 1000px; margin-top: auto; margin-bottom: auto; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; }
@@ -98,18 +98,19 @@
         .maker-select { width: 100%; padding: 10px; border-radius: 10px; border: 2px solid var(--box-border); font-family: 'Nunito'; font-weight: bold; background: var(--input-bg); color: var(--text-heading); outline: none; transition: all 0.3s;}
         .maker-select:focus { border-color: var(--primary-btn-2); }
 
-        #waiting-screen .content-wrapper { padding: 0; max-width: 100%; height: 100%; margin: 0; justify-content: flex-start;}
+        #waiting-screen { overflow: hidden; }
+        #waiting-screen .content-wrapper { padding: 0; max-width: 100%; height: 100%; margin: 0; justify-content: flex-start; flex: 1; min-height: 0; flex-shrink: 1; }
         .waiting-header { padding: 15px 20px; background: var(--box-bg); width: 100%; z-index: 10; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--container-border); transition: background 0.3s; flex-shrink: 0;}
         .waiting-header h2 { font-size: 20px; color: var(--primary-btn-2); font-family: 'Montserrat'; font-weight: 900;}
         
-        .playground-wrapper { flex-grow: 1; width: 100%; position: relative; overflow: hidden; touch-action: none; background: #86efac; cursor: grab;}
+        .playground-wrapper { flex: 1; min-height: 0; width: 100%; position: relative; overflow: hidden; touch-action: none; background: #86efac; cursor: grab;}
         .playground-wrapper:active { cursor: grabbing; }
         #gameCanvas { display: block; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
 
         #dynamic-joystick { position: absolute; width: 120px; height: 120px; border-radius: 50%; background: rgba(255, 255, 255, 0.15); border: 2px solid rgba(255, 255, 255, 0.4); pointer-events: none; z-index: 50; display: none; transform: translate(-50%, -50%); backdrop-filter: blur(4px);}
         #dynamic-knob { position: absolute; width: 50px; height: 50px; border-radius: 50%; background: rgba(255, 255, 255, 0.9); box-shadow: 0 0 15px rgba(0,0,0,0.2); top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; }
 
-        #action-btn-container { position: absolute; bottom: 30px; right: 30px; z-index: 60; display: none; pointer-events: auto; text-align: center; }
+        #action-btn-container { position: absolute; bottom: max(30px, env(safe-area-inset-bottom) + 10px); right: max(30px, env(safe-area-inset-right) + 10px); z-index: 60; display: none; pointer-events: auto; text-align: center; }
         .farm-action-btn { width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, var(--primary-btn-1), var(--primary-btn-2)); border: 4px solid #ffffff; color: white; font-size: 1.5rem; display: flex; justify-content: center; align-items: center; box-shadow: 0 10px 20px rgba(0,0,0,0.3); cursor: pointer; transition: transform 0.1s; }
         .farm-action-btn:active { transform: scale(0.9); }
         .action-text { background: rgba(0,0,0,0.8); color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; margin-bottom: 5px; display: inline-block; white-space: nowrap;}
@@ -1152,6 +1153,7 @@
     }
 
     async function setExamStatus(status) { playClick(); if (!currentUser) return showAlert("Lỗi: Chưa kết nối hệ thống!"); try { await setDoc(globalSettingsRef, { examStatus: status }, { merge: true }); showAlert(`Cập nhật trạng thái thành công!`); } catch(e) { showAlert(`Lỗi thay đổi trạng thái!`); } }
+    function toggleFullscreen() { if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(e => console.log(e)); } else { document.exitFullscreen(); } }
     async function saveBatchSettings() { playClick(); if (!currentUser) return showAlert("Lỗi: Chưa kết nối!"); const batchVal = document.getElementById('admin-batch-name-input').value.trim(); const durationVal = parseInt(document.getElementById('admin-duration-input').value.trim()); if(!batchVal || isNaN(durationVal) || durationVal < 1) return showAlert("Nhập hợp lệ!"); try { await setDoc(globalSettingsRef, { batchName: batchVal, examDuration: durationVal, examStatus: 'idle' }, { merge: true }); showAlert("Đã lưu Đợt thi mới!"); } catch (e) { showAlert("Lỗi!"); } }
     async function updateQuizPassword() { playClick(); if (!currentUser) return showAlert("Lỗi kết nối!"); const newPass = document.getElementById('admin-change-pass-input').value.trim(); if(!newPass) return showAlert("Mật khẩu trống!"); try { await setDoc(globalSettingsRef, { quizPassword: newPass }, { merge: true }); showAlert("Cập nhật thành công!"); } catch(e) { showAlert("Lỗi!"); } }
     async function updateAdminCredentials() { playClick(); if (!currentUser) return showAlert("Lỗi kết nối!"); const newUser = document.getElementById('admin-setting-user').value.trim(); const newPass = document.getElementById('admin-setting-pass').value.trim(); if(!newUser || !newPass) return showAlert("Trống!"); try { await setDoc(globalSettingsRef, { adminUsername: newUser, adminPassword: newPass }, { merge: true }); currentAdminUser = newUser; currentAdminPass = newPass; showAlert("Cập nhật thành công!"); } catch(e) { showAlert("Lỗi!"); } }
@@ -1159,7 +1161,6 @@
     async function deleteAllData() { playClick(); if (!currentUser) return showAlert("Lỗi!"); showConfirm("Xóa TOÀN BỘ dữ liệu?", async () => { const snapshot = await getDocs(scoresCollection); snapshot.forEach(async (document) => { await deleteDoc(doc(scoresCollection, document.id)); }); localStorage.removeItem(SESSION_KEY); localStorage.removeItem(QUESTIONS_KEY); localStorage.removeItem(TIMER_START_KEY); localStorage.removeItem(PAUSE_FREEZE_KEY); await setDoc(globalSettingsRef, { examStatus: 'idle' }, { merge: true }); showAlert("Đã xóa sạch!"); }); }
     function switchAdminTab(paneId, tabBtn) { playClick(); document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active')); document.querySelectorAll('.admin-content-pane').forEach(p => p.classList.remove('active')); tabBtn.classList.add('active'); document.getElementById(paneId).classList.add('active'); }
     function filterAdminByBatch() { const bf = document.getElementById('admin-batch-filter'); if(bf) selectedBatchFilter = bf.value; if (window.refreshAdminDashboard) window.refreshAdminDashboard(); }
-    function toggleFullscreen() { if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(e => console.log(e)); } else { document.exitFullscreen(); } }
 
     function openAdminDashboard() {
         if (!isAdminLoggedIn) { gotoAdminLogin(); return; } showScreen('admin-screen');
