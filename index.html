@@ -1614,6 +1614,26 @@
         .lobby-action-dock .unstuck-btn i { font-size: 13px; }
         .player-pig.other-pig[data-stale="true"] { display: none !important; }
 
+
+
+        /* TIMER FIX - hiển thị rõ đồng hồ đếm ngược */
+        #timer-text { min-width: 92px; justify-content: flex-end; }
+        #timer-text.danger { color: #ef4444 !important; animation: pulse 1s infinite; }
+
+
+
+        /* TIMER DRAMA PATCH - hiển thị 2 số thập phân trong 60 giây cuối */
+        #timer-text.final-minute {
+            color: #ef4444 !important;
+            animation: finalMinuteFlash .42s infinite alternate !important;
+            text-shadow: 0 0 10px rgba(239, 68, 68, .55), 0 0 22px rgba(239, 68, 68, .35);
+            transform-origin: center;
+        }
+        @keyframes finalMinuteFlash {
+            0% { opacity: .55; transform: scale(1); filter: brightness(1); }
+            100% { opacity: 1; transform: scale(1.08); filter: brightness(1.35); }
+        }
+
 </style>
 </head>
 <body>
@@ -4034,7 +4054,19 @@
 
     function startTimer() {
         clearInterval(timerInterval);
-        timerInterval = setInterval(timerTick, 100);
+
+        // FIX TIMER: nếu chưa có mốc bắt đầu thì tạo luôn, tránh giao diện bị kẹt ở --:--.
+        let savedStartTime = localStorage.getItem(TIMER_START_KEY);
+        if (!savedStartTime) {
+            const stamp = currentDocTimestamp > 0 ? currentDocTimestamp : Date.now();
+            savedStartTime = stamp.toString();
+            currentDocTimestamp = stamp;
+            localStorage.setItem(TIMER_START_KEY, savedStartTime);
+        }
+
+        timerTick(); // cập nhật ngay lập tức, không chờ nhịp interval đầu tiên
+        // Chạy nhanh hơn để 60 giây cuối hiển thị phần thập phân mượt hơn.
+        timerInterval = setInterval(timerTick, 50);
     }
 
     function timerTick() {
@@ -4043,7 +4075,10 @@
             savedStartTime = currentDocTimestamp.toString();
             localStorage.setItem(TIMER_START_KEY, savedStartTime);
         }
-        if (!savedStartTime) return;
+        if (!savedStartTime) {
+            updateTimerUI();
+            return;
+        }
 
         let calculateTime = Date.now();
         const freezeStart = localStorage.getItem(PAUSE_FREEZE_KEY);
@@ -4052,9 +4087,9 @@
         }
 
         const elapsedSeconds = (calculateTime - parseInt(savedStartTime)) / 1000;
-        totalTimeTaken = elapsedSeconds;
+        totalTimeTaken = Math.max(0, elapsedSeconds);
         
-        const totalDurationSeconds = examDuration * 60;
+        const totalDurationSeconds = Math.max(1, examDuration * 60);
         timeLeft = Math.max(0, totalDurationSeconds - elapsedSeconds);
 
         updateTimerUI();
@@ -4062,28 +4097,52 @@
         if (timeLeft <= 0) {
             clearInterval(timerInterval);
             timeLeft = 0;
+            updateTimerUI();
             handleTimeOut();
         }
     }
 
     function updateTimerUI() {
         const textEl = document.getElementById('timer-text');
-        const barEl = document.getElementById('timer-bar');
-        if (!textEl || !barEl) return;
+        if (!textEl) return;
 
-        const minutes = Math.floor(timeLeft / 60);
-        const seconds = Math.floor(timeLeft % 60);
-        textEl.innerHTML = `<i class="fa-regular fa-clock"></i> ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        
-        const percentage = (timeLeft / (examDuration * 60)) * 100;
-        barEl.style.width = `${percentage}%`;
+        const safeTimeLeft = Number.isFinite(timeLeft) ? Math.max(0, timeLeft) : Math.max(0, examDuration * 60);
+        const isFinalMinute = safeTimeLeft <= 60;
+        const minutes = Math.floor(safeTimeLeft / 60);
 
-        if (timeLeft <= 10) { 
-            textEl.classList.add('danger');
-            barEl.style.background = '#ef4444';
+        if (isFinalMinute) {
+            // 60 giây cuối: hiển thị giây có 2 số thập phân, ví dụ 00:09.87
+            const secondsWithDecimal = (safeTimeLeft - minutes * 60).toFixed(2).padStart(5, '0');
+            textEl.innerHTML = `<i class="fa-regular fa-clock"></i> ${minutes.toString().padStart(2, '0')}:${secondsWithDecimal}`;
         } else {
-            textEl.classList.remove('danger');
-            barEl.style.background = '#22c55e';
+            const seconds = Math.floor(safeTimeLeft % 60);
+            textEl.innerHTML = `<i class="fa-regular fa-clock"></i> ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        const totalDurationSeconds = Math.max(1, examDuration * 60);
+        const percentage = Math.max(0, Math.min(100, (safeTimeLeft / totalDurationSeconds) * 100));
+
+        // Bản HTML này dùng progress theo câu hỏi nên không còn element #timer-bar.
+        // Nếu file cũ có #timer-bar thì vẫn cập nhật bình thường; nếu không có thì không được return sớm.
+        const barEl = document.getElementById('timer-bar');
+        if (barEl) {
+            barEl.style.width = `${percentage}%`;
+            barEl.style.background = isFinalMinute ? '#ef4444' : '#22c55e';
+        }
+
+        // Tạo hiệu ứng đếm ngược ngay trên đoạn progress hiện tại của câu hỏi.
+        const pgBg = document.getElementById('question-progress-bg');
+        if (pgBg && pgBg.children && pgBg.children[currentQuestion]) {
+            const currentDot = pgBg.children[currentQuestion];
+            const activeColor = isFinalMinute ? '#ef4444' : '#facc15';
+            currentDot.style.background = `linear-gradient(90deg, ${activeColor} 0 ${percentage}%, rgba(255,255,255,0.35) ${percentage}% 100%)`;
+            currentDot.style.boxShadow = isFinalMinute ? '0 0 10px rgba(239,68,68,.55)' : '';
+        }
+
+        if (isFinalMinute) { 
+            textEl.classList.add('danger', 'final-minute');
+        } else {
+            textEl.classList.remove('danger', 'final-minute');
         }
     }
 
