@@ -2313,16 +2313,6 @@
                     "answerHash": "MA=="
             },
             {
-                    "q": "Khách mua 10 hộp GENTADOX được tặng mấy hộp?",
-                    "options": [
-                            "Tặng 5 hộp",
-                            "Tặng 10 hộp cùng loại (mua 10 tặng 10)",
-                            "Tặng 2 hộp + 1 chai sát trùng",
-                            "Không có ưu đãi khi mua số lượng lớn"
-                    ],
-                    "answerHash": "MQ=="
-            },
-            {
                     "q": "Chính sách đổi trả sản phẩm của Megatech là gì?",
                     "options": [
                             "Đổi sản phẩm khác cùng giá trị, không hoàn tiền mặt",
@@ -2524,6 +2514,21 @@
             }
     ];
 
+    // Danh sách câu đã loại khỏi bộ đề. Giữ thêm lớp lọc này để nếu trình duyệt/Firebase còn cache
+    // thì câu bị loại vẫn không lọt vào bài thi mới.
+    const REMOVED_QUESTION_TEXTS = [
+        "Khách mua 10 hộp GENTADOX được tặng mấy hộp?"
+    ];
+
+    function isRemovedQuestion(questionItem) {
+        const qText = String(questionItem?.q || '').trim().toLowerCase();
+        return REMOVED_QUESTION_TEXTS.some(text => qText === text.trim().toLowerCase());
+    }
+
+    function getActiveQuestionPool() {
+        return originalQuestions.filter(q => !isRemovedQuestion(q));
+    }
+
     let currentQuestion = 0, score = 0, hasAnswered = false;
     let selectedAnswerIndex = null; // Cho phép đổi đáp án trước khi bấm Câu tiếp theo
     let quizEndedByTimeout = false;
@@ -2533,10 +2538,30 @@
     let cheatFlag = false; 
     const shapesArr = ["A", "B", "C", "D"];
     
-    const SESSION_KEY = "megatech_quiz_session_v9";
-    const QUESTIONS_KEY = "megatech_quiz_questions_30_green_v1";
-    const TIMER_START_KEY = "megatech_quiz_start_time_v9";
-    const PAUSE_FREEZE_KEY = "megatech_quiz_freeze_time_v9";
+    const SESSION_KEY = "megatech_quiz_session_v10_no_gentadox";
+    const QUESTIONS_KEY = "megatech_quiz_questions_29_no_gentadox_v2";
+    const TIMER_START_KEY = "megatech_quiz_start_time_v10_no_gentadox";
+    const PAUSE_FREEZE_KEY = "megatech_quiz_freeze_time_v10_no_gentadox";
+
+    // Dọn cache câu hỏi cũ: nếu máy đã từng lưu bộ 30 câu có câu GENTADOX,
+    // xóa sạch để tránh mở file mới nhưng vẫn nhìn thấy câu cũ.
+    try {
+        Object.keys(localStorage).forEach(key => {
+            const value = localStorage.getItem(key) || '';
+            if (
+                key.startsWith('megatech_quiz_questions') ||
+                key.startsWith('megatech_quiz_session') ||
+                key.startsWith('megatech_quiz_start_time') ||
+                key.startsWith('megatech_quiz_freeze_time')
+            ) {
+                if (value.includes('Khách mua 10 hộp GENTADOX') || key !== QUESTIONS_KEY && key !== SESSION_KEY && key !== TIMER_START_KEY && key !== PAUSE_FREEZE_KEY) {
+                    localStorage.removeItem(key);
+                }
+            }
+        });
+    } catch (cacheCleanupError) {
+        console.warn('Không thể dọn cache quiz cũ:', cacheCleanupError);
+    }
     
     let examDuration = 9; 
     let timeLeft = examDuration * 60;
@@ -3990,7 +4015,7 @@
         playerName = nameInput; playerDept = deptInput; playerRole = roleInput;
         currentQuestion = 0; score = 0; selectedAnswerIndex = null; quizEndedByTimeout = false; totalTimeTaken = 0; tabFocusWarnings = 0; cheatFlag = false;
 
-        gameQuestions = originalQuestions.map(q => {
+        gameQuestions = getActiveQuestionPool().map(q => {
             const correctIndex = parseInt(atob(q.answerHash));
             const correctText = q.options[correctIndex]; 
             const newOptions = [...q.options];
