@@ -2202,31 +2202,306 @@
     };
 
     const originalQuestions = [
-        { q: "Biện pháp hiệu quả để giảm ruồi lâu dài là:", options: ["Vệ sinh + sát trùng + goodkill", "Chỉ cần goodkill", "Chỉ mở quạt", "Sử dụng bẫy dính"], answerHash: "MA==" },
-        { q: "Tiêu chảy phân trắng ở heo con thường liên quan đến?", options: ["E.coli", "Cầu trùng", "Thiếu khoáng", "Viêm khớp"], answerHash: "MA==" },
-        { q: "Yếu tố nào làm tiêu chảy dễ bùng phát sau cai sữa?", options: ["Chuồng quá sáng", "Đổi cám đột ngột", "Tắm quá nhiều", "Heo ngủ nhiều"], answerHash: "MQ==" },
-        { q: "Khi heo tiêu chảy nặng cần bổ sung gì?", options: ["Điện giải Gluco K-C", "Siêu vỗ béo Nutri Max", "Men tỏi", "Bogaru"], answerHash: "MA==" },
-        { q: "Triệu chứng thường gặp của Mycoplasma suis là?", options: ["Thiếu máu, nhợt nhạt", "Sưng chân", "Rụng lông", "Mù mắt"], answerHash: "MA==" },
-        { q: "Con đường lây truyền phổ biến của Mycoplasma suis là:", options: ["Thức ăn", "Không khí", "Mẹ truyền sang con", "Tiếp xúc trực tiếp"], answerHash: "Mg==" },
-        { q: "Khi lợn thở bụng nghĩa là", options: ["Hệ hô hấp đang bị ảnh hưởng", "Heo đang đói", "Heo sắp ngủ", "Heo thiếu canxi"], answerHash: "MA==" },
-        { q: "Sau khi dùng kháng sinh dài ngày nên", options: ["Bổ sung men tiêu hóa, đào thải kháng sinh", "Cho uống nhiều nước", "Cho ăn nhiều để bù sức", "Tiêm kháng sinh trợ lực"], answerHash: "MA==" },
-        { q: "Loại kháng sinh chính trong sản phẩm Mycos của Megatech là gì", options: ["Oxytetraxylin", "Flofenicol", "Gentamicine", "Doxycycline"], answerHash: "MA==" },
-        { q: "Trong bệnh hô hấp phức hợp (PRDC), loại vi khuẩn nào là tác nhân gây bệnh Suyễn heo (ho khan, ho mửa)?", options: ["Actinobacillus pleuropneumoniae (APP)", "Mycoplasma hyopneumoniae", "Pasteurella multocida", "Salmonella choleraesuis"], answerHash: "MQ==" },
-        { q: "Khi heo bị tiêu chảy cấp do dịch tiêu chảy cấp (PED), đặc điểm phân thường thấy là gì", options: ["Phân khô, vón cục", "Phân có lẫn máu và chất nhầy", "Phân lỏng, màu vàng, mùi tanh", "Phân xanh đen, thối khắm"], answerHash: "Mg==" },
-        { q: "Khi heo có biểu hiện tiêu chảy phân trắng, phân vàng do nhiễm khuẩn sản phẩm nào của Megatech là lựa chọn điều trị hàng đầu?", options: ["FLO-DOXY", "GENTADOX", "OXYTETRACILINE", "Men tỏi"], answerHash: "MQ==" },
-        { q: "Mycoplasma suis thường gây ra vấn đề gì trên heo?", options: ["Thiếu máu, da nhợt, chết thai", "Gãy chân", "Viêm móng", "Sưng khớp"], answerHash: "MA==" },
-        { q: "Khách hàng thường tin tưởng điều gì nhất?", options: ["Tư vấn đúng bệnh và hiệu quả thực tế", "Nói chuyện ngọt với khách hàng", "Một sản phẩm chữa mọi bệnh", "Cam kết khỏi 100%"], answerHash: "MA==" },
-        { q: "Triệu chứng đặc trưng nhất của bệnh Tai xanh trên lợn nái là gì?", options: ["Lợn bỏ cám", "Bụng chướng to", "Lợn con bị liệt 2 chân sau", "Sẩy thai hoặc đẻ con chết lưu"], answerHash: "Mw==" },
-        { q: "Bệnh Mycoplasma suis chủ yếu tấn công vào cơ quan nào?", options: ["Hệ thống thần kinh trung ương", "Niêm mạc ruột non", "Hồng cầu", "Phế nang phổi"], answerHash: "Mg==" },
-        { q: "Megatech Việt Nam cần xây dựng hình ảnh như thế nào?", options: ["Chuyên nghiệp - đồng hành - hiệu quả", "Giá rẻ bằng mọi cách", "Chỉ bán theo trend", "Không cần chăm sóc khách"], answerHash: "MA==" },
-        { q: "Điện giải có tác dụng chính gì trong thời tiết nắng nóng?", options: ["Làm vật nuôi ăn mạnh hơn", "Bù nước và khoáng chất", "Làm giảm tiếng kêu", "Giúp ngủ nhiều hơn"], answerHash: "MQ==" },
-        { q: "Thời điểm phù hợp để bổ cụng điện giải là:", options: ["Buổi trưa nắng gắt", "Khi vật nuôi sắp chết", "Trước và trong thời tiết nắng nóng", "Chỉ dùng mùa lạnh"], answerHash: "Mg==" },
-        { q: "Đối tượng nào cần dùng điện giải nhiều trong mùa nóng?", options: ["Gia súc gia cầm nuôi mật độ cao, vừa tiêm vacine xong", "Vật nuôi đang và có dấu hiệu bệnh", "Vật nuôi vừa vận chuyển xa", "Tất cả đáp án trên"], answerHash: "Mw==" },
-        { q: "Dấu hiệu xuất huyết đặc trưng của bệnh Dịch tả lợn", options: ["Xuất huyết vệt dài ở lưng", "Chỉ xuất huyết ở móng chân", "Không xuất huyết", "Xuất huyết lấm tấm như đinh ghim ở thận và niêm mạc"], answerHash: "Mw==" },
-        { q: "Khi lợn bị Tai xanh, vùng da nào thường có biểu hiện", options: ["Lông trở nên móng mượt hơn", "Chỉ ở phần đuôi", "Tai, mõm và vùng bụng dưới", "Mũi và bốn chân"], answerHash: "Mg==" },
-        { q: "Mục đích chính của việc dùng bổ trợ cùng kháng sinh là gì?", options: ["Hỗ trợ vật nuôi phục hồi tốt hơn", "Làm thuốc có màu đẹp hơn", "Để tăng giá trị đơn hàng", "Tăng mùi thức ăn"], answerHash: "MA==" },
-        { q: "Trong thời tiết nắng nóng, dùng kháng sinh nên kết hợp sản phẩm gì của Megatech", options: ["All zyme men tỏi đen", "Điện giải Gluco KC (tinh chất rau má)", "Bổ sung nhiều Gentadox", "Bổ sung Nutri Max"], answerHash: "MQ==" },
-        { q: "Công ty Megatech có bao nhiêu sản phẩm thú y?", options: ["8", "9", "10", "11"], answerHash: "MQ==" }
+            {
+                    "q": "Xin nghỉ phép thì báo trước bao nhiêu ngày",
+                    "options": [
+                            "2 ngày",
+                            "5 ngày",
+                            "Không cần xin",
+                            "1 ngày"
+                    ],
+                    "answerHash": "MA=="
+            },
+            {
+                    "q": "Nhân viên cần bảo mật điều gì?",
+                    "options": [
+                            "Thông tin công ty",
+                            "Dữ liệu khách hàng",
+                            "Chiến dịch nội bộ",
+                            "Tất cả đáp án trên"
+                    ],
+                    "answerHash": "Mw=="
+            },
+            {
+                    "q": "Công ty có hoạt động thể thao hàng tuần nào",
+                    "options": [
+                            "Bống rổ",
+                            "Cầu Lông",
+                            "Pickleball",
+                            "Tất cả đáp án trên"
+                    ],
+                    "answerHash": "MQ=="
+            },
+            {
+                    "q": "Đâu là câu nói quen thuộc nhất văn phòng?",
+                    "options": [
+                            "“Done chưa em?”",
+                            "“Check giúp anh/chị nhé”",
+                            "“Deadline chiều nay nha”",
+                            "Tất cả đáp án trên"
+                    ],
+                    "answerHash": "Mw=="
+            },
+            {
+                    "q": "Khi phát hiện sự cố trong công việc, nhân viên cần:",
+                    "options": [
+                            "Bỏ qua",
+                            "Báo cáo quản lý phụ trách",
+                            "Đợi người khác xử lý",
+                            "Đăng lên mạng xã hội"
+                    ],
+                    "answerHash": "MQ=="
+            },
+            {
+                    "q": "Nhân sự đi muộn bị phạt bao nhiêu tiền?",
+                    "options": [
+                            "30.000đ",
+                            "100.000đ",
+                            "50.000đ",
+                            "Không bị phạt"
+                    ],
+                    "answerHash": "Mg=="
+            },
+            {
+                    "q": "Nhân viên cần làm gì trước khi ra về?",
+                    "options": [
+                            "Tắt thiết bị điện khi cần thiết",
+                            "Để nguyên mọi thứ",
+                            "Không cần kiểm tra",
+                            "Mang tài sản công ty về nhà"
+                    ],
+                    "answerHash": "MA=="
+            },
+            {
+                    "q": "Tên chuẩn của Công ty là gì?",
+                    "options": [
+                            "Công ty TNHH Nông Nghiệp Xanh Megatech Việt Nam",
+                            "Công ty TNHH Nông Nghiệp Megatech Việt Nam",
+                            "Công ty Nông nghiệp Megatech Việt Nam",
+                            "Công ty TNHH Nông Nghiệp Megatech"
+                    ],
+                    "answerHash": "MQ=="
+            },
+            {
+                    "q": "Nội quy nào bị vi phạm nhiều nhất ở Công ty?",
+                    "options": [
+                            "Đi muộn",
+                            "Quên báo cáo",
+                            "Quên đổ rác",
+                            "Mặc đồ sai quy định"
+                    ],
+                    "answerHash": "MA=="
+            },
+            {
+                    "q": "Khách mua 10 hộp GENTADOX được tặng mấy hộp?",
+                    "options": [
+                            "Tặng 5 hộp",
+                            "Tặng 10 hộp cùng loại (mua 10 tặng 10)",
+                            "Tặng 2 hộp + 1 chai sát trùng",
+                            "Không có ưu đãi khi mua số lượng lớn"
+                    ],
+                    "answerHash": "MQ=="
+            },
+            {
+                    "q": "Chính sách đổi trả sản phẩm của Megatech là gì?",
+                    "options": [
+                            "Đổi sản phẩm khác cùng giá trị, không hoàn tiền mặt",
+                            "1 đổi 1 nếu có lỗi sản phẩm – cần quay video + hình ảnh gửi Zalo",
+                            "Hoàn tiền 100% trong vòng 30 ngày không cần lý do",
+                            "Không hỗ trợ đổi trả sau khi đã giao hàng thành công"
+                    ],
+                    "answerHash": "MQ=="
+            },
+            {
+                    "q": "Khách nói giá sản phẩm cao, nên phản hồi thế nào?",
+                    "options": [
+                            "Đề xuất sản phẩm rẻ hơn hoàn toàn để khách không phàn nàn",
+                            "Nói sản phẩm chất lượng thì phải đắt, không thể khác được",
+                            "Giảm giá ngay 10% để chốt đơn nhanh",
+                            "So sánh chi phí phòng bệnh nhỏ với thiệt hại khi dịch bệnh bùng phát"
+                    ],
+                    "answerHash": "Mw=="
+            },
+            {
+                    "q": "FLO-DOXY mạnh hơn GENTADOX ở điểm nào?",
+                    "options": [
+                            "Chứa thêm thành phần kháng virus nên phổ rộng hơn",
+                            "Tan trong nước nhanh hơn và mùi dễ chịu hơn",
+                            "Đặc trị hô hấp mạnh hơn: viêm phổi, CRD, sưng phù đầu, ORT",
+                            "Giá thành rẻ hơn 30% so với GENTADOX"
+                    ],
+                    "answerHash": "Mg=="
+            },
+            {
+                    "q": "Việc giữ gìn vệ sinh nơi làm việc là trách nhiệm của:",
+                    "options": [
+                            "Cô dọn nhà",
+                            "Quản lý",
+                            "HCNS",
+                            "Tất cả nhân sư trong công ty"
+                    ],
+                    "answerHash": "Mw=="
+            },
+            {
+                    "q": "Điều nào sau đây KHÔNG đúng trong môi trường công ty?",
+                    "options": [
+                            "Hỗ trợ đồng nghiệp",
+                            "Tôn trọng khách hàng",
+                            "Nói xấu, gây chia rẽ nội bộ",
+                            "Chủ động học hỏi"
+                    ],
+                    "answerHash": "Mg=="
+            },
+            {
+                    "q": "Tài sản công ty cần được:",
+                    "options": [
+                            "Sử dụng tùy ý",
+                            "Giữ gìn và bảo quản cẩn thận",
+                            "Mang về dùng cá nhân",
+                            "Cho người ngoài mượn"
+                    ],
+                    "answerHash": "MQ=="
+            },
+            {
+                    "q": "Khi mắc lỗi trong công việc, nên:",
+                    "options": [
+                            "Đổ lỗi người khác",
+                            "Im lặng",
+                            "Chủ động nhận trách nhiệm và xử lý",
+                            "Né tránh quản lý"
+                    ],
+                    "answerHash": "Mg=="
+            },
+            {
+                    "q": "Khi ra khỏi phòng họp cuối cùng, cần:",
+                    "options": [
+                            "Để nguyên mọi thứ",
+                            "Tắt điện, thiết bị nếu cần",
+                            "Không quan tâm",
+                            "Gọi người khác dọn"
+                    ],
+                    "answerHash": "MQ=="
+            },
+            {
+                    "q": "Khi nhận phản hồi góp ý, nên:",
+                    "options": [
+                            "Khó chịu",
+                            "Cãi ngay",
+                            "Lắng nghe và cải thiện",
+                            "Bỏ ngoài tai"
+                    ],
+                    "answerHash": "Mg=="
+            },
+            {
+                    "q": "Khi khách hàng phản hồi tiêu cực, cần:",
+                    "options": [
+                            "Cãi lại",
+                            "Phớt lờ",
+                            "Bình tĩnh xử lý chuyên nghiệp",
+                            "Đùn đẩy trách nhiệm"
+                    ],
+                    "answerHash": "Mg=="
+            },
+            {
+                    "q": "Khi tham gia hoạt động nội bộ, nhân sự nên:",
+                    "options": [
+                            "Tham gia tích cực, văn minh",
+                            "Gây mất trật tự",
+                            "Tách biệt tập thể",
+                            "Không hợp tác"
+                    ],
+                    "answerHash": "MA=="
+            },
+            {
+                    "q": "Mục đích của nội quy công ty là:",
+                    "options": [
+                            "Làm khó nhân viên",
+                            "Tạo môi trường làm việc chuyên nghiệp và hiệu quả",
+                            "Chỉ để xử phạt",
+                            "Không có ý nghĩa gì"
+                    ],
+                    "answerHash": "MQ=="
+            },
+            {
+                    "q": "Đi làm vui nhất khi",
+                    "options": [
+                            "Team đạt KPI",
+                            "Được thưởng",
+                            "Đồng nghiệp vui vẻ",
+                            "Tất cả đáp án trên"
+                    ],
+                    "answerHash": "Mw=="
+            },
+            {
+                    "q": "Phòng ban nào dễ “quên ăn vì KPI”?",
+                    "options": [
+                            "Marketing Ads",
+                            "Sales/ CSKH",
+                            "Cả Marketing Ads và Sales",
+                            "HCNS"
+                    ],
+                    "answerHash": "Mg=="
+            },
+            {
+                    "q": "CSKH nhận phản hồi sản phẩm lỗi từ khách thì cần phối hợp với bộ phận nào đầu tiên?",
+                    "options": [
+                            "Kho/Vận hành",
+                            "Media",
+                            "HCNS",
+                            "Marketing"
+                    ],
+                    "answerHash": "MA=="
+            },
+            {
+                    "q": "Ai là người cung cấp hình ảnh/video để Marketing chạy quảng cáo?",
+                    "options": [
+                            "Media/Content",
+                            "Kho",
+                            "Sales/ CSKH",
+                            "HCNS"
+                    ],
+                    "answerHash": "MA=="
+            },
+            {
+                    "q": "Ai là người “nhắc deadline” nhiều nhất?",
+                    "options": [
+                            "Sếp",
+                            "Chính bạn",
+                            "Leader",
+                            "Cả Sếp và Leader"
+                    ],
+                    "answerHash": "Mw=="
+            },
+            {
+                    "q": "Team nào chịu trách nhiệm chạy quảng cáo Facebook/TikTok?",
+                    "options": [
+                            "Kho",
+                            "CSKH",
+                            "Marketing Ads",
+                            "HCNS"
+                    ],
+                    "answerHash": "Mg=="
+            },
+            {
+                    "q": "Ads có nhiều comment tiêu cực công kích sản phẩm. Bộ phận nào nên phối hợp xử lý hình ảnh thương hiệu?",
+                    "options": [
+                            "Marketing + CSKH",
+                            "Kho + HCNS",
+                            "Marketing + Kho",
+                            "Kế toán + HCNS"
+                    ],
+                    "answerHash": "MA=="
+            },
+            {
+                    "q": "Khi vật nuôi bỏ ăn nhưng chưa rõ nguyên nhân, việc nào nên làm trước?",
+                    "options": [
+                            "Đổi cám",
+                            "Dùng thuốc Gentadox",
+                            "Kiểm tra nhiệt độ và triệu chứng",
+                            "Cho uống điện giải Gluco KC"
+                    ],
+                    "answerHash": "Mg=="
+            }
     ];
 
     let currentQuestion = 0, score = 0, hasAnswered = false;
@@ -2237,7 +2512,7 @@
     const shapesArr = ["A", "B", "C", "D"];
     
     const SESSION_KEY = "megatech_quiz_session_v9";
-    const QUESTIONS_KEY = "megatech_quiz_questions_v9";
+    const QUESTIONS_KEY = "megatech_quiz_questions_30_green_v1";
     const TIMER_START_KEY = "megatech_quiz_start_time_v9";
     const PAUSE_FREEZE_KEY = "megatech_quiz_freeze_time_v9";
     
