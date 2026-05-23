@@ -1634,6 +1634,140 @@
             100% { opacity: 1; transform: scale(1.08); filter: brightness(1.35); }
         }
 
+
+
+        /* =========================================================
+           NO-LOBBY MODE - lightweight waiting room, no realtime map
+           ========================================================= */
+        #waiting-screen {
+            background:
+                radial-gradient(circle at 12% 10%, rgba(34,197,94,.18), transparent 34%),
+                radial-gradient(circle at 88% 18%, rgba(56,189,248,.13), transparent 30%),
+                linear-gradient(145deg, #dcfce7 0%, #f0fdf4 54%, #bbf7d0 100%) !important;
+            color: var(--text-heading) !important;
+            overflow-y: auto !important;
+        }
+        #waiting-screen .no-lobby-wrapper {
+            height: 100% !important;
+            min-height: 100% !important;
+            max-width: 100% !important;
+            padding: 20px !important;
+            justify-content: center !important;
+        }
+        .no-lobby-card {
+            width: min(760px, 94vw);
+            border-radius: 30px;
+            background: rgba(255,255,255,.86);
+            border: 2px solid rgba(34,197,94,.35);
+            box-shadow: 0 24px 70px rgba(6,78,59,.18);
+            padding: clamp(24px, 4vw, 46px);
+            text-align: center;
+            backdrop-filter: blur(16px);
+            position: relative;
+            overflow: hidden;
+        }
+        .no-lobby-card::before {
+            content: '';
+            position: absolute;
+            inset: -80px auto auto -80px;
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            background: rgba(34,197,94,.13);
+            pointer-events: none;
+        }
+        .no-lobby-icon {
+            width: 82px;
+            height: 82px;
+            margin: 0 auto 16px;
+            border-radius: 28px;
+            display: grid;
+            place-items: center;
+            color: #fff;
+            font-size: 32px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            box-shadow: 0 16px 30px rgba(22,163,74,.25);
+            animation: noLobbyPulse 1.4s ease-in-out infinite alternate;
+        }
+        @keyframes noLobbyPulse {
+            from { transform: translateY(0) scale(1); filter: brightness(1); }
+            to { transform: translateY(-4px) scale(1.04); filter: brightness(1.08); }
+        }
+        .no-lobby-kicker {
+            color: #10b981;
+            font-family: 'Montserrat';
+            font-size: 13px;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            font-weight: 900;
+            margin-bottom: 8px;
+        }
+        .no-lobby-card h1 {
+            font-size: clamp(28px, 5vw, 46px);
+            margin-bottom: 12px;
+        }
+        .no-lobby-subtitle {
+            color: #166534;
+            font-size: clamp(15px, 2vw, 18px);
+            line-height: 1.55;
+            font-weight: 800;
+            max-width: 620px;
+            margin: 0 auto 22px;
+        }
+        .no-lobby-status-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 22px 0;
+        }
+        .no-lobby-status-item {
+            background: #f0fdf4;
+            border: 1px solid #86efac;
+            border-radius: 18px;
+            padding: 14px;
+            min-width: 0;
+            text-align: left;
+        }
+        .no-lobby-status-item span {
+            display: block;
+            color: #10b981;
+            font-size: 12px;
+            font-weight: 900;
+            margin-bottom: 6px;
+        }
+        .no-lobby-status-item b {
+            display: block;
+            color: #14532d;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .no-lobby-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 18px 0 12px;
+        }
+        .no-lobby-note {
+            color: #64748b;
+            font-size: 13px;
+            font-weight: 800;
+            margin: 14px 0 0;
+        }
+        .no-lobby-locked .no-lobby-icon { background: linear-gradient(135deg, #f97316, #ef4444); }
+        .no-lobby-locked .no-lobby-card { border-color: rgba(249,115,22,.4); }
+        .no-lobby-locked #no-lobby-phase { color: #dc2626; }
+        body.lobby-active .header { display: flex !important; }
+        body.lobby-active #waiting-screen.active { height: 0 !important; flex-grow: 1 !important; }
+        @media (max-width: 720px) {
+            #waiting-screen .no-lobby-wrapper { padding: 14px !important; }
+            .no-lobby-card { border-radius: 24px; }
+            .no-lobby-status-grid { grid-template-columns: 1fr; }
+            .no-lobby-actions .btn { width: auto; }
+        }
+
 </style>
 </head>
 <body>
@@ -1749,7 +1883,7 @@
                 <input type="password" id="quiz-password" class="name-input" placeholder="Nhập mật khẩu vào bài thi..." autocomplete="off">
                 <div style="display: flex; gap: 10px; width: 100%;">
                     <button class="btn btn-outline" style="flex: 1; padding: 15px;" onclick="backToInfo()"><i class="fa-solid fa-arrow-left"></i> Quay lại</button>
-                    <button class="btn" style="flex: 2; padding: 15px;" id="start-btn" onclick="startQuiz()"><i class="fa-solid fa-bolt"></i> VÀO PHÒNG CHỜ</button>
+                    <button class="btn" style="flex: 2; padding: 15px;" id="start-btn" onclick="startQuiz()"><i class="fa-solid fa-circle-check"></i> XÁC NHẬN THAM GIA</button>
                 </div>
             </div>
             <p style="margin-top: 15px; font-size: 14px; color: var(--text-sub); padding-bottom: 20px;">*Hệ thống sẽ tự động khôi phục bài làm nếu bạn bị văng ra ngoài.</p>
@@ -1757,172 +1891,39 @@
     </div>
 
     <div class="screen" id="waiting-screen">
-        <div class="content-wrapper">
-            <section class="lobby-v2-shell" aria-label="Sảnh chờ game quiz">
-                <header class="lobby-topbar">
-                    <div class="lobby-title-block">
-                        <div class="lobby-kicker"><i class="fa-solid fa-satellite-dish"></i> Realtime Lobby</div>
-                        <h2>Đấu trường kiến thức</h2>
-                        <div class="lobby-status-line">
-                            <span class="lobby-pill warn" id="lobby-phase-pill"><i class="fa-solid fa-clock-rotate-left"></i> Đang chờ mở đề</span>
-                            <span class="lobby-pill" id="lobby-room-pill"><i class="fa-solid fa-layer-group"></i> Đợt thi</span>
-                            <span class="lobby-pill ready" id="lobby-ready-pill"><i class="fa-solid fa-users"></i> 0/0 sẵn sàng</span>
-                            <span class="lobby-pill" id="lobby-tip-pill"><i class="fa-solid fa-lightbulb"></i> Tới gần điểm sáng hoặc vật nuôi để tương tác</span>
-                        </div>
+        <div class="content-wrapper no-lobby-wrapper">
+            <div class="no-lobby-card">
+                <div class="no-lobby-icon"><i class="fa-solid fa-hourglass-half"></i></div>
+                <div class="no-lobby-kicker">Phòng thi đã ghi nhận bạn</div>
+                <h1>Đang chờ Admin mở đề</h1>
+                <p class="no-lobby-subtitle" id="no-lobby-message">
+                    Bạn đã xác nhận tham gia. Khi Admin mở khóa đề, hệ thống sẽ tự chuyển bạn vào bài thi.
+                </p>
+                <div class="no-lobby-status-grid">
+                    <div class="no-lobby-status-item">
+                        <span><i class="fa-solid fa-layer-group"></i> Đợt thi</span>
+                        <b id="no-lobby-batch">Đang tải...</b>
                     </div>
-
-                    <div class="lobby-guide-strip" aria-label="Hướng dẫn nhanh">
-                        <span class="guide-chip"><kbd>WASD</kbd>/<kbd>↑</kbd> Di chuyển</span>
-                        <span class="guide-chip"><kbd>E</kbd> Tương tác</span>
-                        <span class="guide-chip"><kbd>R</kbd> Ready</span>
-                        <span class="guide-chip"><kbd>1-5</kbd> Emote</span>
-                        <span class="guide-chip"><i class="fa-solid fa-hand-pointer"></i> Mobile: chạm đâu hiện joystick đó</span>
+                    <div class="no-lobby-status-item">
+                        <span><i class="fa-solid fa-user"></i> Thí sinh</span>
+                        <b id="no-lobby-player">Bạn</b>
                     </div>
-
-                    <div class="lobby-top-actions">
-                        <button class="lobby-icon-btn" type="button" title="Bật/tắt nhạc" onclick="toggleBGM()"><i class="fa-solid fa-music"></i></button>
-                        <button class="lobby-icon-btn" type="button" title="Đổi giao diện sáng/tối" onclick="toggleTheme()"><i class="fa-solid fa-moon"></i></button>
-                        <button class="lobby-admin-btn" type="button" title="Mở Admin" onclick="gotoAdminLogin()"><i class="fa-solid fa-user-shield"></i><span>Admin</span></button>
-                        <button class="lobby-icon-btn" type="button" title="Danh sách người chơi" data-lobby-action="toggle-panel"><i class="fa-solid fa-users"></i></button>
-                        <button class="lobby-main-btn" type="button" id="lobby-ready-btn" data-lobby-action="ready"><i class="fa-solid fa-circle-check"></i> Sẵn sàng</button>
+                    <div class="no-lobby-status-item">
+                        <span><i class="fa-solid fa-lock"></i> Trạng thái</span>
+                        <b id="no-lobby-phase">Chờ mở đề</b>
                     </div>
-                </header>
-
-                <div class="lobby-stage">
-                    <section class="lobby-map-card" aria-label="Bản đồ sảnh chờ">
-                        <div class="playground-wrapper lobby-v2-playground-wrapper">
-                            <div class="playground-container lobby-v2-map" id="playground">
-                                <div class="lobby-world" id="lobby-world">
-                                    <div class="lobby-road"></div>
-                                    <div class="lobby-path path-warehouse"></div>
-                                    <div class="lobby-path path-pond"></div>
-                                    <div class="lobby-path path-animals"></div>
-
-                                    <div class="lobby-water" aria-hidden="true"></div>
-
-                                    <div class="farm-building warehouse" style="left:260px; top:250px;">
-                                        <div><div class="building-icon">🏚️</div><div class="building-label">NHÀ KHO</div></div>
-                                    </div>
-                                    <div class="farm-building barn" style="left:980px; top:205px;">
-                                        <div><div class="building-icon">🏡</div><div class="building-label">NHÀ TRẠI</div></div>
-                                    </div>
-                                    <div class="farm-building quizgate" style="left:1110px; top:610px;">
-                                        <div><div class="building-icon">⚡</div><div class="building-label">CỔNG QUIZ</div></div>
-                                    </div>
-
-                                    <div class="animal-pen goat"><span class="pen-label">Chuồng dê</span></div>
-                                    <div class="animal-pen cow"><span class="pen-label">Chuồng bò</span></div>
-                                    <div class="animal-pen buffalo"><span class="pen-label">Chuồng trâu</span></div>
-
-                                    <button class="lobby-animal" type="button" data-zone="goat" style="left:500px; top:1090px;" title="Cưỡi dê">
-                                        <span class="animal-name">Cưỡi dê</span><span class="animal-face">🐐</span>
-                                    </button>
-                                    <button class="lobby-animal" type="button" data-zone="cow" style="left:1325px; top:1130px;" title="Cưỡi bò">
-                                        <span class="animal-name">Cưỡi bò</span><span class="animal-face">🐄</span>
-                                    </button>
-                                    <button class="lobby-animal" type="button" data-zone="buffalo" style="left:1960px; top:1085px;" title="Cưỡi trâu">
-                                        <span class="animal-name">Cưỡi trâu</span><span class="animal-face">🐃</span>
-                                    </button>
-
-                                    <div class="lobby-prop tree" style="left:140px; top:165px;"></div>
-                                    <div class="lobby-prop tree" style="left:610px; top:165px;"></div>
-                                    <div class="lobby-prop tree" style="left:1780px; top:650px;"></div>
-                                    <div class="lobby-prop tree" style="left:2190px; top:1130px;"></div>
-                                    <div class="lobby-prop tree" style="left:850px; top:1185px;"></div>
-                                    <div class="lobby-prop crate" style="left:470px; top:470px;"></div>
-                                    <div class="lobby-prop crate" style="left:1540px; top:800px;"></div>
-                                    <div class="lobby-prop crate" style="left:350px; top:860px;"></div>
-                                    <div class="lobby-prop flower" style="left:760px; top:560px;"></div>
-                                    <div class="lobby-prop flower" style="left:2020px; top:560px;"></div>
-                                    <div class="lobby-prop flower" style="left:1050px; top:1270px;"></div>
-                                    <div class="lobby-prop sign" style="left:1040px; top:815px;">READY<br>ZONE</div>
-
-                                    <button class="lobby-poi" type="button" data-zone="ready" style="left:50%; top:52%;" title="Bục sẵn sàng">
-                                        <i class="fa-solid fa-flag-checkered poi-icon"></i><span class="poi-label">Bục ready</span>
-                                    </button>
-                                    <button class="lobby-poi" type="button" data-zone="leaderboard" style="left:31%; top:42%;" title="Bảng xếp hạng">
-                                        <i class="fa-solid fa-trophy poi-icon"></i><span class="poi-label">BXH mini</span>
-                                    </button>
-                                    <button class="lobby-poi" type="button" data-zone="info" style="left:45%; top:24%;" title="Bảng luật chơi">
-                                        <i class="fa-solid fa-scroll poi-icon"></i><span class="poi-label">Luật chơi</span>
-                                    </button>
-                                    <button class="lobby-poi" type="button" data-zone="warehouse" style="left:16%; top:30%;" title="Nhà kho vật phẩm">
-                                        <i class="fa-solid fa-boxes-stacked poi-icon"></i><span class="poi-label">Nhà kho</span>
-                                    </button>
-                                    <button class="lobby-poi" type="button" data-zone="fishing" style="left:78%; top:26%;" title="Câu cá">
-                                        <i class="fa-solid fa-fish poi-icon"></i><span class="poi-label">Câu cá</span>
-                                    </button>
-                                    <button class="lobby-poi" type="button" data-zone="emote" style="left:22%; top:60%;" title="Khu cảm xúc">
-                                        <i class="fa-solid fa-face-laugh-beam poi-icon"></i><span class="poi-label">Emote</span>
-                                    </button>
-                                    <button class="lobby-poi" type="button" data-zone="ping" style="left:89%; top:52%;" title="Cổng triệu tập">
-                                        <i class="fa-solid fa-bullhorn poi-icon"></i><span class="poi-label">Triệu tập</span>
-                                    </button>
-                                    <button class="lobby-poi" type="button" data-zone="campfire" style="left:58%; top:86%;" title="Lửa trại giao lưu">
-                                        <i class="fa-solid fa-fire poi-icon"></i><span class="poi-label">Lửa trại</span>
-                                    </button>
-
-                                    <div class="player-pig" id="my-pig">
-                                        <div class="pig-nameplate" id="my-pig-name">Tôi</div>
-                                        <div class="pig-mount" id="my-pig-mount"></div>
-                                        <div class="pig-body"><img id="my-pig-img" src="" alt="Nhân vật của tôi"></div>
-                                    </div>
-                                </div>
-
-                                <div class="lobby-prompt" id="lobby-prompt">
-                                    <span id="lobby-prompt-text"><i class="fa-solid fa-circle-info"></i> Đang ở gần điểm tương tác</span>
-                                    <button type="button" data-lobby-action="interact">Tương tác</button>
-                                </div>
-
-                                <div class="minimap-card" aria-label="Mini map">
-                                    <div class="minimap-head"><span><i class="fa-solid fa-location-dot"></i> Mini Map</span><span id="minimap-count">0</span></div>
-                                    <svg id="lobby-minimap" viewBox="0 0 240 150" role="img" aria-label="Bản đồ thu nhỏ"></svg>
-                                    <div class="minimap-legend">
-                                        <span><i class="mini-dot me"></i> Bạn</span>
-                                        <span><i class="mini-dot ready"></i> Ready</span>
-                                        <span><i class="mini-dot"></i> Người chơi</span>
-                                        <span><i class="mini-dot animal"></i> Thú cưỡi</span>
-                                    </div>
-                                </div>
-
-                                <div class="dynamic-joystick" id="dynamic-joystick" aria-hidden="true">
-                                    <div class="joy-base"></div>
-                                    <div class="joy-stick" id="joystick-stick"></div>
-                                </div>
-                                <div class="lobby-overview-badge" id="lobby-overview-badge"><i class="fa-solid fa-map"></i> Đang xem toàn bản đồ</div>
-                            </div>
-
-                            <div class="lobby-action-dock" aria-label="Hành động nhanh">
-                                <button class="emote-btn" type="button" data-emote="👋" title="Vẫy tay">👋</button>
-                                <button class="emote-btn" type="button" data-emote="🔥" title="Máu chiến">🔥</button>
-                                <button class="emote-btn" type="button" data-emote="😂" title="Haha">😂</button>
-                                <button class="emote-btn" type="button" data-emote="💡" title="Thông thái">💡</button>
-                                <button class="emote-btn" type="button" data-emote="🏆" title="Winner">🏆</button>
-                                <button class="interact-btn" type="button" id="lobby-interact-btn" data-lobby-action="interact" disabled><i class="fa-solid fa-hand-pointer"></i> Tương tác</button>
-                            </div>
-                        </div>
-                    </section>
-
-                    <aside class="lobby-side-panel" id="lobby-side-panel" aria-label="Danh sách người chơi và hoạt động">
-                        <div class="side-panel-head">
-                            <strong><i class="fa-solid fa-people-group"></i> Người trong sảnh</strong>
-                            <span class="room-code" id="room-code-pill">LIVE</span>
-                        </div>
-                        <div class="sidebar-list" id="sidebar-player-list"></div>
-                        <div class="lobby-feed">
-                            <div class="lobby-feed-title">
-                                <span><i class="fa-solid fa-bolt"></i> Hoạt động</span>
-                                <button class="lobby-icon-btn" style="width:30px;height:30px;border-radius:10px;font-size:12px;" type="button" data-lobby-action="ping" title="Gửi ping"><i class="fa-solid fa-bullhorn"></i></button>
-                            </div>
-                            <div class="lobby-feed-list" id="lobby-feed-list">
-                                <div class="feed-item"><b>Hệ thống:</b> Phòng chỉ hiện người chơi thật đang online trong đúng đợt thi.</div>
-                            </div>
-                        </div>
-                    </aside>
                 </div>
-            </section>
+                <div class="no-lobby-actions">
+                    <button class="btn btn-outline btn-small" type="button" onclick="toggleBGM()"><i class="fa-solid fa-music"></i> Nhạc</button>
+                    <button class="btn btn-outline btn-small" type="button" onclick="toggleTheme()"><i class="fa-solid fa-moon"></i> Giao diện</button>
+                    <button class="btn btn-outline btn-small" type="button" onclick="gotoAdminLogin()"><i class="fa-solid fa-user-shield"></i> Admin</button>
+                </div>
+                <p class="no-lobby-note"><i class="fa-solid fa-circle-info"></i> Đã tắt sảnh chờ game để giảm lag khi đông người.</p>
+            </div>
         </div>
     </div>
+
+
 
     <div class="screen" id="admin-login-screen">
         <div class="content-wrapper">
@@ -1935,6 +1936,7 @@
                         <button class="btn btn-outline" style="flex: 1;" onclick="cancelAdminLogin()"><i class="fa-solid fa-arrow-left"></i> Quay lại</button>
                         <button class="btn" style="flex: 1;" onclick="handleAdminLogin()"><i class="fa-solid fa-right-to-bracket"></i> Đăng nhập</button>
                     </div>
+                    <p style="margin-top: 14px; font-size: 13px; color: var(--text-sub); font-weight: 700;">Dành cho quản trị viên mở/khóa đề và xem bảng điểm.</p>
                 </div>
             </div>
         </div>
@@ -3578,7 +3580,7 @@
     }
 
     function showLobbyOnlyAfterLockNotice() {
-        const msg = '🔒 Phòng thi đã khóa sau khi Admin mở đề. Bạn vẫn ở sảnh chờ được, nhưng không thể vào bài thi trong lượt này.';
+        const msg = '🔒 Phòng thi đã khóa sau khi Admin mở đề. Bạn vào muộn nên không thể vào bài thi trong lượt này.';
         try {
             if (typeof showLobbyTip === 'function' && document.getElementById('waiting-screen')?.classList.contains('active')) {
                 showLobbyTip(msg);
@@ -3696,12 +3698,19 @@
             s.style.opacity = '0'; 
         });
         const targetScreen = document.getElementById(screenId);
+        if (!targetScreen) {
+            console.warn('Không tìm thấy màn hình:', screenId);
+            return;
+        }
         targetScreen.classList.add('active');
         setTimeout(() => targetScreen.style.opacity = '1', 50);
         
         if(screenId === 'admin-login-screen') {
-            document.getElementById('admin-login-user').value = '';
-            document.getElementById('admin-login-pass').value = '';
+            const adminUserEl = document.getElementById('admin-login-user');
+            const adminPassEl = document.getElementById('admin-login-pass');
+            if (adminUserEl) adminUserEl.value = '';
+            if (adminPassEl) adminPassEl.value = '';
+            setTimeout(() => adminUserEl?.focus(), 80);
         }
     }
 
@@ -3782,25 +3791,25 @@
                 confirmBtn.style.display = 'none';
             } else if (examStatus === 'idle') {
                 alertBox.style.display = 'block';
-                alertBox.innerHTML = '<i class="fa-solid fa-clock"></i> KỲ THI CHƯA MỞ! Vui lòng ghi danh và vào Phòng Chờ.';
+                alertBox.innerHTML = '<i class="fa-solid fa-clock"></i> KỲ THI CHƯA MỞ! Vui lòng ghi danh và xác nhận tham gia.';
                 alertBox.style.background = 'rgba(59, 130, 246, 0.1)'; alertBox.style.color = '#3b82f6'; alertBox.style.borderColor = '#3b82f6';
                 confirmBtn.style.display = 'block';
             } else if (examStatus === 'paused') {
                 alertBox.style.display = 'block';
-                alertBox.innerHTML = '<i class="fa-solid fa-pause-circle"></i> KỲ THI ĐANG TẠM DỪNG! Bạn có thể ghi danh và vào Phòng Chờ.';
+                alertBox.innerHTML = '<i class="fa-solid fa-pause-circle"></i> KỲ THI ĐANG TẠM DỪNG! Bạn có thể ghi danh và xác nhận tham gia.';
                 alertBox.style.background = 'rgba(245, 158, 11, 0.1)'; alertBox.style.color = '#f59e0b'; alertBox.style.borderColor = '#f59e0b';
                 confirmBtn.style.display = 'block';
             } else {
                 alertBox.style.display = 'block';
-                alertBox.innerHTML = '<i class="fa-solid fa-lock"></i> KỲ THI ĐANG DIỄN RA! Phòng thi đã khóa. Người vào muộn chỉ có thể đứng ở sảnh chờ.';
+                alertBox.innerHTML = '<i class="fa-solid fa-lock"></i> KỲ THI ĐANG DIỄN RA! Phòng thi đã khóa. Người vào muộn không thể vào bài thi trong lượt này.';
                 alertBox.style.background = 'rgba(245, 158, 11, 0.1)'; alertBox.style.color = '#d97706'; alertBox.style.borderColor = '#f59e0b';
                 confirmBtn.style.display = 'block';
             }
         }
         
         if (startBtn) {
-            if (examStatus === 'running') startBtn.innerHTML = '<i class="fa-solid fa-door-closed"></i> VÀO SẢNH CHỜ';
-            else startBtn.innerHTML = '<i class="fa-solid fa-hourglass-half"></i> VÀO PHÒNG CHỜ';
+            if (examStatus === 'running') startBtn.innerHTML = '<i class="fa-solid fa-door-closed"></i> XÁC NHẬN THAM GIA';
+            else startBtn.innerHTML = '<i class="fa-solid fa-hourglass-half"></i> XÁC NHẬN THAM GIA';
         }
     }
 
@@ -4057,7 +4066,7 @@
                     mount: '',
                     mountIcon: '',
                     facing: movementFacing,
-                    lobbySignal: { type: 'join', text: isLateAfterExamLock ? 'vào sảnh sau khi phòng thi đã khóa.' : 'đã vào sảnh chờ.', icon: isLateAfterExamLock ? '🔒' : '👋', at: Date.now() }
+                    lobbySignal: { type: 'join', text: isLateAfterExamLock ? 'vào sảnh sau khi phòng thi đã khóa.' : 'đã xác nhận tham gia.', icon: isLateAfterExamLock ? '🔒' : '👋', at: Date.now() }
                 });
                 localStorage.setItem(SESSION_KEY, currentDocId);
                 localStorage.setItem(QUESTIONS_KEY, JSON.stringify(gameQuestions));
@@ -4083,7 +4092,7 @@
                 console.log(e); showAlert("Lỗi kết nối đến máy chủ."); 
                 if (startBtn) { 
                     startBtn.disabled = false; 
-                    startBtn.innerHTML = examStatus === 'running' ? '<i class="fa-solid fa-door-closed"></i> VÀO SẢNH CHỜ' : '<i class="fa-solid fa-hourglass-half"></i> VÀO PHÒNG CHỜ'; 
+                    startBtn.innerHTML = examStatus === 'running' ? '<i class="fa-solid fa-door-closed"></i> XÁC NHẬN THAM GIA' : '<i class="fa-solid fa-hourglass-half"></i> XÁC NHẬN THAM GIA'; 
                 }
                 return;
             }
@@ -4100,7 +4109,7 @@
         
         if (startBtn) { 
             startBtn.disabled = false; 
-            startBtn.innerHTML = examStatus === 'running' ? '<i class="fa-solid fa-door-closed"></i> VÀO SẢNH CHỜ' : '<i class="fa-solid fa-hourglass-half"></i> VÀO PHÒNG CHỜ'; 
+            startBtn.innerHTML = examStatus === 'running' ? '<i class="fa-solid fa-door-closed"></i> XÁC NHẬN THAM GIA' : '<i class="fa-solid fa-hourglass-half"></i> XÁC NHẬN THAM GIA'; 
         }
     }
 
@@ -6351,6 +6360,321 @@
     };
 
     window.unstickPlayerV48 = unstickPlayerV48;
+
+
+    /* =========================================================
+       NO-LOBBY MODE - removes realtime game waiting room to reduce lag
+       ========================================================= */
+    const NO_LOBBY_MODE = true;
+
+    function renderNoLobbyWaitingScreen(message = '') {
+        const waiting = document.getElementById('waiting-screen');
+        if (!waiting) return;
+        const isLocked = !canCurrentPlayerEnterExam();
+        waiting.classList.toggle('no-lobby-locked', isLocked);
+
+        const messageEl = document.getElementById('no-lobby-message');
+        const batchEl = document.getElementById('no-lobby-batch');
+        const playerEl = document.getElementById('no-lobby-player');
+        const phaseEl = document.getElementById('no-lobby-phase');
+        const iconEl = waiting.querySelector('.no-lobby-icon i');
+
+        if (batchEl) batchEl.textContent = currentBatchName || 'Đợt thi';
+        if (playerEl) playerEl.textContent = playerName || 'Bạn';
+
+        if (isLocked) {
+            if (iconEl) iconEl.className = 'fa-solid fa-lock';
+            if (phaseEl) phaseEl.textContent = 'Phòng thi đã khóa';
+            if (messageEl) messageEl.textContent = message || 'Phòng thi đã khóa sau khi Admin mở đề. Bạn vào muộn nên không thể vào bài thi trong lượt này.';
+        } else if (examStatus === 'running') {
+            if (iconEl) iconEl.className = 'fa-solid fa-bolt';
+            if (phaseEl) phaseEl.textContent = 'Đề đã mở';
+            if (messageEl) messageEl.textContent = message || 'Đề đã mở. Hệ thống đang chuẩn bị chuyển bạn vào bài thi.';
+        } else if (examStatus === 'paused') {
+            if (iconEl) iconEl.className = 'fa-solid fa-pause';
+            if (phaseEl) phaseEl.textContent = 'Đề đang tạm dừng';
+            if (messageEl) messageEl.textContent = message || 'Đề đang tạm dừng. Vui lòng chờ Admin mở lại.';
+        } else {
+            if (iconEl) iconEl.className = 'fa-solid fa-hourglass-half';
+            if (phaseEl) phaseEl.textContent = 'Chờ mở đề';
+            if (messageEl) messageEl.textContent = message || 'Bạn đã xác nhận tham gia. Khi Admin mở khóa đề, hệ thống sẽ tự chuyển bạn vào bài thi.';
+        }
+    }
+
+    function showNoLobbyWaiting(message = '') {
+        if (publicLeaderboardUnsub) { try { publicLeaderboardUnsub(); } catch(e) {} publicLeaderboardUnsub = null; }
+        if (gameLoop) { cancelAnimationFrame(gameLoop); gameLoop = null; }
+        showScreen('waiting-screen');
+        renderNoLobbyWaitingScreen(message);
+    }
+
+    startWaitingRoomListener = function() {
+        if (publicLeaderboardUnsub) { try { publicLeaderboardUnsub(); } catch(e) {} publicLeaderboardUnsub = null; }
+    };
+
+    initPlayground = function() {
+        if (gameLoop) { cancelAnimationFrame(gameLoop); gameLoop = null; }
+        renderNoLobbyWaitingScreen();
+    };
+
+    toggleReadyStatus = function() {
+        renderNoLobbyWaitingScreen('Không còn sảnh chờ game nên đã bỏ nút sẵn sàng. Chỉ cần chờ Admin mở đề là vào thi.');
+    };
+
+    showLobbyOnlyAfterLockNotice = function() {
+        showNoLobbyWaiting('🔒 Phòng thi đã khóa sau khi Admin mở đề. Bạn vào muộn nên không thể vào bài thi trong lượt này.');
+    };
+
+    const __oldShowScreenNoLobby = showScreen;
+    showScreen = function(screenId) {
+        __oldShowScreenNoLobby(screenId);
+        document.body.classList.remove('lobby-active');
+        if (screenId === 'waiting-screen') renderNoLobbyWaitingScreen();
+    };
+
+    checkResumeSession = async function() {
+        if (!currentUser) return;
+        const savedSession = localStorage.getItem(SESSION_KEY);
+        const savedQuestions = localStorage.getItem(QUESTIONS_KEY);
+        if (!savedSession || !savedQuestions) return;
+
+        try {
+            const docSnap = await getDoc(doc(scoresCollection, savedSession));
+            if (!docSnap.exists()) {
+                localStorage.removeItem(SESSION_KEY);
+                localStorage.removeItem(QUESTIONS_KEY);
+                localStorage.removeItem(TIMER_START_KEY);
+                localStorage.removeItem(PAUSE_FREEZE_KEY);
+                return;
+            }
+            const data = docSnap.data();
+            currentDocId = savedSession;
+            applyCurrentPlayerExamAccess(data);
+            playerName = data.name;
+            playerDept = data.dept || '';
+            playerRole = data.role || '';
+            score = data.score || 0;
+            currentQuestion = data.question || 0;
+            gameQuestions = JSON.parse(savedQuestions);
+            if (data.timestamp) currentDocTimestamp = data.timestamp;
+
+            if (playerDocUnsub) playerDocUnsub();
+            playerDocUnsub = onSnapshot(doc(scoresCollection, currentDocId), (userDoc) => {
+                if (!userDoc.exists()) return;
+                const liveData = userDoc.data();
+                applyCurrentPlayerExamAccess(liveData);
+                if (liveData.allowedReplay === true) {
+                    localStorage.removeItem(SESSION_KEY);
+                    localStorage.removeItem(QUESTIONS_KEY);
+                    localStorage.removeItem(TIMER_START_KEY);
+                    localStorage.removeItem(PAUSE_FREEZE_KEY);
+                    showAlert('Yêu cầu thi lại của bạn đã được Admin phê duyệt! Trang thi sẽ được làm mới ngay bây giờ.', () => location.reload());
+                }
+            });
+
+            if (data.status === 'Hoàn thành' || data.status === 'Gian lận' || data.status === 'Yêu cầu thi lại') {
+                showEndScreen();
+                if (data.status === 'Yêu cầu thi lại') updateReplayButtonUI(true);
+            } else if (data.status === 'Chờ bắt đầu') {
+                if (examStatus === 'running' && canCurrentPlayerEnterExam(data)) startCountdownAndEnterQuiz();
+                else showNoLobbyWaiting(canCurrentPlayerEnterExam(data) ? '' : '🔒 Phòng thi đã khóa sau khi Admin mở đề. Bạn vào muộn nên không thể vào bài thi trong lượt này.');
+            } else {
+                showScreen('question-screen');
+                loadQuestion();
+                if (examStatus === 'running') {
+                    startTimer();
+                    const bgmAudio = document.getElementById('bgm-audio');
+                    if (isBgmEnabled && bgmAudio && bgmAudio.paused) bgmAudio.play().catch(e=>{});
+                } else timerTick();
+                handleLockStateChange();
+            }
+        } catch(e) { console.log('Lỗi khôi phục session cũ', e); }
+    };
+
+    startQuiz = async function() {
+        try { playClick(); } catch(e){}
+        if (!currentUser) return showAlert('Chưa kết nối được máy chủ, vui lòng đợi thêm 1 giây và thử lại!');
+
+        const nameInputEl = document.getElementById('player-name');
+        const deptInputEl = document.getElementById('player-dept');
+        const roleInputEl = document.getElementById('player-role');
+        const enteredPassword = document.getElementById('quiz-password').value.trim();
+        const startBtn = document.getElementById('start-btn');
+
+        const nameInput = nameInputEl ? nameInputEl.value.trim() : '';
+        const deptInput = deptInputEl ? deptInputEl.value.trim() : '';
+        const roleInput = roleInputEl ? roleInputEl.value.trim() : '';
+
+        if (examStatus === 'ended') return showAlert('Kỳ thi hiện đang đóng bởi giám thị!');
+        if (!nameInput || !deptInput || !roleInput) { showAlert('Thông tin cá nhân bị thiếu. Vui lòng điền đầy đủ!'); backToInfo(); return; }
+        if (enteredPassword !== currentCorrectPassword) { showAlert('Mật khẩu vào bài thi không chính xác!'); document.getElementById('quiz-password').focus(); return; }
+
+        const isLateAfterExamLock = isExamRoomLockedNow();
+        currentPlayerLockedOutByExamStart = isLateAfterExamLock;
+        currentPlayerCanEnterExam = !isLateAfterExamLock;
+
+        if (startBtn) {
+            startBtn.disabled = true;
+            startBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ĐANG XỬ LÝ...';
+        }
+
+        playerName = nameInput; playerDept = deptInput; playerRole = roleInput;
+        currentQuestion = 0; score = 0; selectedAnswerIndex = null; quizEndedByTimeout = false; totalTimeTaken = 0; tabFocusWarnings = 0; cheatFlag = false;
+
+        gameQuestions = getActiveQuestionPool().map(q => {
+            const correctIndex = parseInt(atob(q.answerHash));
+            const correctText = q.options[correctIndex];
+            const newOptions = [...q.options];
+            for (let i = newOptions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newOptions[i], newOptions[j]] = [newOptions[j], newOptions[i]];
+            }
+            return { q: q.q, options: newOptions, answer: newOptions.indexOf(correctText) };
+        });
+
+        for (let i = gameQuestions.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [gameQuestions[i], gameQuestions[j]] = [gameQuestions[j], gameQuestions[i]];
+        }
+
+        if (db) {
+            currentDocId = Date.now().toString() + '_' + Math.floor(Math.random() * 1000);
+            const startTimeStamp = Date.now();
+            currentDocTimestamp = startTimeStamp;
+            try {
+                await setDoc(doc(scoresCollection, currentDocId), {
+                    name: playerName, dept: playerDept, role: playerRole,
+                    score: 0, question: 0, totalTime: 0, totalQuestions: gameQuestions.length,
+                    status: 'Chờ bắt đầu', timestamp: startTimeStamp,
+                    avatar: playerAvatarBase64,
+                    batch: currentBatchName,
+                    allowedReplay: false,
+                    canEnterExam: !isLateAfterExamLock,
+                    joinedBeforeExamLock: !isLateAfterExamLock,
+                    lockedOutByExamStart: isLateAfterExamLock,
+                    examLockedAtAtJoin: isLateAfterExamLock ? (examLockedAt || Date.now()) : 0,
+                    lobbyOnly: true,
+                    isBot: false,
+                    bot: false,
+                    demo: false,
+                    mock: false,
+                    lastSeen: Date.now()
+                });
+                localStorage.setItem(SESSION_KEY, currentDocId);
+                localStorage.setItem(QUESTIONS_KEY, JSON.stringify(gameQuestions));
+                localStorage.removeItem(PAUSE_FREEZE_KEY);
+
+                if (playerDocUnsub) playerDocUnsub();
+                playerDocUnsub = onSnapshot(doc(scoresCollection, currentDocId), (userDoc) => {
+                    if (!userDoc.exists()) return;
+                    const liveData = userDoc.data();
+                    applyCurrentPlayerExamAccess(liveData);
+                    if (liveData.allowedReplay === true) {
+                        localStorage.removeItem(SESSION_KEY);
+                        localStorage.removeItem(QUESTIONS_KEY);
+                        localStorage.removeItem(TIMER_START_KEY);
+                        localStorage.removeItem(PAUSE_FREEZE_KEY);
+                        showAlert('Yêu cầu thi lại của bạn đã được Admin phê duyệt! Đang làm mới...', () => location.reload());
+                    }
+                });
+            } catch (e) {
+                console.log(e);
+                showAlert('Lỗi kết nối đến máy chủ.');
+                if (startBtn) {
+                    startBtn.disabled = false;
+                    startBtn.innerHTML = '<i class="fa-solid fa-circle-check"></i> XÁC NHẬN THAM GIA';
+                }
+                return;
+            }
+        }
+
+        if (examStatus === 'running' && canCurrentPlayerEnterExam()) startCountdownAndEnterQuiz();
+        else showNoLobbyWaiting(isLateAfterExamLock ? '🔒 Phòng thi đã khóa sau khi Admin mở đề. Bạn vào muộn nên không thể vào bài thi trong lượt này.' : 'Bạn đã xác nhận tham gia. Khi Admin mở khóa đề, hệ thống sẽ tự chuyển bạn vào bài thi.');
+
+        if (startBtn) {
+            startBtn.disabled = false;
+            startBtn.innerHTML = '<i class="fa-solid fa-circle-check"></i> XÁC NHẬN THAM GIA';
+        }
+    };
+
+
+    updateWelcomeScreenUI = function() {
+        const batchSpan = document.getElementById('welcome-batch-name');
+        const durationSpan = document.getElementById('welcome-duration');
+        const alertBox = document.getElementById('exam-status-alert');
+        const confirmBtn = document.getElementById('confirm-info-btn');
+        const startBtn = document.getElementById('start-btn');
+
+        if (batchSpan) batchSpan.innerText = currentBatchName;
+        if (durationSpan) durationSpan.innerText = examDuration;
+
+        if (alertBox && confirmBtn) {
+            alertBox.style.display = 'block';
+            confirmBtn.style.display = examStatus === 'ended' ? 'none' : 'block';
+            if (examStatus === 'ended') {
+                alertBox.innerHTML = '<i class="fa-solid fa-stop-circle"></i> KỲ THI ĐÃ KẾT THÚC. Bạn không thể làm bài lúc này!';
+                alertBox.style.background = 'rgba(239, 68, 68, 0.1)'; alertBox.style.color = '#ef4444'; alertBox.style.borderColor = '#ef4444';
+            } else if (examStatus === 'idle') {
+                alertBox.innerHTML = '<i class="fa-solid fa-clock"></i> KỲ THI CHƯA MỞ! Bạn có thể xác nhận tham gia, sau đó chờ Admin mở đề.';
+                alertBox.style.background = 'rgba(59, 130, 246, 0.1)'; alertBox.style.color = '#3b82f6'; alertBox.style.borderColor = '#3b82f6';
+            } else if (examStatus === 'paused') {
+                alertBox.innerHTML = '<i class="fa-solid fa-pause-circle"></i> KỲ THI ĐANG TẠM DỪNG! Bạn có thể xác nhận tham gia và chờ Admin mở lại.';
+                alertBox.style.background = 'rgba(245, 158, 11, 0.1)'; alertBox.style.color = '#f59e0b'; alertBox.style.borderColor = '#f59e0b';
+            } else {
+                alertBox.innerHTML = '<i class="fa-solid fa-lock"></i> KỲ THI ĐANG DIỄN RA! Phòng thi đã khóa, người vào sau không thể vào bài thi trong lượt này.';
+                alertBox.style.background = 'rgba(245, 158, 11, 0.1)'; alertBox.style.color = '#d97706'; alertBox.style.borderColor = '#f59e0b';
+            }
+        }
+        if (startBtn) startBtn.innerHTML = '<i class="fa-solid fa-circle-check"></i> XÁC NHẬN THAM GIA';
+        if (document.getElementById('waiting-screen')?.classList.contains('active')) renderNoLobbyWaitingScreen();
+    };
+
+    startCountdownAndEnterQuiz = function() {
+        if (!currentUser || isCountingDown) return;
+        if (!canCurrentPlayerEnterExam()) {
+            showLobbyOnlyAfterLockNotice();
+            return;
+        }
+        isCountingDown = true;
+        const overlay = document.getElementById('countdown-overlay');
+        const numberEl = document.getElementById('countdown-number');
+        overlay.style.display = 'flex';
+        let count = 5;
+        numberEl.innerText = count;
+        const countInterval = setInterval(async () => {
+            count--;
+            if (count > 0) {
+                numberEl.innerText = count;
+            } else {
+                clearInterval(countInterval);
+                if (!canCurrentPlayerEnterExam()) {
+                    overlay.style.display = 'none';
+                    isCountingDown = false;
+                    showLobbyOnlyAfterLockNotice();
+                    return;
+                }
+                overlay.style.display = 'none';
+                isCountingDown = false;
+                const startTimeStamp = Date.now();
+                localStorage.setItem(TIMER_START_KEY, startTimeStamp.toString());
+                localStorage.removeItem(PAUSE_FREEZE_KEY);
+                currentDocTimestamp = startTimeStamp;
+                if (currentDocId && db) {
+                    updateDoc(doc(scoresCollection, currentDocId), {
+                        status: 'Đang làm bài', timestamp: startTimeStamp,
+                        lobbyOnly: false,
+                        lastSeen: Date.now()
+                    }).catch(e=>console.log(e));
+                }
+                showScreen('question-screen');
+                loadQuestion();
+                startTimer();
+                const bgmAudio = document.getElementById('bgm-audio');
+                if (isBgmEnabled && bgmAudio) bgmAudio.play().catch(e=>{});
+            }
+        }, 1000);
+    };
+
 
 window.showScreen = showScreen;
     window.gotoAdminLogin = gotoAdminLogin;
