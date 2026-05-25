@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Megatech - Đấu Trường Kiến Thức V4.3</title>
+    <title>Megatech - Đấu Trường Kiến Thức - Admin Reset</title>
     
     <link rel="icon" type="image/jpg" href="logo_new.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -1768,6 +1768,220 @@
             .no-lobby-actions .btn { width: auto; }
         }
 
+
+
+        /* =========================================================
+           ADMIN ANSWER HISTORY - xem từng người đúng/sai ở đâu
+           ========================================================= */
+        .history-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1px solid var(--box-border);
+            background: var(--btn-outline-bg);
+        }
+        .history-summary-cards {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(120px, 1fr));
+            gap: 10px;
+            width: 100%;
+            margin-bottom: 14px;
+        }
+        .history-mini-card {
+            border: 1px solid var(--box-border);
+            background: var(--input-bg);
+            border-radius: 14px;
+            padding: 12px;
+            box-shadow: 0 8px 18px rgba(0,0,0,.04);
+        }
+        .history-mini-card span {
+            display: block;
+            color: var(--text-sub);
+            font-size: 12px;
+            font-weight: 800;
+        }
+        .history-mini-card strong {
+            display: block;
+            color: #10b981;
+            font-size: 24px;
+            font-family: 'Montserrat';
+            margin-top: 3px;
+        }
+        .history-layout {
+            display: grid;
+            grid-template-columns: minmax(280px, 360px) 1fr;
+            gap: 14px;
+            min-height: 420px;
+        }
+        .history-player-list,
+        .history-detail-box {
+            border: 1px solid var(--box-border);
+            border-radius: 16px;
+            background: var(--input-bg);
+            overflow: hidden;
+            min-height: 420px;
+        }
+        .history-player-list-head,
+        .history-detail-head {
+            padding: 12px 14px;
+            background: var(--table-header);
+            border-bottom: 1px solid var(--box-border);
+            font-weight: 900;
+            color: var(--text-heading);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .history-search {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--box-border);
+            border-radius: 12px;
+            background: var(--input-bg);
+            color: var(--text-heading);
+            font-family: 'Nunito';
+            font-weight: 800;
+            outline: none;
+        }
+        .history-player-list-body {
+            max-height: 560px;
+            overflow-y: auto;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .history-player-item {
+            width: 100%;
+            border: 1px solid var(--box-border);
+            background: var(--box-bg);
+            border-radius: 13px;
+            padding: 10px;
+            display: grid;
+            grid-template-columns: 38px 1fr auto;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            text-align: left;
+            transition: transform .15s ease, border-color .15s ease, background .15s ease;
+        }
+        .history-player-item:hover,
+        .history-player-item.active {
+            transform: translateY(-1px);
+            border-color: #22c55e;
+            background: rgba(34,197,94,.08);
+        }
+        .history-player-item img {
+            width: 38px;
+            height: 38px;
+            border-radius: 999px;
+            object-fit: cover;
+            border: 2px solid #86efac;
+            background: #fdf4ff;
+        }
+        .history-player-name {
+            font-weight: 900;
+            color: var(--text-heading);
+            font-size: 13px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .history-player-meta {
+            color: var(--text-sub);
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .history-score-pill {
+            border-radius: 999px;
+            padding: 5px 8px;
+            background: #dcfce7;
+            color: #166534;
+            font-weight: 900;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+        .history-detail-body {
+            padding: 12px;
+            max-height: 560px;
+            overflow-y: auto;
+        }
+        .history-empty {
+            text-align: center;
+            color: var(--text-sub);
+            padding: 38px 18px;
+            font-weight: 800;
+        }
+        .history-answer-row {
+            border: 1px solid var(--box-border);
+            border-radius: 14px;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: var(--box-bg);
+            box-shadow: 0 6px 16px rgba(0,0,0,.035);
+        }
+        .history-answer-row.correct { border-color: #22c55e; background: rgba(34,197,94,.08); }
+        .history-answer-row.wrong { border-color: #ef4444; background: rgba(239,68,68,.06); }
+        .history-answer-row.pending { border-color: #f59e0b; background: rgba(245,158,11,.06); }
+        .history-answer-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+        .history-answer-question {
+            color: var(--text-heading);
+            font-weight: 900;
+            line-height: 1.35;
+        }
+        .history-badge {
+            white-space: nowrap;
+            border-radius: 999px;
+            padding: 5px 9px;
+            font-size: 11px;
+            font-weight: 900;
+        }
+        .history-badge.correct { background: #22c55e; color: white; }
+        .history-badge.wrong { background: #ef4444; color: white; }
+        .history-badge.pending { background: #f59e0b; color: white; }
+        .history-answer-lines {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .history-answer-line {
+            border-radius: 11px;
+            padding: 8px 10px;
+            background: rgba(148,163,184,.12);
+            color: var(--text-heading);
+            font-size: 13px;
+            font-weight: 800;
+        }
+        .history-answer-line small {
+            display: block;
+            color: var(--text-sub);
+            font-size: 11px;
+            font-weight: 900;
+            margin-bottom: 3px;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+        }
+        @media (max-width: 900px) {
+            .history-summary-cards { grid-template-columns: repeat(2, 1fr); }
+            .history-layout { grid-template-columns: 1fr; }
+            .history-answer-lines { grid-template-columns: 1fr; }
+        }
+
 </style>
 </head>
 <body>
@@ -2023,8 +2237,8 @@
 
                         <div style="display: flex; align-items: center; gap: 8px; background: var(--input-bg); padding: 6px 12px; border-radius: 10px; border: 1px solid var(--box-border);">
                             <span style="font-size: 13px; font-weight: bold; color: var(--text-heading);"><i class="fa-solid fa-user-lock"></i> Đổi TK:</span>
-                            <input type="text" id="admin-setting-user" class="name-input" style="width: 80px; padding: 5px; border-radius: 6px; font-size: 13px; margin:0;" placeholder="User">
-                            <input type="password" id="admin-setting-pass" class="name-input" style="width: 80px; padding: 5px; border-radius: 6px; font-size: 13px; margin:0;" placeholder="Pass">
+                            <input type="text" id="admin-setting-user" class="name-input" style="width: 80px; padding: 5px; border-radius: 6px; font-size: 13px; margin:0;" placeholder="User" value="admin">
+                            <input type="password" id="admin-setting-pass" class="name-input" style="width: 80px; padding: 5px; border-radius: 6px; font-size: 13px; margin:0;" placeholder="Pass" value="admin">
                             <button class="action-btn btn-primary" style="padding: 6px 12px; font-size: 12px;" onclick="updateAdminCredentials()"><i class="fa-solid fa-floppy-disk"></i> Lưu</button>
                         </div>
                         
@@ -2046,6 +2260,7 @@
                 <div class="admin-nav-tabs">
                     <button class="admin-tab active" onclick="switchAdminTab('grid-pane', this);"><i class="fa-solid fa-grip"></i> Bản đồ Grid (Live Grid)</button>
                     <button class="admin-tab" onclick="switchAdminTab('chart-pane', this);"><i class="fa-solid fa-chart-bar"></i> Biểu đồ trực quan (Live Chart)</button>
+                    <button class="admin-tab" onclick="switchAdminTab('history-pane', this);"><i class="fa-solid fa-clipboard-list"></i> Lịch sử trả lời</button>
                 </div>
 
                 <div class="admin-content-pane active" id="grid-pane">
@@ -2056,6 +2271,31 @@
 
                 <div class="admin-content-pane" id="chart-pane">
                     <div class="chart-view-container" id="admin-chart-container"></div>
+                </div>
+
+                <div class="admin-content-pane" id="history-pane">
+                    <div class="history-toolbar">
+                        <div style="font-weight:900; color:var(--text-heading);"><i class="fa-solid fa-eye"></i> Xem mọi người trả lời đúng/sai ở từng câu</div>
+                        <button class="action-btn btn-success" onclick="exportAnswerHistoryCsv()"><i class="fa-solid fa-file-csv"></i> Xuất lịch sử CSV</button>
+                    </div>
+                    <div class="history-summary-cards" id="history-summary-cards"></div>
+                    <div class="history-layout">
+                        <div class="history-player-list">
+                            <div class="history-player-list-head">
+                                <span><i class="fa-solid fa-users"></i> Người chơi</span>
+                            </div>
+                            <div style="padding:10px 10px 0;"><input id="history-search-input" class="history-search" placeholder="Tìm tên / phòng ban..." oninput="renderAnswerHistoryDashboard()"></div>
+                            <div class="history-player-list-body" id="history-player-list-body"></div>
+                        </div>
+                        <div class="history-detail-box">
+                            <div class="history-detail-head" id="history-detail-head">
+                                <span><i class="fa-solid fa-list-check"></i> Chi tiết câu trả lời</span>
+                            </div>
+                            <div class="history-detail-body" id="history-detail-body">
+                                <div class="history-empty">Chọn một người chơi ở bên trái để xem họ đúng/sai ở câu nào.</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -2589,6 +2829,7 @@
 
     let currentAdminUser = "admin";
     let currentAdminPass = "admin";
+    const FORCE_RESET_ADMIN_LOGIN = true; // Reset cứng tài khoản Admin về admin/admin
     let isAdminLoggedIn = false;
     let selectedBatchFilter = "CURRENT";
 
@@ -3603,8 +3844,16 @@
                     if (data.quizPassword) currentCorrectPassword = data.quizPassword;
                     if (data.batchName) currentBatchName = data.batchName;
                     if (data.examDuration) examDuration = parseInt(data.examDuration);
-                    if (data.adminUsername) currentAdminUser = data.adminUsername;
-                    if (data.adminPassword) currentAdminPass = data.adminPassword;
+                    if (FORCE_RESET_ADMIN_LOGIN) {
+                        currentAdminUser = "admin";
+                        currentAdminPass = "admin";
+                        if (data.adminUsername !== "admin" || data.adminPassword !== "admin") {
+                            setDoc(globalSettingsRef, { adminUsername: "admin", adminPassword: "admin" }, { merge: true }).catch(() => {});
+                        }
+                    } else {
+                        if (data.adminUsername) currentAdminUser = data.adminUsername;
+                        if (data.adminPassword) currentAdminPass = data.adminPassword;
+                    }
                     examLockedAt = Number(data.examLockedAt || 0);
                     examLockedBatch = data.examLockedBatch || '';
                     
@@ -6675,6 +6924,372 @@
         }, 1000);
     };
 
+
+
+
+    /* =========================================================
+       ANSWER HISTORY FEATURE - lưu/xem mọi người đúng sai ở đâu
+       ========================================================= */
+    let answerHistory = [];
+    let lastAdminHistoryData = [];
+    let selectedHistoryPlayerId = '';
+    let adminHistoryUnsub = null;
+
+    function sanitizeHistoryRecord(record) {
+        return {
+            no: Number(record.no || 0),
+            questionIndex: Number(record.questionIndex || 0),
+            question: String(record.question || ''),
+            selectedIndex: Number(record.selectedIndex ?? -1),
+            selectedAnswer: String(record.selectedAnswer || ''),
+            correctIndex: Number(record.correctIndex ?? -1),
+            correctAnswer: String(record.correctAnswer || ''),
+            isCorrect: !!record.isCorrect,
+            answeredAt: Number(record.answeredAt || Date.now()),
+            time: Number(record.time || 0)
+        };
+    }
+
+    function getCleanAnswerHistory() {
+        return (answerHistory || []).filter(Boolean).map(sanitizeHistoryRecord);
+    }
+
+    function getAnswerSummary(history = answerHistory) {
+        const clean = (history || []).filter(Boolean);
+        const correct = clean.filter(item => !!item.isCorrect).length;
+        const wrong = clean.length - correct;
+        return { answered: clean.length, correct, wrong };
+    }
+
+    function buildCurrentAnswerRecord(answerIndex) {
+        const q = gameQuestions[currentQuestion];
+        const selectedText = q?.options?.[answerIndex] || '';
+        const correctText = q?.options?.[q?.answer] || '';
+        return sanitizeHistoryRecord({
+            no: currentQuestion + 1,
+            questionIndex: currentQuestion,
+            question: q?.q || '',
+            selectedIndex: answerIndex,
+            selectedAnswer: selectedText,
+            correctIndex: q?.answer,
+            correctAnswer: correctText,
+            isCorrect: answerIndex === q?.answer,
+            answeredAt: Date.now(),
+            time: Number((totalTimeTaken || 0).toFixed(2))
+        });
+    }
+
+    function buildQuestionSetForAdmin() {
+        return (gameQuestions || []).map((q, index) => ({
+            no: index + 1,
+            questionIndex: index,
+            question: q.q,
+            options: q.options,
+            correctIndex: q.answer,
+            correctAnswer: q.options[q.answer] || ''
+        }));
+    }
+
+    const __historyOriginalStartQuiz = startQuiz;
+    startQuiz = async function(...args) {
+        answerHistory = [];
+        selectedHistoryPlayerId = '';
+        const result = await __historyOriginalStartQuiz.apply(this, args);
+        if (currentDocId && db && Array.isArray(gameQuestions) && gameQuestions.length) {
+            updateDoc(doc(scoresCollection, currentDocId), {
+                answerHistory: [],
+                answerSummary: { answered: 0, correct: 0, wrong: 0 },
+                currentAnswerDraft: null,
+                questionSet: buildQuestionSetForAdmin(),
+                questionSetVersion: 'answer-history-v1'
+            }).catch(() => {});
+        }
+        return result;
+    };
+
+    finalizeCurrentAnswer = function() {
+        if (selectedAnswerIndex === null || selectedAnswerIndex === undefined) return false;
+        const answerIndex = selectedAnswerIndex;
+        const record = buildCurrentAnswerRecord(answerIndex);
+        if (record.isCorrect) score += 10;
+        answerHistory[currentQuestion] = record;
+        selectedAnswerIndex = null;
+
+        if (db && currentDocId) {
+            const clean = getCleanAnswerHistory();
+            updateDoc(doc(scoresCollection, currentDocId), {
+                answerHistory: clean,
+                answerSummary: getAnswerSummary(clean),
+                lastAnswer: record,
+                currentAnswerDraft: null,
+                score: score,
+                totalTime: totalTimeTaken,
+                lastSeen: Date.now()
+            }).catch(e => console.error(e));
+        }
+        return true;
+    };
+
+    showControlsAfterAnswer = function() {
+        const draft = buildCurrentAnswerRecord(selectedAnswerIndex);
+        draft.locked = false;
+        draft.note = 'Người chơi đang chọn tạm, vẫn có thể đổi trước khi bấm câu tiếp theo.';
+        if (db && currentDocId) {
+            updateDoc(doc(scoresCollection, currentDocId), {
+                selectedAnswer: selectedAnswerIndex,
+                currentAnswerDraft: draft,
+                question: currentQuestion + 1,
+                totalTime: totalTimeTaken,
+                lastSeen: Date.now()
+            }).catch(e => console.error(e));
+        }
+        const nextBtn = document.getElementById('next-btn');
+        if (nextBtn) nextBtn.style.display = 'block';
+    };
+
+    nextQuestion = function() {
+        if (examStatus !== 'running') return;
+        if (selectedAnswerIndex === null || selectedAnswerIndex === undefined) {
+            showAlert('Bạn cần chọn một đáp án trước khi qua câu tiếp theo nha!');
+            return;
+        }
+        playClick();
+        const nextBtn = document.getElementById('next-btn');
+        if (nextBtn) nextBtn.disabled = true;
+        finalizeCurrentAnswer();
+        if (db && currentDocId) {
+            updateDoc(doc(scoresCollection, currentDocId), {
+                score: score,
+                question: currentQuestion + 1,
+                totalTime: totalTimeTaken,
+                answerHistory: getCleanAnswerHistory(),
+                answerSummary: getAnswerSummary(),
+                lastSeen: Date.now()
+            }).catch(e => console.error(e));
+        }
+        currentQuestion++;
+        if (currentQuestion < gameQuestions.length) loadQuestion();
+        else showEndScreen();
+    };
+
+    const __historyOriginalShowEndScreen = showEndScreen;
+    showEndScreen = function(...args) {
+        if (db && currentDocId) {
+            const clean = getCleanAnswerHistory();
+            updateDoc(doc(scoresCollection, currentDocId), {
+                answerHistory: clean,
+                answerSummary: getAnswerSummary(clean),
+                totalTime: totalTimeTaken,
+                score: score,
+                currentAnswerDraft: null,
+                lastSeen: Date.now()
+            }).catch(() => {});
+        }
+        return __historyOriginalShowEndScreen.apply(this, args);
+    };
+
+    function getFilteredHistoryData() {
+        let rows = [...(lastAdminHistoryData || [])];
+        if (selectedBatchFilter === 'CURRENT') rows = rows.filter(item => item.batch === currentBatchName);
+        else if (selectedBatchFilter !== 'ALL') rows = rows.filter(item => item.batch === selectedBatchFilter);
+        const search = String(document.getElementById('history-search-input')?.value || '').trim().toLowerCase();
+        if (search) {
+            rows = rows.filter(item => `${item.name || ''} ${item.dept || ''} ${item.role || ''}`.toLowerCase().includes(search));
+        }
+        rows.sort((a, b) => {
+            if ((b.score || 0) !== (a.score || 0)) return (b.score || 0) - (a.score || 0);
+            return (a.totalTime || 0) - (b.totalTime || 0);
+        });
+        return rows;
+    }
+
+    function renderAnswerHistoryDashboard() {
+        const summaryEl = document.getElementById('history-summary-cards');
+        const listEl = document.getElementById('history-player-list-body');
+        if (!summaryEl || !listEl) return;
+        const rows = getFilteredHistoryData();
+        const totalPlayers = rows.length;
+        const finished = rows.filter(r => r.status === 'Hoàn thành' || r.status === 'Gian lận').length;
+        const allAnswered = rows.reduce((sum, r) => sum + ((r.answerHistory || []).length), 0);
+        const allCorrect = rows.reduce((sum, r) => sum + ((r.answerHistory || []).filter(a => a.isCorrect).length), 0);
+        const accuracy = allAnswered ? Math.round((allCorrect / allAnswered) * 100) : 0;
+
+        summaryEl.innerHTML = `
+            <div class="history-mini-card"><span>Người chơi</span><strong>${totalPlayers}</strong></div>
+            <div class="history-mini-card"><span>Đã nộp / gian lận</span><strong>${finished}</strong></div>
+            <div class="history-mini-card"><span>Lượt trả lời</span><strong>${allAnswered}</strong></div>
+            <div class="history-mini-card"><span>Tỉ lệ đúng</span><strong>${accuracy}%</strong></div>
+        `;
+
+        if (!rows.length) {
+            listEl.innerHTML = '<div class="history-empty">Chưa có người chơi nào phù hợp bộ lọc.</div>';
+            renderAnswerHistoryDetail(null);
+            return;
+        }
+        if (!selectedHistoryPlayerId || !rows.some(r => r.id === selectedHistoryPlayerId)) selectedHistoryPlayerId = rows[0].id;
+
+        listEl.innerHTML = rows.map(row => {
+            const history = row.answerHistory || [];
+            const correct = history.filter(a => a.isCorrect).length;
+            const total = row.totalQuestions || row.questionSet?.length || getActiveQuestionPool().length;
+            const avatarUrl = row.avatar || "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2322c55e'><circle cx='12' cy='12' r='10'/></svg>";
+            return `
+                <button class="history-player-item ${row.id === selectedHistoryPlayerId ? 'active' : ''}" onclick="viewAnswerHistory('${row.id}')">
+                    <img src="${avatarUrl}" alt="">
+                    <div style="min-width:0;">
+                        <div class="history-player-name">${escapeHtml(row.name || 'Người chơi')}</div>
+                        <div class="history-player-meta">${escapeHtml(row.dept || '-')} • ${escapeHtml(row.status || 'Chưa rõ')}</div>
+                    </div>
+                    <div class="history-score-pill">${correct}/${total}</div>
+                </button>
+            `;
+        }).join('');
+
+        renderAnswerHistoryDetail(rows.find(r => r.id === selectedHistoryPlayerId));
+    }
+
+    function renderAnswerHistoryDetail(row) {
+        const headEl = document.getElementById('history-detail-head');
+        const bodyEl = document.getElementById('history-detail-body');
+        if (!headEl || !bodyEl) return;
+        if (!row) {
+            headEl.innerHTML = '<span><i class="fa-solid fa-list-check"></i> Chi tiết câu trả lời</span>';
+            bodyEl.innerHTML = '<div class="history-empty">Chọn một người chơi để xem chi tiết.</div>';
+            return;
+        }
+        const history = row.answerHistory || [];
+        const draft = row.currentAnswerDraft;
+        const questionSet = row.questionSet || [];
+        const correct = history.filter(a => a.isCorrect).length;
+        const wrong = history.length - correct;
+        const total = row.totalQuestions || questionSet.length || getActiveQuestionPool().length;
+        headEl.innerHTML = `
+            <span><i class="fa-solid fa-user-check"></i> ${escapeHtml(row.name || 'Người chơi')}</span>
+            <span class="history-score-pill">${correct} đúng • ${wrong} sai • ${history.length}/${total} câu</span>
+        `;
+
+        const byIndex = new Map(history.map(item => [Number(item.questionIndex), item]));
+        const rows = [];
+        if (questionSet.length) {
+            questionSet.forEach(q => {
+                const item = byIndex.get(Number(q.questionIndex));
+                if (item) rows.push(renderAnswerHistoryRow(item));
+                else rows.push(renderPendingQuestionRow(q));
+            });
+        } else if (history.length) {
+            history.forEach(item => rows.push(renderAnswerHistoryRow(item)));
+        } else {
+            rows.push('<div class="history-empty">Người này chưa có lịch sử trả lời. Khi họ bấm “Câu tiếp theo”, lịch sử sẽ hiện ở đây.</div>');
+        }
+        if (draft && draft.selectedAnswer && !byIndex.has(Number(draft.questionIndex))) {
+            rows.unshift(renderDraftAnswerRow(draft));
+        }
+        bodyEl.innerHTML = rows.join('');
+    }
+
+    function renderAnswerHistoryRow(item) {
+        const cls = item.isCorrect ? 'correct' : 'wrong';
+        const icon = item.isCorrect ? '✅ ĐÚNG' : '❌ SAI';
+        return `
+            <div class="history-answer-row ${cls}">
+                <div class="history-answer-top">
+                    <div class="history-answer-question">Câu ${item.no}: ${escapeHtml(item.question)}</div>
+                    <span class="history-badge ${cls}">${icon}</span>
+                </div>
+                <div class="history-answer-lines">
+                    <div class="history-answer-line"><small>Người chơi chọn</small>${escapeHtml(item.selectedAnswer || 'Không có')}</div>
+                    <div class="history-answer-line"><small>Đáp án đúng</small>${escapeHtml(item.correctAnswer || 'Không có')}</div>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderDraftAnswerRow(item) {
+        return `
+            <div class="history-answer-row pending">
+                <div class="history-answer-top">
+                    <div class="history-answer-question">Đang chọn tạm câu ${item.no}: ${escapeHtml(item.question)}</div>
+                    <span class="history-badge pending">⏳ CHƯA KHÓA</span>
+                </div>
+                <div class="history-answer-lines">
+                    <div class="history-answer-line"><small>Đáp án đang chọn</small>${escapeHtml(item.selectedAnswer || 'Không có')}</div>
+                    <div class="history-answer-line"><small>Ghi chú</small>Có thể đổi trước khi bấm câu tiếp theo</div>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderPendingQuestionRow(q) {
+        return `
+            <div class="history-answer-row pending">
+                <div class="history-answer-top">
+                    <div class="history-answer-question">Câu ${q.no}: ${escapeHtml(q.question)}</div>
+                    <span class="history-badge pending">CHƯA TRẢ LỜI</span>
+                </div>
+                <div class="history-answer-lines">
+                    <div class="history-answer-line"><small>Người chơi chọn</small>Chưa có</div>
+                    <div class="history-answer-line"><small>Đáp án đúng</small>${escapeHtml(q.correctAnswer || '')}</div>
+                </div>
+            </div>
+        `;
+    }
+
+    function viewAnswerHistory(playerId) {
+        selectedHistoryPlayerId = playerId;
+        renderAnswerHistoryDashboard();
+    }
+
+    function setupAnswerHistoryListener() {
+        if (!currentUser || !db || !scoresCollection) return;
+        if (adminHistoryUnsub) adminHistoryUnsub();
+        adminHistoryUnsub = onSnapshot(scoresCollection, (snapshot) => {
+            lastAdminHistoryData = [];
+            snapshot.forEach(snap => lastAdminHistoryData.push({ id: snap.id, ...snap.data() }));
+            renderAnswerHistoryDashboard();
+        }, (error) => {
+            console.error('Lỗi tải lịch sử trả lời:', error);
+        });
+    }
+
+    const __historyOriginalOpenAdminDashboard = openAdminDashboard;
+    openAdminDashboard = function(...args) {
+        const result = __historyOriginalOpenAdminDashboard.apply(this, args);
+        setTimeout(setupAnswerHistoryListener, 120);
+        return result;
+    };
+
+    const __historyOriginalFilterAdminByBatch = filterAdminByBatch;
+    filterAdminByBatch = function(...args) {
+        const result = __historyOriginalFilterAdminByBatch.apply(this, args);
+        renderAnswerHistoryDashboard();
+        return result;
+    };
+
+    function exportAnswerHistoryCsv() {
+        const rows = getFilteredHistoryData();
+        if (!rows.length) return showAlert('Không có dữ liệu lịch sử trả lời để xuất!');
+        let csv = 'data:text/csv;charset=utf-8,\uFEFF';
+        csv += 'Họ tên,Phòng ban,Chức vụ,Điểm,Trạng thái,Câu số,Câu hỏi,Đáp án chọn,Đáp án đúng,Kết quả,Thời gian làm đến lúc trả lời (s),Đợt thi\n';
+        rows.forEach(row => {
+            (row.answerHistory || []).forEach(item => {
+                const line = [
+                    row.name || '', row.dept || '', row.role || '', row.score || 0, row.status || '',
+                    item.no || '', item.question || '', item.selectedAnswer || '', item.correctAnswer || '',
+                    item.isCorrect ? 'Đúng' : 'Sai', item.time || 0, row.batch || ''
+                ].map(value => `"${String(value).replace(/"/g, '""')}"`).join(',');
+                csv += line + '\n';
+            });
+        });
+        const link = document.createElement('a');
+        link.setAttribute('href', encodeURI(csv));
+        link.setAttribute('download', `Lich_su_tra_loi_Megatech_${Date.now()}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    window.viewAnswerHistory = viewAnswerHistory;
+    window.exportAnswerHistoryCsv = exportAnswerHistoryCsv;
 
 window.showScreen = showScreen;
     window.gotoAdminLogin = gotoAdminLogin;
